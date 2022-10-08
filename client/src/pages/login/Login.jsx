@@ -14,35 +14,34 @@ const Login = () => {
                 src={"/img/logo_cse416.png"}
                 alt="logo__load"
                 style={{
-                    width: "10vw",
-                    height: "10vh",
-                    position: "absolute",
-                    left: 480,
-                    top: 200,
-                    objectFit: "cover",
+                    display: "block",
+                    marginTop:"20vh",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    width: "20%",
                     zIndex: -1,
                     opacity: 0.8,
                 }}
             />
             {/* <div></div> */}
-            <Grid
-                container
-                alignItems={"center"}
-                justifyContent={"space-around"}
-                height={"50px"}
-                mb={2.5}
-                mt={"20vh"}
-            >
-                <Typography variant="h2" sx={{ color: "#FFF" }}>
-                    Plog-In
-                </Typography>
-            </Grid>
+            {/*<Grid*/}
+            {/*    container*/}
+            {/*    alignItems={"center"}*/}
+            {/*    justifyContent={"space-around"}*/}
+            {/*    height={"50px"}*/}
+            {/*    mb={2.5}*/}
+            {/*    mt={"20vh"}*/}
+            {/*>*/}
+            {/*    <Typography variant="h2" sx={{ color: "#FFF" }}>*/}
+
+            {/*    </Typography>*/}
+            {/*</Grid>*/}
             <Grid
                 container
                 alignItems={"center"}
                 justifyContent={"space-around"}
                 // flexDirection={"row"}
-                mt={"55vh"}
+                mt={"25vh"}
             >
                 <Button
                     variant="contained"
