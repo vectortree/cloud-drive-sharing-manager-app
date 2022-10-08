@@ -158,24 +158,16 @@ export default function PrimarySearchAppBar() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="static" style={{boxShadow:"none"}}>
                 <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="black"
-                        aria-label="open drawer"
-                        sx={{ mr: 2 }}
-                    >
-
-                    </IconButton>
                     <img
-
                         src={"/img/logo_cse416.png"}
                         alt="logo__load"
                         style={{
                             display: "block",
                             marginTop:"0vh",
+                            padding:0,
+                            margin:0,
                             marginLeft: "auto",
                             marginRight: "auto",
                             width: "5%",

@@ -1,10 +1,12 @@
 import {Grid} from "@mui/material"
 import React from "react";
 import PrimarySearchAppBar from "../../components/Header"
-
+import MiniDrawer from "../../components/sideBar"
 const MyPage = ()=>{
     return (
-        <PrimarySearchAppBar/>
+        <>
+        <MiniDrawer/>
+        </>
     )
 }
 export default MyPage;
