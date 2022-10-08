@@ -6,7 +6,7 @@ import {isRunningRecoil} from "../../recoil"
 const Home = () =>{
     return (
         <Grid>
-            
+
         </Grid>
     )
 }
