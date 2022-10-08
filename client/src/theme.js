@@ -22,7 +22,7 @@ export const FontWeightValues = {
 export const theme = createTheme({
     palette: {
         primary: {
-            main: "#48BCA7",
+            main: "#00000",
         },
         secondary: {
             main: "#FAFAFA",

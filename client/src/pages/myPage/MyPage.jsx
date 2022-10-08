@@ -1,10 +1,10 @@
 import {Grid} from "@mui/material"
 import React from "react";
-import ResponsiveAppBar from "../../components/Header"
+import PrimarySearchAppBar from "../../components/Header"
 
 const MyPage = ()=>{
     return (
-        <ResponsiveAppBar/>
+        <PrimarySearchAppBar/>
     )
 }
 export default MyPage;
