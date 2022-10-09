@@ -48,7 +48,7 @@ export const GoogleDriveButton = () => {
             >
                 <img
                     src={
-                        "https://pbs.twimg.com/profile_images/1455185376876826625/s1AjSxph_400x400.jpg"
+                        "https://www.freepnglogos.com/uploads/google-logo-png/google-logo-icon-png-transparent-background-osteopathy-16.png"
                     }
                     alt="google_icon"
                     width="18dp"
