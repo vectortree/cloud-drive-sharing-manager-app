@@ -20,15 +20,20 @@ const Layout = () =>{
 }
 function App() {
   const [user, setUser] = useState(undefined);
+  const [isAuthenticatedGoogleDrive, setIsAuthenticatedGoogleDrive] = useState(localStorage.getItem("isLoggedIn"));
   const isAuthenticatedOneDrive = useIsAuthenticated();
 
+  const isAuth = isAuthenticatedGoogleDrive || isAuthenticatedOneDrive;
   // useEffect(()=>{
   //
   // })
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={isAuthenticatedOneDrive ? <MyPage/> : <Login/>}/>
+          <Route path="/" element={isAuth ? 
+              <MyPage/> : 
+              <Login setIsAuthenticatedGoogleDrive={setIsAuthenticatedGoogleDrive}/>
+            }/>
           {/* <Route index element={<Login/>}/> */}
           {/* <Route path ="/" element={<MyPage/>}/> */}
           {/*<Route path = "ranking" element={}/>*/}

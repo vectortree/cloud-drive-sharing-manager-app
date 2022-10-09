@@ -4,7 +4,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
-export const GoogleDriveButton = () => {
+export const GoogleDriveButton = (props) => {
 
     const login = useGoogleLogin({
         flow: 'auth-code',
@@ -13,6 +13,8 @@ export const GoogleDriveButton = () => {
             const tokens = await axios.post('http://localhost:5000/auth/google', {
                 code: codeResponse.code
             });
+            localStorage.setItem("isLoggedIn", true);
+            props.setIsAuthenticatedGoogleDrive(true);
             console.log(jwt_decode(tokens.data.id_token));
         },
         onError: errorResponse => console.log(errorResponse)
