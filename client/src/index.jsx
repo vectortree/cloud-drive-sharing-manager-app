@@ -10,6 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./authConfig";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -20,7 +21,7 @@ root.render(
           <ThemeProvider theme={theme}>
               <CssBaseline/>
               <MsalProvider instance={msalInstance}>
-                <App />
+              <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}><App/></GoogleOAuthProvider>
               </MsalProvider>
           </ThemeProvider>
       </RecoilRoot>
