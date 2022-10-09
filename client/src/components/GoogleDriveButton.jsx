@@ -1,8 +1,23 @@
 import {Button, Grid, Typography} from "@mui/material";
 import React from "react";
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from "axios";
+import jwt_decode from "jwt-decode";
 
+export const GoogleDriveButton = () => {
 
-export const GoogleDriveButton = ()=>{
+    const login = useGoogleLogin({
+        flow: 'auth-code',
+        onSuccess: async codeResponse => {
+            console.log(codeResponse);
+            const tokens = await axios.post('http://localhost:5000/auth/google', {
+                code: codeResponse.code
+            });
+            console.log(jwt_decode(tokens.data.id_token));
+        },
+        onError: errorResponse => console.log(errorResponse)
+    });
+
     return (
         <Grid
             container
@@ -25,7 +40,7 @@ export const GoogleDriveButton = ()=>{
                 // fullWidth
                 color="white"
                 onClick={() => {
-
+                    login();
                     console.log("onclick Google Login");
                 }}
                 // onSuccess={onSuccess}
@@ -50,6 +65,7 @@ export const GoogleDriveButton = ()=>{
                 >
                     Sign In with Google
                 </Typography>
+                
             </Button>
         </Grid>
     )
