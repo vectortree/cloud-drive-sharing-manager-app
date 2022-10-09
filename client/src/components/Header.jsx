@@ -15,6 +15,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import { useMsal } from "@azure/msal-react";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -82,7 +83,14 @@ export default function PrimarySearchAppBar() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
+    const handleLogout = (instance) => {
+        instance.logoutRedirect().catch(e => {
+            console.error(e);
+        });
+    }
+
     const menuId = 'primary-search-account-menu';
+    const { instance } = useMsal();
     const renderMenu = (
         <Menu
             anchorEl={anchorEl}
@@ -101,6 +109,7 @@ export default function PrimarySearchAppBar() {
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={() => handleLogout(instance)}>Logout</MenuItem>
         </Menu>
     );
 
