@@ -1,50 +1,43 @@
-const http = require('http');
 const express = require('express');
-const socketio = require('socket.io');
 const cors = require('cors');
-
-//const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
-//const router = require('./router');
-
 const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
+const mongoose = require("mongoose");
+const { OAuth2Client } = require('google-auth-library');
 
 app.use(cors());
-//app.use(router);
+app.use(express.json());
 
-io.on('connect', (socket) => {
-    socket.on('join', ({ name, room }, callback) => {
-        const { error, user } = addUser({ id: socket.id, name, room });
 
-        if(error) return callback(error);
+require("dotenv").config({ path: "./config.env" });
+const port = process.env.PORT || 5000;
 
-        socket.join(user.room);
+const oAuth2Client = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    'postmessage',
+);
 
-        socket.emit('message', { user: 'admin', text: `${user.name}, welcome to cse416Proejct ${user.room}.`});
-        socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} has joined!` });
-
-        io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
-
-        callback();
-    });
-
-    socket.on('sendMessage', (message, callback) => {
-        const user = getUser(socket.id);
-
-        io.to(user.room).emit('message', { user: user.name, text: message });
-
-        callback();
-    });
-
-    socket.on('disconnect', () => {
-        const user = removeUser(socket.id);
-
-        if(user) {
-            io.to(user.room).emit('message', { user: 'Admin', text: `${user.name} has left.` });
-            io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
-        }
-    })
+app.post('/auth/google', async (req, res) => {
+    const { tokens } = await oAuth2Client.getToken(req.body.code); // Exchange code for tokens
+    console.log(tokens);
+    res.json(tokens);
 });
-
-server.listen(process.env.PORT || 8080, () => console.log(`Server has started.`));
+  
+app.post('/auth/google/refresh-token', async (req, res) => {
+    const user = new UserRefreshClient(
+        clientId,
+        clientSecret,
+        req.body.refreshToken,
+    );
+    const { credentials } = await user.refreshAccessToken(); // Optain new tokens
+    res.json(credentials);
+});
+  
+app.listen(port, () => {
+    // Perform a database connection when server starts
+    mongoose
+    .connect(process.env.ATLAS_URI, { useNewUrlParser: true, useUnifiedTopology: true})
+    .then(() => console.log("Successfully connected to MongoDB."))
+    .catch((err) => console.log(err));
+    console.log(`Server is running on port: ${port}`);
+});

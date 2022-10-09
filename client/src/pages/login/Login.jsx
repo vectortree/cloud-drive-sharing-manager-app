@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Button, IconButton, Typography, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import {OnedriveButton} from "../../components/OnedriveButton";
+import {OneDriveButton} from "../../components/OneDriveButton";
 import {GoogleDriveButton} from "../../components/GoogleDriveButton";
 import axios from "axios";
 
@@ -10,7 +10,7 @@ import axios from "axios";
  * Renders the navbar component with a sign-in button if a user is not authenticated
  */
 
-const Login = () => {
+const Login = (props) => {
         return (
         <Grid>
             {/*Logo*/}
@@ -29,8 +29,8 @@ const Login = () => {
                 }}
             />
 
-            <OnedriveButton/>
-            <GoogleDriveButton/>
+            <OneDriveButton/>
+            <GoogleDriveButton setIsAuthenticatedGoogleDrive={props.setIsAuthenticatedGoogleDrive}/>
         </Grid>
     );
 };

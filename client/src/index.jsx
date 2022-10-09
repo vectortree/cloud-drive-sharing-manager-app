@@ -7,6 +7,12 @@ import App from './App';
 import {theme} from "./theme"
 import {RecoilRoot} from "recoil";
 import reportWebVitals from './reportWebVitals';
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import { msalConfig } from "./authConfig";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,7 +20,9 @@ root.render(
       <RecoilRoot>
           <ThemeProvider theme={theme}>
               <CssBaseline/>
-              <App />
+              <MsalProvider instance={msalInstance}>
+              <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}><App/></GoogleOAuthProvider>
+              </MsalProvider>
           </ThemeProvider>
       </RecoilRoot>
   </React.StrictMode>

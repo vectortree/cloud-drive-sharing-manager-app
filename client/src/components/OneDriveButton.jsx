@@ -1,10 +1,19 @@
 import React from "react";
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../authConfig";
 import {Button, Grid, Typography} from "@mui/material";
 
+function handleLogin(instance) {
+    instance.loginRedirect(loginRequest).catch(e => {
+        console.error(e);
+    });
+}
+
 /**
- * Renders a button which, when selected, will redirect the page to the login prompt
+ * Renders a button which, when selected, will redirect to the Microsoft account sign in page
  */
-export const OnedriveButton = () => {
+export const OneDriveButton = () => {
+    const { instance } = useMsal();
     return (
         <Grid
             container
@@ -26,10 +35,7 @@ export const OnedriveButton = () => {
                 }}
                 // fullWidth
                 color="white"
-                onClick={() => {
-
-                    console.log("onclick OneDrive Login");
-                }}
+                onClick={() => handleLogin(instance)}
                 // onSuccess={onSuccess}
                 // onFailure={onFailure}
             >
