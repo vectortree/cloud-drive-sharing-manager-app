@@ -15,7 +15,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { useMsal } from "@azure/msal-react";
+import { useIsAuthenticated, useMsal } from "@azure/msal-react";
+import { googleLogout } from '@react-oauth/google';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -59,12 +60,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+    const { instance } = useMsal();
+    const isAuthenticatedOneDrive = useIsAuthenticated();
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -83,14 +87,21 @@ export default function PrimarySearchAppBar() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
-    const handleLogout = (instance) => {
-        instance.logoutRedirect().catch(e => {
-            console.error(e);
-        });
+    const handleLogout = () => {
+        if(isAuthenticatedOneDrive) {
+            instance.logoutRedirect().catch(e => {
+                console.error(e);
+            });
+        }
+        else {
+            googleLogout();
+            localStorage.setItem("isLoggedIn", true);
+            props.setIsAuthenticatedGoogleDrive(false);
+            console.log("Logging out of Google");
+        }
     }
 
     const menuId = 'primary-search-account-menu';
-    const { instance } = useMsal();
     const renderMenu = (
         <Menu
             anchorEl={anchorEl}
@@ -109,7 +120,7 @@ export default function PrimarySearchAppBar() {
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-            <MenuItem onClick={() => handleLogout(instance)}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
     );
 

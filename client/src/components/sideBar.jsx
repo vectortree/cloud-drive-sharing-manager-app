@@ -86,7 +86,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export default function MiniDrawer() {
+export default function MiniDrawer(props) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
 
@@ -115,7 +115,7 @@ export default function MiniDrawer() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <PrimarySearchAppBar />
+                    <PrimarySearchAppBar setIsAuthenticatedGoogleDrive={props.setIsAuthenticatedGoogleDrive}/>
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>

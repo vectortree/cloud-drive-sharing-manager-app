@@ -20,7 +20,7 @@ const Layout = () =>{
 }
 function App() {
   const [user, setUser] = useState(undefined);
-  const [isAuthenticatedGoogleDrive, setIsAuthenticatedGoogleDrive] = useState(localStorage.getItem("isLoggedIn"));
+  const [isAuthenticatedGoogleDrive, setIsAuthenticatedGoogleDrive] = useState(false);
   const isAuthenticatedOneDrive = useIsAuthenticated();
 
   const isAuth = isAuthenticatedGoogleDrive || isAuthenticatedOneDrive;
@@ -31,7 +31,7 @@ function App() {
     <BrowserRouter>
       <Routes>
           <Route path="/" element={isAuth ? 
-              <MyPage/> : 
+              <MyPage setIsAuthenticatedGoogleDrive={setIsAuthenticatedGoogleDrive}/> : 
               <Login setIsAuthenticatedGoogleDrive={setIsAuthenticatedGoogleDrive}/>
             }/>
           {/* <Route index element={<Login/>}/> */}
