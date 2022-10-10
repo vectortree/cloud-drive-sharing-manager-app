@@ -10,7 +10,7 @@ import axios from "axios";
  * Renders the navbar component with a sign-in button if a user is not authenticated
  */
 
-const Login = (props) => {
+const Login = () => {
         return (
         <Grid>
             {/*Logo*/}
@@ -30,7 +30,7 @@ const Login = (props) => {
             />
 
             <OneDriveButton/>
-            <GoogleDriveButton setIsAuthenticatedGoogleDrive={props.setIsAuthenticatedGoogleDrive}/>
+            <GoogleDriveButton/>
         </Grid>
     );
 };

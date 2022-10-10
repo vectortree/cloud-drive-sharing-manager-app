@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useContext} from "react"
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -16,7 +17,9 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
-import { googleLogout } from '@react-oauth/google';
+import { AuthContext } from '../auth/auth';
+import axios from "axios";
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -60,7 +63,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export default function PrimarySearchAppBar(props) {
+export default function PrimarySearchAppBar() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -69,6 +72,8 @@ export default function PrimarySearchAppBar(props) {
 
     const { instance } = useMsal();
     const isAuthenticatedOneDrive = useIsAuthenticated();
+    
+    const { user, setUser } = useContext(AuthContext);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -93,11 +98,12 @@ export default function PrimarySearchAppBar(props) {
                 console.error(e);
             });
         }
-        else {
-            googleLogout();
-            localStorage.setItem("isLoggedIn", true);
-            props.setIsAuthenticatedGoogleDrive(false);
+        if(user) {
             console.log("Logging out of Google");
+            axios.get('http://localhost:5001/logout', { withCredentials: true}).then(() => 
+                setUser(null)
+            );
+            
         }
     }
 

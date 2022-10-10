@@ -1,54 +1,59 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const User = require('./User');
-const Permission = require('./Permission');
-const File = require('./File');
-const Group = require('./Group');
-const FileSharingSnapshot = require('./FileSharingSnapshot');
-const GroupMembershipSnapshot = require('./GroupMembershipSnapshot');
-const AccessControlRequirement = require('./AccessControlRequirement');
-const SearchQuery = require('./SearchQuery');
-
-
-
 // Create schema for User Profile
 const UserProfileSchema = new Schema({
     // User
     user: {
-        type: mongoose.ObjectId
-        ref: 'User'
+        type: Object,
+        required: true
     },
     // List of file-sharing snapshots
     fileSharingSnapshots: {
         type: [{
-            type: mongoose.ObjectId
-            ref: 'FileSharingSnapshot'
+            name: String,
+            createdAt: Date,
+            updatedAt: Date,
+            data: [{
+                Permission: Object,
+                Metadata: Object
+            }]
         }],
         required: false
     },
     // List of group-membership snapshots
     groupMembershipSnapshots: {
         type: [{
-            type: mongoose.ObjectId
-            ref: 'GroupMembershipSnapshot'
+            name: String,
+            createdAt: Date,
+            updatedAt: Date,
+            data: [{
+                Group: Object
+            }]
         }],
         required: false
     },
     // List of access control requirements
     accessControlRequirements: {
         type: [{
-            type: mongoose.ObjectId
-            ref: 'AccessControlRequirement'
+            name: String,
+            searchQuery: [{
+                operator: String,
+                argument: String
+            }],
+            allowedReaders: [String],
+            allowedWriters: [String],
+            deniedReaders: [String],
+            deniedWriters: [String]
         }],
         required: false
-    }
+    },
     // List of search queries
     searchQueryHistory: {
-        type: [{
-            type: mongoose.ObjectId
-            ref: 'SearchQuery'
-        }],
+        type: [[{
+            operator: String,
+            argument: String
+        }]],
         required: false
     }
 });
@@ -56,4 +61,4 @@ const UserProfileSchema = new Schema({
 // Create model for UserProfile
 const UserProfile = mongoose.model('UserProfile', UserProfileSchema);
 
-module.exports = { UserProfile };
+module.exports = UserProfile;

@@ -1,24 +1,12 @@
 import {Button, Grid, Typography} from "@mui/material";
 import React from "react";
-import { useGoogleLogin } from '@react-oauth/google';
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 
-export const GoogleDriveButton = (props) => {
+export const GoogleDriveButton = () => {
 
-    const login = useGoogleLogin({
-        flow: 'auth-code',
-        onSuccess: async codeResponse => {
-            console.log(codeResponse);
-            const tokens = await axios.post('http://localhost:5000/auth/google', {
-                code: codeResponse.code
-            });
-            localStorage.setItem("isLoggedIn", true);
-            props.setIsAuthenticatedGoogleDrive(true);
-            console.log(jwt_decode(tokens.data.id_token));
-        },
-        onError: errorResponse => console.log(errorResponse)
-    });
+    const googleLogin = () => {
+       window.open('http://localhost:5001/auth/google', "_self");
+    }
 
     return (
         <Grid
@@ -42,7 +30,7 @@ export const GoogleDriveButton = (props) => {
                 // fullWidth
                 color="white"
                 onClick={() => {
-                    login();
+                    googleLogin();
                     console.log("onclick Google Login");
                 }}
                 // onSuccess={onSuccess}
