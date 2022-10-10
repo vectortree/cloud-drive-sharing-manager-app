@@ -188,13 +188,13 @@ export default function MiniDrawer(props) {
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 {/*Need to get data and fix it*/}
-                <Typography>Google Drive &emsp;&emsp;CSE416 > HomeWorkSubmission
+                <Typography>Google Drive &emsp;&emsp;CSE416 {'>'} HomeWorkSubmission
                     <MultipleSelectPlaceholder />
                     <BasicModal icon={ restoreIcon}/>
                     <BasicModal icon={ photoIcon}/>
                 </Typography><hr/>
                 {/*Here to Start flexible components*/}
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{display:"inline-flex"}}>
+                <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{}}>
                 {
                     props.components.map((element)=>(
                         element

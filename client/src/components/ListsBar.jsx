@@ -13,12 +13,18 @@ export default function ColumnMenuGrid( props) {
     return (
         <div>
             <h2>{props.name}</h2>
-        <div style={{ height: 280, width: '50%' }}>
+        <div style={{display:"inline-flex", width : "80%"}}>
+            
+        <div style={{ height: 280, width: '100%', 'padding-right' : '10%' }}>
             <DataGrid {...data} disableColumnMenu />
         </div>
+        <div style={{display:"inline-flex"}}>
             <br/>
-            <BasicButtons name="Add"/>
+            <BasicButtons name="Add" />
             <BasicButtons name="Edit"/>
+        </div>
+            
+        </div>
         </div>
     );
 }
