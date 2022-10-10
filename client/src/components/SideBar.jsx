@@ -125,7 +125,7 @@ export default function MiniDrawer(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <PrimarySearchAppBar setIsAuthenticatedGoogleDrive={props.setIsAuthenticatedGoogleDrive}/>
+                    <PrimarySearchAppBar/>
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>

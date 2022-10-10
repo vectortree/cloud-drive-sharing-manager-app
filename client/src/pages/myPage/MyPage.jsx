@@ -15,7 +15,7 @@ const sharingInfo= [
 const MyPage = (props)=> {
     return (
         <Grid>
-            <MiniDrawer components={sharingInfo} setIsAuthenticatedGoogleDrive={props.setIsAuthenticatedGoogleDrive}/>
+            <MiniDrawer components={sharingInfo}/>
         </Grid>
     );
 }
