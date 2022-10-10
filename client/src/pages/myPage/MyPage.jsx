@@ -12,11 +12,11 @@ const sharingInfo= [
     <ColumnMenuGrid name="User's Recent Query"/>
 ];
 
-const MyPage = ()=>{
+const MyPage = (props)=> {
     return (
         <Grid>
-            <MiniDrawer components={sharingInfo}/>
+            <MiniDrawer components={sharingInfo} setIsAuthenticatedGoogleDrive={props.setIsAuthenticatedGoogleDrive}/>
         </Grid>
-    )
+    );
 }
-export default MyPage;
+export default MyPage

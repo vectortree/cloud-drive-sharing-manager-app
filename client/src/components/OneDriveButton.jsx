@@ -40,10 +40,7 @@ export const OneDriveButton = () => {
                 // onFailure={onFailure}
             >
                 <img
-                    src={
-                        "https://www.onmsft.com/wp-content/uploads/2019/04/onedrive.jpg"
-                    }
-                    alt="OneDrive_icon"
+                    src={"/img/onedrive.jpg"}                 
                     width="50dp"
                     height="30dp"
                 />

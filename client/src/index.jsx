@@ -21,7 +21,9 @@ root.render(
           <ThemeProvider theme={theme}>
               <CssBaseline/>
               <MsalProvider instance={msalInstance}>
-              <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}><App/></GoogleOAuthProvider>
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                    <App/>
+                </GoogleOAuthProvider>
               </MsalProvider>
           </ThemeProvider>
       </RecoilRoot>

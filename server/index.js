@@ -22,6 +22,9 @@ app.post('/auth/google', async (req, res) => {
     console.log(tokens);
     res.json(tokens);
 });
+
+//app.post('/createSnapshot', async (req, res) => {
+//});
   
 app.post('/auth/google/refresh-token', async (req, res) => {
     const user = new UserRefreshClient(
