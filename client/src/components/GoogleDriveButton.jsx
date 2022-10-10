@@ -49,10 +49,8 @@ export const GoogleDriveButton = (props) => {
                 // onFailure={onFailure}
             >
                 <img
-                    src={
-                        "https://www.freepnglogos.com/uploads/google-logo-png/google-logo-icon-png-transparent-background-osteopathy-16.png"
-                    }
-                    alt="google_icon"
+                    src={"/img/googledrive.png"}
+                    
                     width="18dp"
                     height="18dp"
 
