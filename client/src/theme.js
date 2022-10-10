@@ -189,7 +189,7 @@ export const theme = createTheme({
                     minWidth: "24px",
                     borderRadius: "5px",
                     fontWeight: 600,
-                    "&.Mui-selected": { color: "white" },
+                    "&.Mui-selected": { color: "black" },
                     "&.Mui-disabled": { display: "none" },
                     "&.MuiPaginationItem-previousNext": {
                         border: "solid 1px #E0E0E0",

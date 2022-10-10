@@ -1,12 +1,29 @@
 import {Grid} from "@mui/material"
 import React from "react";
-import {useRecoilValue} from "recoil";
-import {isRunningRecoil} from "../../recoil"
+import MiniDrawer from "../../components/SideBar"
+import Profile from "../../components/Profile";
+import ColumnMenuGrid from "../../components/ListsBar";
+import MultiActionAreaCard from "../../components/Folder";
+const folderInfo ={
+    name: "HW1",
+    fileSize:"180MB",
+    description:"This is HW1 Folder",
+    accessPermission:"read and write",
+    sharing:["sije.park@stonybrook.edu"],
+    owner:"sije.park@stonybrook.edu"
+}
 
+const sharingInfo= [
+    <MultiActionAreaCard folderList={folderInfo}/>,
+    <MultiActionAreaCard folderList={folderInfo}/>,
+    <MultiActionAreaCard folderList={folderInfo}/>,
+    <MultiActionAreaCard folderList={folderInfo}/>,
+
+];
 const Home = () =>{
     return (
         <Grid>
-
+            <MiniDrawer components={sharingInfo}/>
         </Grid>
     )
 }

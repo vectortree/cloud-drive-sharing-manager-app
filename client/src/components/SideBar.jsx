@@ -19,10 +19,17 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import PrimarySearchAppBar from "./Header";
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import RestoreIcon from '@mui/icons-material/Restore';
+import BasicModal from "./Modal";
+import MultipleSelectPlaceholder from "./DropDownList";
+import {GoogleDriveButton} from "./GoogleDriveButton";
+import {OneDriveButton} from "./OneDriveButton";
 
 
 const drawerWidth = 240;
-
+const photoIcon = <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
+const restoreIcon = <RestoreIcon style={{float:"right", marginLeft:"30px"}}/>
 const openedMixin = (theme) => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {
@@ -179,25 +186,20 @@ export default function MiniDrawer( props) {
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
-                <Typography paragraph>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                    enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                    imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-                    Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-                    Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                    adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-                    nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                    leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-                    feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-                    consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                    sapien faucibus et molestie ac.
-                </Typography>
-                {props.component[0]}
-                {props.component[1]}
-                {props.component[2]}
-                {props.component[3]}
-
+                {/*Need to get data and fix it*/}
+                <Typography>Google Drive &emsp;&emsp;CSE416 > HomeWorkSubmission
+                    <MultipleSelectPlaceholder />
+                    <BasicModal icon={ restoreIcon}/>
+                    <BasicModal icon={ photoIcon}/>
+                </Typography><hr/>
+                {/*Here to Start flexible components*/}
+                <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{display:"inline-flex"}}>
+                {
+                    props.components.map((element)=>(
+                        element
+                    ))
+                }
+                </Box>
             </Box>
         </Box>
     );

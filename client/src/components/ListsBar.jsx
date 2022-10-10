@@ -15,9 +15,10 @@ export default function ColumnMenuGrid( props) {
             <h2>{props.name}</h2>
         <div style={{ height: 280, width: '50%' }}>
             <DataGrid {...data} disableColumnMenu />
-            <BasicButtons/>
         </div>
-
+            <br/>
+            <BasicButtons name="Add"/>
+            <BasicButtons name="Edit"/>
         </div>
     );
 }

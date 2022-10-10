@@ -27,6 +27,7 @@ function App() {
   // useEffect(()=>{
   //
   // })
+    console.log(isAuth);
   return (
     <BrowserRouter>
       <Routes>
@@ -34,10 +35,8 @@ function App() {
               <MyPage/> : 
               <Login setIsAuthenticatedGoogleDrive={setIsAuthenticatedGoogleDrive}/>
             }/>
-          {/* <Route index element={<Login/>}/> */}
-          {/* <Route path ="/" element={<MyPage/>}/> */}
-          {/*<Route path = "ranking" element={}/>*/}
-
+          {/*This is for temporarily fixing front end */}
+           <Route path ="/home" element={<Home/>}/>
       </Routes>
     </BrowserRouter>
   );

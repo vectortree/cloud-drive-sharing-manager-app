@@ -1,9 +1,11 @@
 import {Grid} from "@mui/material"
 import React from "react";
-import PrimarySearchAppBar from "../../components/Header"
 import MiniDrawer from "../../components/SideBar"
 import ColumnMenuGrid from "../../components/ListsBar"
+import Profile from "../../components/Profile";
+
 const sharingInfo= [
+    <Profile/>,
     <ColumnMenuGrid name="Recent Access Control Requirement"/>,
     <ColumnMenuGrid name="File Sharing Snapshot"/>,
     <ColumnMenuGrid name="Group Sharing Snapshot"/>,
@@ -13,7 +15,7 @@ const sharingInfo= [
 const MyPage = ()=>{
     return (
         <Grid>
-            <MiniDrawer component={sharingInfo}/>
+            <MiniDrawer components={sharingInfo}/>
         </Grid>
     )
 }
