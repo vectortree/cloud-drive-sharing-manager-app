@@ -16,13 +16,13 @@ const SearchQuery = require('./SearchQuery');
 const UserProfileSchema = new Schema({
     // User
     user: {
-        type: mongoose.ObjectId
+        type: mongoose.ObjectId,
         ref: 'User'
     },
     // List of file-sharing snapshots
     fileSharingSnapshots: {
         type: [{
-            type: mongoose.ObjectId
+            type: mongoose.ObjectId,
             ref: 'FileSharingSnapshot'
         }],
         required: false
@@ -30,7 +30,7 @@ const UserProfileSchema = new Schema({
     // List of group-membership snapshots
     groupMembershipSnapshots: {
         type: [{
-            type: mongoose.ObjectId
+            type: mongoose.ObjectId,
             ref: 'GroupMembershipSnapshot'
         }],
         required: false
@@ -38,15 +38,15 @@ const UserProfileSchema = new Schema({
     // List of access control requirements
     accessControlRequirements: {
         type: [{
-            type: mongoose.ObjectId
+            type: mongoose.ObjectId,
             ref: 'AccessControlRequirement'
         }],
         required: false
-    }
+    },
     // List of search queries
     searchQueryHistory: {
         type: [{
-            type: mongoose.ObjectId
+            type: mongoose.ObjectId,
             ref: 'SearchQuery'
         }],
         required: false

@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 const Group = require('./Group');
 
  // Create schema for GroupMembershipSnapshot
-const GroupMembershipSnapshot = new Schema({
+const GroupMembershipSnapshotSchema = new Schema({
     name: String,
     data: [{
-        type: mongoose.ObjectId
+        type: mongoose.ObjectId,
         ref: 'Group'
     }]
  }, { timestamps: true });

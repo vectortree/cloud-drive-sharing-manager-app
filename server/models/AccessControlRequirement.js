@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 const SearchQuery = require('./SearchQuery');
   
   // Create schema for AccessControlRequirement
-  const AccessControlRequirement = new Schema({
+  const AccessControlRequirementSchema = new Schema({
     name: String,
     searchQuery: {
-        type: mongoose.ObjectId
+        type: mongoose.ObjectId,
         ref: 'SearchQuery'
     },
     aR: [],
