@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
 const User = require('./User');
 const Permission = require('./Permission');
 const File = require('./File');
@@ -7,6 +8,7 @@ const Group = require('./Group');
 const FileSharingSnapshot = require('./FileSharingSnapshot');
 const GroupMembershipSnapshot = require('./GroupMembershipSnapshot');
 const AccessControlRequirement = require('./AccessControlRequirement');
+const SearchQuery = require('./SearchQuery');
 
 
 

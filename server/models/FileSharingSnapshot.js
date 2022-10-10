@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
+const File = require('./File');
  
  // Create schema for FileSharingSnapshot
 const FileSharingSnapshot = new Schema({
     name: String,
     data: [{
         type: mongoose.ObjectId
-        ref: 'FileData'
+        ref: 'File'
     }]
  }, { timestamps: true });
 

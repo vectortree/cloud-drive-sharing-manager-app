@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
+const SearchQuery = require('./SearchQuery');
   
   // Create schema for AccessControlRequirement
   const AccessControlRequirement = new Schema({
