@@ -11,7 +11,7 @@ passport.use(new MicrosoftStrategy({
   function(accessToken, refreshToken, profile, cb) {
     // On successful authentication, find or create user profile in database
     console.log(profile);
-    UserProfile.findOne({ 'user.data.sub': profile.id }, async function(err, userProfile) {
+    UserProfile.findOne({ 'user.data.id': profile.id }, async function(err, userProfile) {
         if(!userProfile) {
             //Create new user profile
             console.log("Creating new user profile");
