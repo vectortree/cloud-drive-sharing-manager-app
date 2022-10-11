@@ -15,7 +15,7 @@ const sharingInfo= [
 const MyPage = (props)=> {
     return (
         <Grid>
-            <MiniDrawer components={sharingInfo}/>
+            <MiniDrawer components={sharingInfo} type = "myPage"/>
         </Grid>
     );
 }

@@ -36,5 +36,6 @@ export default function Profile() {
             />
             <Typography>Email: {email}</Typography>
         </Box>
+
     );
 }

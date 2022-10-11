@@ -25,6 +25,8 @@ import BasicModal from "./Modal";
 import MultipleSelectPlaceholder from "./DropDownList";
 import {GoogleDriveButton} from "./GoogleDriveButton";
 import {OneDriveButton} from "./OneDriveButton";
+import {colors} from "@mui/material";
+import {blue} from "@mui/material/colors";
 
 
 const drawerWidth = 240;
@@ -194,13 +196,24 @@ export default function MiniDrawer(props) {
                     <BasicModal icon={ photoIcon}/>
                 </Typography><hr/>
                 {/*Here to Start flexible components*/}
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{}}>
-                {
-                    props.components.map((element)=>(
-                        element
-                    ))
+                {props.type === "home" ?
+
+                    <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{display:"inline-flex"}}>
+                        {
+                            props.components.map((element)=>(
+                                element
+                            ))
+                        }
+                    </Box>
+                    :
+                    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                        {
+                            props.components.map((element) => (
+                                element
+                            ))
+                        }
+                    </Box>
                 }
-                </Box>
             </Box>
         </Box>
     );

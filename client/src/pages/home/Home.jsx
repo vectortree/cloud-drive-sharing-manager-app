@@ -23,7 +23,7 @@ const sharingInfo= [
 const Home = () =>{
     return (
         <Grid>
-            <MiniDrawer components={sharingInfo}/>
+            <MiniDrawer components={sharingInfo} type = "home"/>
         </Grid>
     )
 }
