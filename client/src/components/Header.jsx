@@ -19,6 +19,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { AuthContext } from '../auth/auth';
 import axios from "axios";
+import api from '../api/api';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -73,7 +74,7 @@ export default function PrimarySearchAppBar() {
     const { instance } = useMsal();
     const isAuthenticatedOneDrive = useIsAuthenticated();
     
-    const { user, setUser } = useContext(AuthContext);
+    const { userProfile, setUserProfile } = useContext(AuthContext);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -93,16 +94,12 @@ export default function PrimarySearchAppBar() {
     };
 
     const handleLogout = () => {
-        if(isAuthenticatedOneDrive) {
-            instance.logoutRedirect().catch(e => {
-                console.error(e);
+        if(userProfile) {
+            api.logout().then((res) => {
+                if(res.status === 200) {
+                    setUserProfile(null);
+                }
             });
-        }
-        if(user) {
-            console.log("Logging out of Google");
-            axios.get('http://localhost:5001/logout', { withCredentials: true}).then(() => 
-                setUser(null)
-            );
             
         }
     }

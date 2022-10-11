@@ -1,24 +1,26 @@
 import React, {createContext, useEffect, useState} from 'react';
 import axios from 'axios';
+import api from '../api/api';
 
 export const AuthContext = createContext();
 
 export default function AuthContextProvider(props) {
 
-    const [user, setUser] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:5001/getuser', { withCredentials: true }).then(res => {
-            if(res.data) {
-                console.log("Res:")
-                console.log(res);
-                setUser(res.data);
+        api.getUser().then((res) => {
+            if(res.status === 200) {
+                if(res.data) {
+                    console.log(res);
+                    setUserProfile(res.data);
+                }
             }
-        })
-    }, [axios]);
+        });
+    }, []);
 
     return (
-        <AuthContext.Provider value={{user, setUser}}>
+        <AuthContext.Provider value={{userProfile, setUserProfile}}>
             {props.children}
         </AuthContext.Provider>
     );

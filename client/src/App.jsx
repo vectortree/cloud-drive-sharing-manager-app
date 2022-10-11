@@ -7,7 +7,6 @@ import Login from "./pages/login/Login"
 import MyPage from "./pages/myPage/MyPage"
 import {useRecoilState } from "recoil";
 import {userRecoil} from "./recoil";
-import { useIsAuthenticated } from "@azure/msal-react";
 import { AuthContext } from './auth/auth';
 
 import './App.css';
@@ -20,15 +19,14 @@ const Layout = () =>{
       )
 }
 function App() {
-  const {user} = useContext(AuthContext);
-  const isAuthenticatedOneDrive = useIsAuthenticated();
+  const {userProfile} = useContext(AuthContext);
  
-  console.log(user);
+  console.log(userProfile);
 
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={user || isAuthenticatedOneDrive ? 
+          <Route path="/" element={userProfile ? 
               <MyPage /> : 
               <Login/>
             }/>

@@ -5,7 +5,7 @@ import axios from "axios";
 export const GoogleDriveButton = () => {
 
     const googleLogin = () => {
-       window.open('http://localhost:5001/auth/google', "_self");
+       window.open(process.env.REACT_APP_SERVER_URL + '/auth/google', "_self");
     }
 
     return (

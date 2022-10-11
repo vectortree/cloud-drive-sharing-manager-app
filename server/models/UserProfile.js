@@ -5,8 +5,10 @@ const Schema = mongoose.Schema;
 const UserProfileSchema = new Schema({
     // User
     user: {
-        type: Object,
+        type: {driveType: {type: String, enum: ['google', 'microsoft']},
+            data: Object},
         required: true
+
     },
     // List of file-sharing snapshots
     fileSharingSnapshots: {
