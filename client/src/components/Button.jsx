@@ -4,7 +4,17 @@ import Button from '@mui/material/Button';
 import {colors} from "@mui/material";
 
 export default function BasicButtons(props) {
+
+
+    const clickModalButton = (e) => {
+        console.log(props.name)
+        if (props.name == "Add"){
+            props.isModalReqAddClicked(true);
+        }
+    }
+
+
     return (
-        <Button variant="contained" style={{backgroundColor:"#666666", marginRight:"10px", "margin-top" : "70%", "margin-bottom" : "100%"}}>{props.name}</Button>
+        <Button variant="contained" onClick = {clickModalButton} style={{backgroundColor:"#666666", marginRight:"10px", "margin-top" : "70%", "margin-bottom" : "100%"}}>{props.name}</Button>
     );
 }
