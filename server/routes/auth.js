@@ -9,7 +9,7 @@ router.get('/auth/google/callback',
   passport.authenticate('google', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/google' }));
 
 router.get('/auth/microsoft',
-passport.authenticate('microsoft', { scope: ['user.read'] }));
+passport.authenticate('microsoft', { scope: ['user.read'], prompt: 'select_account' }));
 
 router.get('/auth/microsoft/callback',
   passport.authenticate('microsoft', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/microsoft' }));

@@ -9,7 +9,7 @@ const app = express();
 require('./passport/passport-google');
 require('./passport/passport-microsoft');
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 app.use(express.json());
 
