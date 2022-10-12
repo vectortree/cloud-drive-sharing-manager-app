@@ -7,12 +7,12 @@ router.post('/createfilesharingsnapshot', (req, res) => {
     if(!req.user) return res.status(500).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
-        if(err) throw err;
-        if(!userProfile) return res.status(500).json({success: false, message: "Error"});
-        if(userProfile.user.driveType == "microsoft") {
+        if(err) console.log(err);
+        if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        if(userProfile.user.driveType === "microsoft") {
             // TODO
         }
-        else if(userProfile.user.driveType == "google") {
+        else if(userProfile.user.driveType === "google") {
             // Make sure to refresh tokens before attempting to access Google Drive API
             refresh.requestNewAccessToken(
                 'google',
