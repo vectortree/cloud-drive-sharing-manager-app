@@ -17,7 +17,7 @@ router.get('/auth/microsoft/callback',
 router.get('/getuser', (req, res) => {
     let userProfile = req.user;
     // No need to send token data to front-end
-    userProfile.user.tokens = undefined;
+    if(userProfile) userProfile.user.tokens = undefined;
     res.send(userProfile);
 });
 

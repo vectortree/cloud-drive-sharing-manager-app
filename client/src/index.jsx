@@ -7,12 +7,8 @@ import App from './App';
 import {theme} from "./theme"
 import {RecoilRoot} from "recoil";
 import reportWebVitals from './reportWebVitals';
-import { PublicClientApplication } from "@azure/msal-browser";
-import { MsalProvider } from "@azure/msal-react";
-import { msalConfig } from "./authConfig";
 import AuthContext from './auth/auth';
 
-const msalInstance = new PublicClientApplication(msalConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,11 +16,10 @@ root.render(
       <RecoilRoot>
           <ThemeProvider theme={theme}>
               <CssBaseline/>
-              <MsalProvider instance={msalInstance}>
                 <AuthContext>
                     <App/>
                 </AuthContext>
-              </MsalProvider>
+              <CssBaseline/>
           </ThemeProvider>
       </RecoilRoot>
   </React.StrictMode>
