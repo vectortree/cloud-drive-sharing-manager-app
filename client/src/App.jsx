@@ -5,6 +5,7 @@ import {useEffect, useContext, useState} from "react"
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login"
 import MyPage from "./pages/myPage/MyPage"
+import Modal from "./components/Modal";
 import {useRecoilState } from "recoil";
 import {userRecoil} from "./recoil";
 import { AuthContext } from './auth/auth';
@@ -32,6 +33,8 @@ function App() {
             }/>
           {/*This is for temporarily fixing front end */}
            <Route path ="/home" element={<Home/>}/>
+           <Route path ="/user" element={<MyPage/>}/>
+           <Route path ="/modal" element={<Modal/>}/>
       </Routes>
     </BrowserRouter>
   );
