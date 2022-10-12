@@ -19,7 +19,6 @@ root.render(
                 <AuthContext>
                     <App/>
                 </AuthContext>
-              <CssBaseline/>
           </ThemeProvider>
       </RecoilRoot>
   </React.StrictMode>
