@@ -61,6 +61,8 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             // Save to database
             userProfile.save();
         }
+        // No need to send token data to front-end
+        userProfile.user.tokens = undefined;
         return res.status(200).json({success: true, data: userProfile});
     });
 });
