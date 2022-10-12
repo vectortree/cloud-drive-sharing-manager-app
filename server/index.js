@@ -28,12 +28,13 @@ app.use(session({
         ttl: 60 * 60 * 24
     }),
     cookie: { maxAge: 60 * 60 * 24 * 1000 }
-}))
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(require("./routes/auth"));
+app.use(require("./routes/routes"));
   
 app.listen(port, () => {
     // Perform a database connection when server starts

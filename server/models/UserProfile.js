@@ -6,7 +6,7 @@ const UserProfileSchema = new Schema({
     // User
     user: {
         type: {driveType: {type: String, enum: ['google', 'microsoft']},
-            data: Object},
+            data: Object, tokens: Object},
         required: true
 
     },
@@ -16,10 +16,7 @@ const UserProfileSchema = new Schema({
             name: String,
             createdAt: Date,
             updatedAt: Date,
-            data: [{
-                Permission: Object,
-                Metadata: Object
-            }]
+            data: [Object]
         }],
         required: false
     },
