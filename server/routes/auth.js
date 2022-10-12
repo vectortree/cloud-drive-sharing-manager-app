@@ -16,10 +16,13 @@ router.get('/auth/microsoft/callback',
   passport.authenticate('microsoft', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/microsoft' }));
 
 router.get('/getuser', (req, res) => {
-    let userProfile = req.user;
-    // No need to send token data to front-end
-    if(userProfile) userProfile.user.tokens = undefined;
-    res.send(userProfile);
+    if(req.user) {
+      let userProfile = JSON.parse(JSON.stringify(req.user));
+      // No need to send token data to front-end
+      userProfile.user.tokens = undefined;
+      res.send(userProfile);
+    }
+    else res.send(null);
 });
 
 router.get('/logout', (req, res) => {

@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { google } = require('googleapis');
 const UserProfile = require('../models/UserProfile');
+const refresh = require('passport-oauth2-refresh');
 
 router.post('/createfilesharingsnapshot', (req, res) => {
     if(!req.user) return res.status(500).json({success: false, message: "Error"});
@@ -12,6 +13,17 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             // TODO
         }
         else if(userProfile.user.driveType == "google") {
+            // Make sure to refresh tokens before attempting to access Google Drive API
+            refresh.requestNewAccessToken(
+                'google',
+                userProfile.user.tokens.refresh_token,
+                function (err, accessToken, refreshToken) {
+                    // Store new tokens in database
+                    userProfile.user.tokens.access_token = accessToken;
+                    userProfile.user.tokens.refresh_token = refreshToken;
+                    userProfile.save();
+                },
+            );
             const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
                 process.env.GOOGLE_CLIENT_SECRET, process.env.CLIENT_URL);
             
@@ -30,13 +42,14 @@ router.post('/createfilesharingsnapshot', (req, res) => {
                     pageToken: NextPageToken || ""
                 };
                 const response1 = await googleDrive.files.list(params);
+                if(!response1) return res.status(500).json({success: false, message: "Error"});
                 const files = response1.data.files;
                 // Get file metadata and permissions
                 files.map((file) => {
                     googleDrive.files.get({fileId: file.id, fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, permissions"}, (err, response2) => {
                         if(err) {
                             console.log(err);
-                            return response2.status(500).json({success: false, message: "Error"});
+                            return res.status(500).json({success: false, message: "Error"});
                         }
                         let metadata = response2.data;
                         fileDataList.push(metadata);
@@ -46,7 +59,7 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             } while(NextPageToken);
 
             // Create new file sharing snapshot to store in user profile
-            // fileDataList.map((data) => console.log(data));
+            fileDataList.map((data) => console.log(data));
             console.log("Creating file-sharing snapshot");
             const defaultName = "fs_snapshot";
             const snapshotNumber = userProfile.fileSharingSnapshots.length + 1;
@@ -61,9 +74,10 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             // Save to database
             userProfile.save();
         }
+        const profile = JSON.parse(JSON.stringify(userProfile));
         // No need to send token data to front-end
-        userProfile.user.tokens = undefined;
-        return res.status(200).json({success: true, data: userProfile});
+        profile.user.tokens = undefined;
+        return res.status(200).json({success: true, data: profile});
     });
 });
 

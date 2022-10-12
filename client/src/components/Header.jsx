@@ -121,7 +121,14 @@ export default function PrimarySearchAppBar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem onClick={() => {
+                api.createFileSharingSnapshot().then((res) => {
+                    if(res.data) {
+                        console.log(res);
+                        setUserProfile(res.data);
+                    }
+                });
+            }}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>

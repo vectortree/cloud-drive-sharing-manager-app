@@ -13,7 +13,7 @@ const api = axios.create({
 
 // The following are requests that the client will make. Note that all requests
 // should have a request method (e.g., GET, POST, PUT, DELETE) as well as a path.
-export const createFileSharingSnapshot = (payload) => api.post('/createfilesharingsnapshot', payload);
+export const createFileSharingSnapshot = () => api.post('/createfilesharingsnapshot');
 export const createGroupMembershipSnapshot = () => api.post('/creategroupmembershipsnapshot');
 export const getUser = () => api.get('/getuser');
 export const logout = () => api.get('/logout');
