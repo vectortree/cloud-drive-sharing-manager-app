@@ -3,7 +3,7 @@ const router = require("express").Router();
 const passport = require("passport");
 
 router.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.metadata'], accessType: 'offline', prompt: 'consent' }));
+  passport.authenticate('google', { scope: ['profile', 'email', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.metadata'], accessType: 'offline', prompt: 'select_account'}));
 
 router.get('/auth/google/callback',
   passport.authenticate('google', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/google' }));
