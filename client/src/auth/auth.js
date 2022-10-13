@@ -9,7 +9,7 @@ export default function AuthContextProvider(props) {
     const [userProfile, setUserProfile] = useState(null);
 
     useEffect(() => {
-        api.getUser().then((res) => {
+        api.getUserProfile().then((res) => {
             if(res.status === 200) {
                 if(res.data) {
                     console.log(res);

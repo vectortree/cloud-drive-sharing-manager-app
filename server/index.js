@@ -33,8 +33,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(require("./routes/auth"));
-app.use(require("./routes/routes"));
+app.use(require("./routes/auth-router"));
+app.use(require("./routes/ac-requirements-router"));
+app.use(require("./routes/snapshot-router"));
   
 app.listen(port, () => {
     // Perform a database connection when server starts

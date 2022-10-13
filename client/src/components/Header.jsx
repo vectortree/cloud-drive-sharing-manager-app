@@ -16,7 +16,6 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { AuthContext } from '../auth/auth';
 import axios from "axios";
 import api from '../api/api';
@@ -70,9 +69,6 @@ export default function PrimarySearchAppBar() {
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-    const { instance } = useMsal();
-    const isAuthenticatedOneDrive = useIsAuthenticated();
     
     const { userProfile, setUserProfile } = useContext(AuthContext);
 
@@ -100,7 +96,6 @@ export default function PrimarySearchAppBar() {
                     setUserProfile(null);
                 }
             });
-            
         }
     }
 
@@ -121,7 +116,14 @@ export default function PrimarySearchAppBar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem onClick={() => {
+                api.createFileSharingSnapshot().then((res) => {
+                    if(res.data) {
+                        console.log(res);
+                        setUserProfile(res.data);
+                    }
+                });
+            }}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>

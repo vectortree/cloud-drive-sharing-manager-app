@@ -1,7 +1,18 @@
+// All necessary back-end operations (e.g., CRUD) for snapshots will be written here
+// Note that there's no need for the client to "GET" a snapshot
+// since the client will be able to access all the snapshots in the user profile
 const router = require("express").Router();
 const { google } = require('googleapis');
 const UserProfile = require('../models/UserProfile');
 const refresh = require('passport-oauth2-refresh');
+
+function sendUserProfile(res, userProfile) {
+    // Make a copy of user profile object before sending to client
+    const profile = JSON.parse(JSON.stringify(userProfile));
+    // No need to send token data to front-end
+    profile.user.tokens = undefined;
+    return res.status(200).json({success: true, data: profile});
+}
 
 router.post('/createfilesharingsnapshot', (req, res) => {
     if(!req.user) return res.status(500).json({success: false, message: "Error"});
@@ -63,9 +74,13 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             console.log("Creating file-sharing snapshot");
             const defaultName = "fs_snapshot";
             const snapshotNumber = userProfile.fileSharingSnapshots.length + 1;
+            // Create a default name
+            let snapshotName = defaultName + snapshotNumber;
+            // If name specified, replace snapshotName with user-specified name
+            if(req.body.name) snapshotName = req.body.name;
             const currentDate = new Date();
             const snapshot = {
-                name: defaultName + snapshotNumber,
+                name: snapshotName,
                 createdAt: currentDate,
                 updatedAt: currentDate,
                 data: fileDataList
@@ -74,10 +89,7 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             // Save to database
             userProfile.save();
         }
-        const profile = JSON.parse(JSON.stringify(userProfile));
-        // No need to send token data to front-end
-        profile.user.tokens = undefined;
-        return res.status(200).json({success: true, data: profile});
+        return sendUserProfile(res, userProfile);
     });
 });
 
