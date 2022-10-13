@@ -6,8 +6,7 @@ const refresh = require('passport-oauth2-refresh');
 const strategy = new MicrosoftStrategy({
     clientID: process.env.MICROSOFT_CLIENT_ID,
     clientSecret: process.env.MICROSOFT_CLIENT_SECRET_VALUE,
-    callbackURL: "/auth/microsoft/callback",
-    tenant: 'stonybrook.edu'
+    callbackURL: "/auth/microsoft/callback"
   },
   function(accessToken, refreshToken, otherTokenDetails, profile, cb) {
     // On successful authentication, save tokens and find or create user profile in database

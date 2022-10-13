@@ -2,14 +2,23 @@ import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import {colors} from "@mui/material";
+import { useContext } from 'react';
+import { AuthContext } from '../auth/auth';
+import api from '../api/api';
 
 export default function BasicButtons(props) {
-
+    const { userProfile, setUserProfile } = useContext(AuthContext);
 
     const clickModalButton = (e) => {
         console.log(props.name)
         if (props.name == "Add"){
             props.isModalReqAddClicked(true);
+        } else if (props.name == "Edit") {
+            api.createFileSharingSnapshot().then((res) => {
+                if(res.status === 200) {
+                    console.log("Created snapshot")
+                }
+            });
         }
     }
 

@@ -10,7 +10,7 @@ router.get('/auth/google/callback',
 
 router.get('/auth/microsoft',
 
-passport.authenticate('microsoft', { scope: ['user.read'], accessType: 'offline', prompt: 'select_account'}));
+passport.authenticate('microsoft', { scope: ['user.read', 'files.read', 'mail.read'], accessType: 'offline', prompt: 'select_account'}));
 
 router.get('/auth/microsoft/callback',
   passport.authenticate('microsoft', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/microsoft' }));

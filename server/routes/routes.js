@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { google } = require('googleapis');
 const UserProfile = require('../models/UserProfile');
 const refresh = require('passport-oauth2-refresh');
+const graph = require('../graph.js');
 
 router.post('/createfilesharingsnapshot', (req, res) => {
     if(!req.user) return res.status(500).json({success: false, message: "Error"});
@@ -9,8 +10,34 @@ router.post('/createfilesharingsnapshot', (req, res) => {
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        const fileDataList = [];
         if(userProfile.user.driveType === "microsoft") {
-            // TODO
+            // Make sure to refresh tokens before attempting to access Microsoft Graph API
+            refresh.requestNewAccessToken(
+                'microsoft',
+                userProfile.user.tokens.refresh_token,
+                function (err, accessToken, refreshToken) {
+                    // Store new tokens in database
+                    userProfile.user.tokens.access_token = accessToken;
+                    userProfile.user.tokens.refresh_token = refreshToken;
+                    userProfile.save();
+                },
+            );
+
+            const accessToken = userProfile.user.tokens.access_token;
+
+            // Call Microsoft Graph API method to get all file permission data and metadata
+            const driveItems = await graph.getDriveItems(accessToken);
+            await Promise.all(driveItems.value.map(async (driveItem) => {
+                let metadata = driveItem;
+
+                // Gets the permissions for a particular driveItem and adds it to the metadata
+                await graph.getDriveItemPermissions(accessToken, metadata.id).then(permissions => {
+                    metadata['permissions'] = permissions;
+                    fileDataList.push(metadata);
+                });
+            }));
+            
         }
         else if(userProfile.user.driveType === "google") {
             // Make sure to refresh tokens before attempting to access Google Drive API
@@ -35,7 +62,6 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             });
 
             // Call Google Drive API method to get all file permission data and metadata
-            const fileDataList = [];
             let NextPageToken = "";
             do {
                 const params = {
@@ -57,23 +83,24 @@ router.post('/createfilesharingsnapshot', (req, res) => {
                 });
                 NextPageToken = response1.data.nextPageToken;
             } while(NextPageToken);
-
-            // Create new file sharing snapshot to store in user profile
-            fileDataList.map((data) => console.log(data));
-            console.log("Creating file-sharing snapshot");
-            const defaultName = "fs_snapshot";
-            const snapshotNumber = userProfile.fileSharingSnapshots.length + 1;
-            const currentDate = new Date();
-            const snapshot = {
-                name: defaultName + snapshotNumber,
-                createdAt: currentDate,
-                updatedAt: currentDate,
-                data: fileDataList
-            };
-            userProfile.fileSharingSnapshots.push(snapshot);
-            // Save to database
-            userProfile.save();
         }
+
+        // Create new file sharing snapshot to store in user profile
+        fileDataList.map((data) => console.log(data));
+        console.log("Creating file-sharing snapshot");
+        const defaultName = "fs_snapshot";
+        const snapshotNumber = userProfile.fileSharingSnapshots.length + 1;
+        const currentDate = new Date();
+        const snapshot = {
+            name: defaultName + snapshotNumber,
+            createdAt: currentDate,
+            updatedAt: currentDate,
+            data: fileDataList
+        };
+        userProfile.fileSharingSnapshots.push(snapshot);
+        // Save to database
+        userProfile.save();
+
         const profile = JSON.parse(JSON.stringify(userProfile));
         // No need to send token data to front-end
         profile.user.tokens = undefined;
