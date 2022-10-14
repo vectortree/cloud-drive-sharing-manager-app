@@ -3,13 +3,13 @@ const router = require("express").Router();
 const passport = require("passport");
 
 router.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.metadata'], accessType: 'offline', prompt: 'select_account'}));
+  passport.authenticate('google', { scope: ['profile', 'email', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.metadata'], accessType: 'offline', prompt: 'consent'}));
 
 router.get('/auth/google/callback',
   passport.authenticate('google', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/google' }));
 
 router.get('/auth/microsoft',
-passport.authenticate('microsoft', { scope: ['user.read', 'files.read', 'mail.read'], accessType: 'offline', prompt: 'select_account'}));
+passport.authenticate('microsoft', { scope: ['user.read', 'files.read'], accessType: 'offline', prompt: 'consent'}));
 
 router.get('/auth/microsoft/callback',
   passport.authenticate('microsoft', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/microsoft' }));
