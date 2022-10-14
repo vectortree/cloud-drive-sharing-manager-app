@@ -15,13 +15,31 @@ function sendUserProfile(res, userProfile) {
     return res.status(200).json({success: true, data: profile});
 }
 
+const fileDataList = [];
+
+async function getDriveItems(accessToken, path) {
+    const driveItems = await graph.getDriveItemsPath(accessToken, path);
+    await Promise.all(driveItems.value.map(async (driveItem) => {
+        let metadata = driveItem;
+
+        // Gets the permissions for a particular driveItem and adds it to the metadata
+        await graph.getDriveItemPermissions(accessToken, metadata.id).then(async (permissions) => {
+            metadata['permissions'] = permissions;
+            fileDataList.push(metadata);
+            if (metadata.folder && metadata.folder.childCount > 0) {
+                let p = metadata.parentReference.path + '/' + metadata.name + ':';
+                await getDriveItems(accessToken, p);
+            }
+        });
+    }));
+}
+
 router.post('/createfilesharingsnapshot', (req, res) => {
     if(!req.user) return res.status(500).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
-        const fileDataList = [];
         if(userProfile.user.driveType === "microsoft") {
             // Make sure to refresh tokens before attempting to access Microsoft Graph API
             refresh.requestNewAccessToken(
@@ -37,17 +55,8 @@ router.post('/createfilesharingsnapshot', (req, res) => {
 
             const accessToken = userProfile.user.tokens.access_token;
 
-            // Call Microsoft Graph API method to get all file permission data and metadata
-            const driveItems = await graph.getDriveItems(accessToken);
-            await Promise.all(driveItems.value.map(async (driveItem) => {
-                let metadata = driveItem;
-
-                // Gets the permissions for a particular driveItem and adds it to the metadata
-                await graph.getDriveItemPermissions(accessToken, metadata.id).then(permissions => {
-                    metadata['permissions'] = permissions;
-                    fileDataList.push(metadata);
-                });
-            }));
+            // Call Microsoft Graph API method recursively to get all file permission data and metadata
+            await getDriveItems(accessToken, '/drive/root');
             
         }
         else if(userProfile.user.driveType === "google") {

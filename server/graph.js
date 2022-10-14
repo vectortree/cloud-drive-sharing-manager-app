@@ -2,9 +2,9 @@ const graph = require('@microsoft/microsoft-graph-client');
 require('isomorphic-fetch');
 
 module.exports = {
-    getDriveItems: async function(accessToken) {
+    getDriveItemsPath: async function(accessToken, path) {
         const client = getAuthenticatedClient(accessToken);
-        const driveItems = await client.api('/me/drive/root/children?$select=id, name, size, webUrl, createdDateTime, lastModifiedDateTime, parentReference, file, folder').get();
+        const driveItems = await client.api(`/me${path}/children?$select=id, name, size, webUrl, createdDateTime, lastModifiedDateTime, parentReference, file, folder`).get();
 
         return driveItems;
     },
