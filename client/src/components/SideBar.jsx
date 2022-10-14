@@ -135,8 +135,24 @@ export default function MiniDrawer(props) {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
+
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                {['Drive Storage'].map((text, index) => (
+                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 1.5,
+                                    backgroundColor: open ? "#E1E1E1" : '' , 
+                                }}
+                            >
+                                <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
+                    
+                    {['Google Drive', 'OneDrive'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
                                 sx={{
@@ -150,36 +166,43 @@ export default function MiniDrawer(props) {
                                         minWidth: 0,
                                         mr: open ? 3 : 'auto',
                                         justifyContent: 'center',
+                                        opacity: open ? 1 : 0
                                     }}
                                 >
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                                    {index % 2 === 0 ? <img src={"/img/googledrive.png"} width="18dp" height="18dp" /> : <img src={"/img/onedrive.jpg"} width="28dp" height="20dp"/>}
                                 </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                                <ListItemText primaryTypographyProps={{fontSize: '15px'}} 
+ primary={text} sx={{ opacity: open ? 1 :0 }} />
                             </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
                 <Divider />
+                {['Analysis'].map((text, index) => (
+                        <ListItem key={text} disablePadding sx={{ pt : 1, display: 'block' }}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 1.5,
+                                    backgroundColor: open ? "#E1E1E1" : '' , 
+                                }}
+                            >
+                                <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
                 <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                    {['Redundant Sharing', 'Deviant Sharing', 'File-folder Sharing Differences', 'Sharing changes'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
                                     justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
+                                    px: 1.5,
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                                <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
                             </ListItemButton>
                         </ListItem>
                     ))}
