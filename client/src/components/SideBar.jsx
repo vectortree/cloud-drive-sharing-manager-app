@@ -23,12 +23,13 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import RestoreIcon from '@mui/icons-material/Restore';
 import BasicModal from "./Modal";
 import MultipleSelectPlaceholder from "./DropDownList";
-
-
+import Stack from '@mui/material/Stack';
+import LoadingButtons from "./LoadingButton";
+import ColorRadioButtons from "./CreateSnapshot";
 
 const drawerWidth = 240;
 const photoIcon = <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
-const restoreIcon = <RestoreIcon style={{float:"right", marginLeft:"30px"}}/>
+const snapshotToggle = <ColorRadioButtons/>
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -213,9 +214,12 @@ export default function MiniDrawer(props) {
                 {/*Need to get data and fix it*/}
                 <Typography>Google Drive &emsp;&emsp;CSE416 {'>'} HomeWorkSubmission
                     <MultipleSelectPlaceholder />
-                    <BasicModal icon={ restoreIcon}/>
-                    <BasicModal icon={ photoIcon}/>
+                    <IconButton aria-label="delete"style={{float:"right", padding:"5px", marginLeft:"30px", marginRight:"30px"}}>
+                        <RestoreIcon/>
+                    </IconButton>
+                    <BasicModal icon={ photoIcon} title={"Create Snapshot"} contents={snapshotToggle}/>
                 </Typography><hr/>
+
                 {/*Here to Start flexible components*/}
                 {props.type === "home" ?
 
