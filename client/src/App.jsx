@@ -39,16 +39,7 @@ function App() {
            userData.fileSharingSnapshots = userProfile.fileSharingSnapshots;
            userData.groupMembershipSnapshots = userProfile.groupMembershipSnapshots;
            userData.searchQueryHistory = userProfile.searchQueryHistory;
-        //   if(userProfile.fileSharingSnapshots.length ==0)
-        //   {
-        //       userProfile.fileSharingSnapshots[0] = createFileSharingSnapshot();
-        //   }else if(userProfile.accessControlRequirements.length==0)
-        //   {
-        //       userProfile.accessControlRequirements[0] = createAccessControlRequirement();
-        //   }else if(userProfile.groupMembershipSnapshots.length==0)
-        //   {
-        //       userProfile.groupMembershipSnapshots[0] = createGroupMembershipSnapshot();
-        //   }
+
 
        }else if(userProfile.user.driveType == "google"){
            userData.name = userProfile.user.data.name;
