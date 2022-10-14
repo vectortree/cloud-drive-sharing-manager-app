@@ -59,8 +59,8 @@ export default function ColumnMenuGrid( props) {
         </div>
         <div style={{display:"inline-flex"}}>
             <br/>
-            <BasicModal icon={ addButton}/>
-            <BasicModal icon={ editButton}/>
+            <BasicModal icon={ addButton} title="Add Requirement" contents={accessDataTable}/>
+            <BasicModal icon={ editButton} title="Edit Requirement" contents={accessDataTable}/>
 
         </div>
             
