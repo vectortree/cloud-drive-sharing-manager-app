@@ -20,9 +20,9 @@ router.get('/getuserprofile', (req, res) => {
       let userProfile = JSON.parse(JSON.stringify(req.user));
       // No need to send token data to front-end
       userProfile.user.tokens = undefined;
-      res.send(userProfile);
+      return res.status(200).json({success: true, profile: userProfile});
     }
-    else res.send(null);
+    return res.status(401).json({success: true, profile: null});
 });
 
 router.get('/logout', (req, res) => {
@@ -30,9 +30,9 @@ router.get('/logout', (req, res) => {
         req.logout(function(err) {
             if(err) return next(err);
         });
-        return res.status(200).json({success: true});
+        return res.status(200).json({success: true, message: "Logged out"});
     }
-    else return res.status(401).json({success: false});
+    else return res.status(401).json({success: false, message: "Logout failed"});
 });
 
 module.exports = router;

@@ -12,9 +12,10 @@ function sendUserProfile(res, userProfile) {
     const profile = JSON.parse(JSON.stringify(userProfile));
     // No need to send token data to front-end
     profile.user.tokens = undefined;
-    return res.status(200).json({success: true, data: profile});
+    return res.status(200).json({success: true, profile: profile});
 }
 
+// TODO: Remove global variable from back-end router
 let fileDataList = [];
 
 async function getDriveItems(accessToken, path) {
@@ -42,16 +43,18 @@ router.post('/createfilesharingsnapshot', (req, res) => {
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         if(userProfile.user.driveType === "microsoft") {
             // Make sure to refresh tokens before attempting to access Microsoft Graph API
-            refresh.requestNewAccessToken(
-                'microsoft',
-                userProfile.user.tokens.refresh_token,
-                function (err, accessToken, refreshToken) {
-                    // Store new tokens in database
-                    userProfile.user.tokens.access_token = accessToken;
-                    userProfile.user.tokens.refresh_token = refreshToken;
-                    userProfile.save();
-                },
-            );
+            if(userProfile.user.tokens.refresh_token) {
+                refresh.requestNewAccessToken(
+                    'microsoft',
+                    userProfile.user.tokens.refresh_token,
+                    function (err, accessToken, refreshToken) {
+                        // Store new tokens in database
+                        userProfile.user.tokens.access_token = accessToken;
+                        userProfile.user.tokens.refresh_token = refreshToken;
+                        userProfile.save();
+                    },
+                );
+            }
 
             const accessToken = userProfile.user.tokens.access_token;
 
@@ -60,17 +63,19 @@ router.post('/createfilesharingsnapshot', (req, res) => {
             
         }
         else if(userProfile.user.driveType === "google") {
-            // Make sure to refresh tokens before attempting to access Google Drive API
-            refresh.requestNewAccessToken(
-                'google',
-                userProfile.user.tokens.refresh_token,
-                function (err, accessToken, refreshToken) {
-                    // Store new tokens in database
-                    userProfile.user.tokens.access_token = accessToken;
-                    userProfile.user.tokens.refresh_token = refreshToken;
-                    userProfile.save();
-                },
-            );
+            // Make sure to refresh access token before attempting to access Google Drive API
+            if(userProfile.user.tokens.refresh_token) {
+                refresh.requestNewAccessToken(
+                    'google',
+                    userProfile.user.tokens.refresh_token,
+                    function (err, accessToken, refreshToken) {
+                        // Store new tokens in database
+                        userProfile.user.tokens.access_token = accessToken;
+                        userProfile.user.tokens.refresh_token = refreshToken;
+                        userProfile.save();
+                    },
+                );
+            }
             const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
                 process.env.GOOGLE_CLIENT_SECRET, process.env.CLIENT_URL);
             

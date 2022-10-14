@@ -22,6 +22,7 @@ function App() {
   const {userProfile} = useContext(AuthContext);
   let userData ={};
   if(userProfile){
+    console.log(userProfile);
       console.log(userProfile.fileSharingSnapshots);
       console.log(userProfile.accessControlRequirements);
       console.log(userProfile.groupMembershipSnapshots);

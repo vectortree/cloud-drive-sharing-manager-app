@@ -11,9 +11,9 @@ export default function AuthContextProvider(props) {
     useEffect(() => {
         api.getUserProfile().then((res) => {
             if(res.status === 200) {
-                if(res.data) {
+                if(res.data.profile) {
                     console.log(res);
-                    setUserProfile(res.data);
+                    setUserProfile(res.data.profile);
                 }
             }
         });

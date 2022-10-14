@@ -19,9 +19,9 @@ export default function ColorRadioButtons() {
 
     const handleCreateFileSnapshot = () => {
         api.createFileSharingSnapshot().then((res) => {
-            if(res.data) {
+            if(res.data.profile) {
                 console.log(res);
-                setUserProfile(res.data);
+                setUserProfile(res.data.profile);
                 console.log("Created snapshot");
             }
         });

@@ -13,7 +13,7 @@ function sendUserProfile(res, userProfile) {
     const profile = JSON.parse(JSON.stringify(userProfile));
     // No need to send token data to front-end
     profile.user.tokens = undefined;
-    return res.status(200).json({success: true, data: profile});
+    return res.status(200).json({success: true, profile: profile});
 }
 
 router.post('/createaccesscontrolrequirement', (req, res) => {
