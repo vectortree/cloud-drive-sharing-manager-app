@@ -19,8 +19,14 @@ const Layout = () =>{
 function App() {
 
   const {userProfile} = useContext(AuthContext);
- 
-  console.log(userProfile);
+  let userData;
+  if(userProfile){
+      if(userProfile.userData.user.driveType == "microsoft"){
+          userData.name = userProfile.userData.user.displayName;
+      }else if(userProfile.userData.user.driveType == "google"){
+          userData.name = userProfile.userData.user.name;
+      }
+  }
       return (
           <BrowserRouter>
               <Routes>
