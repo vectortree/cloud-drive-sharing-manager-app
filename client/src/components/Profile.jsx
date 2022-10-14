@@ -26,13 +26,7 @@ export default function Profile(props) {
                 src={props.userData.picture}
                 sx={{ width: "80px", height: "80px" }}
             />
-            <TextField
-                id="outlined-name"
-                label="Name"
-                value={props.userData.name}
-                onChange={handleChange}
-                size="small"
-            />
+            <Typography >{props.userData.name}</Typography>
             <Typography>Email: {props.userData.email}</Typography>
             <Typography>Group: {props.userData.domain}</Typography>
             <Typography>Drive Type: {props.userData.driveType}</Typography>

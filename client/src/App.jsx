@@ -23,7 +23,7 @@ function App() {
   if(userProfile){
     console.log(userProfile);
       if(userProfile.user.driveType == "microsoft"){
-           userData.name = userProfile.user.displayName;
+           userData.name = userProfile.user.data.displayName;
            userData.email = userProfile.user.data.mail;
            userData.picture = userProfile.user.data.picture;
           let beforeHd = userProfile.user.data.mail;
