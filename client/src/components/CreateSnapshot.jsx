@@ -4,13 +4,28 @@ import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { useContext } from 'react';
+import { AuthContext } from '../auth/auth';
+import api from '../api/api';
 
 export default function ColorRadioButtons() {
     const [selectedValue, setSelectedValue] = React.useState('a');
 
+    const { userProfile, setUserProfile } = useContext(AuthContext);
+
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     };
+
+    const handleCreateFileSnapshot = () => {
+        api.createFileSharingSnapshot().then((res) => {
+            if(res.data) {
+                console.log(res);
+                setUserProfile(res.data);
+                console.log("Created snapshot");
+            }
+        });
+    }
 
     const controlProps = (item) => ({
         checked: selectedValue === item,
@@ -24,10 +39,10 @@ export default function ColorRadioButtons() {
         <div>
             <h3>Snapshot Type</h3>
             <div>
-            <Radio {...controlProps('c')} color="success" />
+            <Radio {...controlProps('c')} color="success" checked />
                 Take file sharing snapshot
             </div>
-            <div>
+            {/* <div>
             <Radio
                 {...controlProps('e')}
                 sx={{
@@ -65,8 +80,8 @@ export default function ColorRadioButtons() {
                         defaultValue=""
                     />
                 </div>
-            </Box>
-            <Button variant="contained" color="success" style={{marginLeft:"10px"}}>
+            </Box> */}
+            <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateFileSnapshot}>
                 Submit
             </Button>
         </div>
