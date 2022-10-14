@@ -13,12 +13,6 @@ export default function BasicButtons(props) {
         console.log(props.name)
         if (props.name == "Add"){
             props.isModalReqAddClicked(true);
-        } else if (props.name == "Edit") {
-            api.createFileSharingSnapshot().then((res) => {
-                if(res.status === 200) {
-                    console.log("Created snapshot")
-                }
-            });
         }
     }
 
