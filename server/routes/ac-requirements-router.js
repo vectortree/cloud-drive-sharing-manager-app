@@ -38,15 +38,25 @@ router.post('/createaccesscontrolrequirement', (req, res) => {
         // Note: An access control set must be a list (of Strings)
 
         // Note: Need to check for valid search query
-        // A valid search query should be a list of operator:argument objects
+        // A valid search query should be a list of operator:argument objects (can be an empty list)
         // This can be done in the client side (e.g., using the query builder UI)
         // so that a valid search query is always sent to the server
 
+        // Check that the provided search query is non-null
+        if(!searchQuery) return res.status(401).json({success: false, message: "Invalid data format"});
+
+        console.log("Creating access control requirement");
+        const defaultName = "ac_requirement";
+        const requirementNumber = userProfile.accessControlRequirements.length + 1;
+        // Create a default name
+        let requirementName = defaultName + requirementNumber;
+        // If name specified, replace requirementName with user-specified name
+        if(name && name !== "") requirementName = name;
         // Create an access control requirement object
         let currentDate = new Date();
         let accessControlRequirement = {
-            name: name,
-            searchQuery, searchQuery,
+            name: requirementName,
+            searchQuery: searchQuery,
             allowedReaders: allowedReaders,
             allowedWriters: allowedWriters,
             deniedReaders: deniedReaders,
@@ -97,6 +107,7 @@ router.put('/editaccesscontrolrequirement/:id', (req, res) => {
             deniedReaders,
             deniedWriters } = req.body;
 
+
         // Must have at least one access control set (e.g., AR, AW, DR, DW)
         // This should be enforced in the UI
         if(!allowedReaders && !allowedWriters && !deniedReaders && !deniedWriters)
@@ -109,16 +120,22 @@ router.put('/editaccesscontrolrequirement/:id', (req, res) => {
         // Note: An access control set must be a list (of Strings)
 
         // Note: Need to check for valid search query
-        // A valid search query should be a list of operator:argument objects
+        // A valid search query should be a list of operator:argument objects (can be an empty list)
         // This can be done in the client side (e.g., using the query builder UI)
         // so that a valid search query is always sent to the server
 
+        // Check that the provided search query is non-null
+        if(!searchQuery) return res.status(401).json({success: false, message: "Invalid data format"});
+        // Set requirementName to the old name
+        let requirementName = userProfile.accessControlRequirements[req.params.id].name;
+        // If name is non-null and name is not the empty string, then set requirementName to the new name
+        if(name && name !== "") requirementName = name;
         // Create an access control requirement object
         // Note: The createdAt field will remain the same (since we're editing)
         let currentDate = new Date();
         let accessControlRequirement = {
-            name: name,
-            searchQuery, searchQuery,
+            name: requirementName,
+            searchQuery: searchQuery,
             allowedReaders: allowedReaders,
             allowedWriters: allowedWriters,
             deniedReaders: deniedReaders,
