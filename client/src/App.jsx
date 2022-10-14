@@ -8,6 +8,7 @@ import MyPage from "./pages/myPage/MyPage"
 import { AuthContext } from './auth/auth';
 
 import './App.css';
+import {createAccessControlRequirement, createFileSharingSnapshot, createGroupMembershipSnapshot} from "./api/api";
 
 const Layout = () =>{
       return(
@@ -21,7 +22,9 @@ function App() {
   const {userProfile} = useContext(AuthContext);
   let userData ={};
   if(userProfile){
-    console.log(userProfile);
+      console.log(userProfile.fileSharingSnapshots);
+      console.log(userProfile.accessControlRequirements);
+      console.log(userProfile.groupMembershipSnapshots);
       if(userProfile.user.driveType == "microsoft"){
            userData.name = userProfile.user.data.displayName;
            userData.email = userProfile.user.data.mail;
@@ -36,6 +39,16 @@ function App() {
            userData.fileSharingSnapshots = userProfile.fileSharingSnapshots;
            userData.groupMembershipSnapshots = userProfile.groupMembershipSnapshots;
            userData.searchQueryHistory = userProfile.searchQueryHistory;
+          if(userProfile.fileSharingSnapshots.length ==0)
+          {
+              userProfile.fileSharingSnapshots[0] = createFileSharingSnapshot();
+          }else if(userProfile.accessControlRequirements.length==0)
+          {
+              userProfile.accessControlRequirements[0] = createAccessControlRequirement();
+          }else if(userProfile.groupMembershipSnapshots.length==0)
+          {
+              userProfile.groupMembershipSnapshots[0] = createGroupMembershipSnapshot();
+          }
 
        }else if(userProfile.user.driveType == "google"){
            userData.name = userProfile.user.data.name;
@@ -50,7 +63,6 @@ function App() {
            userData.searchQueryHistory = userProfile.searchQueryHistory;
        }
   }
-console.log(userData);
       return (
           <BrowserRouter>
               <Routes>

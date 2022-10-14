@@ -10,10 +10,10 @@ const MyPage = (props)=> {
 
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" userData = {props.userData}/>,
-        <ColumnMenuGrid name="File Sharing Snapshot" userData = {props.userData}/>,
-        <ColumnMenuGrid name="Group Sharing Snapshot" userData = {props.userData}/>,
-        <ColumnMenuGrid name="User's Recent Query" userData = {props.userData}/>
+        <ColumnMenuGrid name="Recent Access Control Requirement" userData = {props.userData.accessControlRequirements}/>,
+        <ColumnMenuGrid name="File Sharing Snapshot" userData = {props.userData.fileSharingSnapshots}/>,
+        <ColumnMenuGrid name="Group Sharing Snapshot" userData = {props.userData.groupMembershipSnapshots}/>,
+        <ColumnMenuGrid name="User's Recent Query" userData = {props.userData.searchQueryHistory}/>
     ];
     console.log(props.userData);
     return (

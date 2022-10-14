@@ -73,6 +73,10 @@ export default function PrimarySearchAppBar(props) {
         // 👇️ navigate to /
         navigate('/home');
     };
+    const navigateProfile = () => {
+        // 👇️ navigate to /
+        navigate('/');
+    };
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     
@@ -122,8 +126,7 @@ export default function PrimarySearchAppBar(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={navigateProfile}>Profile</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
     );

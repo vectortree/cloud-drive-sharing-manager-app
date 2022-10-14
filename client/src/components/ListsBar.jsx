@@ -11,7 +11,7 @@ const accessDataTable = <DataTable/>
 const columns = [
     { field: 'id', headerName: 'Index', width: 90 ,editable: true },
     {
-      field: 'reqName',
+      field: 'name',
       headerName: 'Requirement Name',
       width: 550,
       editable: true,
@@ -40,7 +40,11 @@ const columns = [
   
 
 export default function ColumnMenuGrid( props) {
-    
+    for(let i = 0; i < props.userData.length; i++)
+    {
+        props.userData[i].id = i;
+    }
+
     const addButton = <BasicButtons name="Add" />
     const editButton = <BasicButtons name="Edit"/>
     return (
@@ -50,7 +54,7 @@ export default function ColumnMenuGrid( props) {
         <div style={{display:"inline-flex", width : "80%"}}>
             
         <div style={{ height: 280, width: '100%', 'padding-right' : '10%' }}>
-            <DataGrid rows={rows}
+            <DataGrid rows={props.userData}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
