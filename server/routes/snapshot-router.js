@@ -15,7 +15,7 @@ function sendUserProfile(res, userProfile) {
     return res.status(200).json({success: true, data: profile});
 }
 
-const fileDataList = [];
+let fileDataList = [];
 
 async function getDriveItems(accessToken, path) {
     const driveItems = await graph.getDriveItemsPath(accessToken, path);
@@ -120,7 +120,7 @@ router.post('/createfilesharingsnapshot', (req, res) => {
         userProfile.fileSharingSnapshots.push(snapshot);
         // Save to database
         userProfile.save();
-
+        fileDataList = [];
         const profile = JSON.parse(JSON.stringify(userProfile));
         // No need to send token data to front-end
         profile.user.tokens = undefined;
