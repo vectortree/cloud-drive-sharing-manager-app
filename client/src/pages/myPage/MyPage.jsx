@@ -9,16 +9,16 @@ import Profile from "../../components/Profile";
 const MyPage = (props)=> {
 
     const sharingInfo= [
-        <Profile/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement"/>,
-        <ColumnMenuGrid name="File Sharing Snapshot"/>,
-        <ColumnMenuGrid name="Group Sharing Snapshot"/>,
-        <ColumnMenuGrid name="User's Recent Query"/>
+        <Profile userData = {props.userData}/>,
+        <ColumnMenuGrid name="Recent Access Control Requirement" userData = {props.userData}/>,
+        <ColumnMenuGrid name="File Sharing Snapshot" userData = {props.userData}/>,
+        <ColumnMenuGrid name="Group Sharing Snapshot" userData = {props.userData}/>,
+        <ColumnMenuGrid name="User's Recent Query" userData = {props.userData}/>
     ];
-
+    console.log(props.userData);
     return (
         <Grid>
-            <MiniDrawer  components={sharingInfo} type = "myPage"/>
+            <MiniDrawer  components={sharingInfo} type = "myPage" profileData = {props.userData}/>
         </Grid>
     );
 }

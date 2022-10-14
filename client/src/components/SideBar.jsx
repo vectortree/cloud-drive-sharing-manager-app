@@ -126,7 +126,7 @@ export default function MiniDrawer(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <PrimarySearchAppBar/>
+                    <PrimarySearchAppBar profileData = {props.profileData}/>
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>

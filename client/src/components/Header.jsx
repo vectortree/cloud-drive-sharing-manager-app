@@ -19,6 +19,8 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { AuthContext } from '../auth/auth';
 import axios from "axios";
 import api from '../api/api';
+import BadgeAvatars from "./WithBadge";
+import {useNavigate} from "react-router-dom";
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -63,10 +65,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+    const navigate = useNavigate()
+    const navigateHome = () => {
+        // 👇️ navigate to /
+        navigate('/home');
+    };
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     
@@ -139,26 +145,6 @@ export default function PrimarySearchAppBar() {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="black">
-                    <Badge badgeContent={4} color="error">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="black"
-                >
-                    <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
             <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
                     size="large"
@@ -167,7 +153,7 @@ export default function PrimarySearchAppBar() {
                     aria-haspopup="true"
                     color="black"
                 >
-                    <AccountCircle />
+                    <BadgeAvatars profileData={props.profileData}/>
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>
@@ -191,6 +177,7 @@ export default function PrimarySearchAppBar() {
                             width: "5%",
                             zIndex: 1,
                         }}
+                        onClick={navigateHome}
                     />
                     <Search>
                         <SearchIconWrapper>
@@ -203,20 +190,6 @@ export default function PrimarySearchAppBar() {
                     </Search>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="black">
-                            <Badge badgeContent={4} color="error">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="show 17 new notifications"
-                            color="black"
-                        >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
                         <IconButton
                             size="large"
                             edge="end"
@@ -226,7 +199,7 @@ export default function PrimarySearchAppBar() {
                             onClick={handleProfileMenuOpen}
                             color="black"
                         >
-                            <AccountCircle />
+                            <BadgeAvatars profileData={props.profileData}/>
                         </IconButton>
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

@@ -20,10 +20,11 @@ const sharingInfo= [
     <MultiActionAreaCard folderList={folderInfo}/>,
 
 ];
-const Home = () =>{
+const Home = (props) =>{
+    console.log("this is home page");
     return (
         <Grid>
-            <MiniDrawer components={sharingInfo} type = "home"/>
+            <MiniDrawer components={sharingInfo} type = "home" profileData = {props.userData}/>
         </Grid>
     )
 }

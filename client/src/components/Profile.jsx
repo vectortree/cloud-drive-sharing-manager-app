@@ -5,9 +5,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from "@mui/material/Typography";
 
-const email = "sije.park@stonybrook.edu"
 
-export default function Profile() {
+export default function Profile(props) {
     const [name, setName] = React.useState('Cat in the Hat');
     const handleChange = (event) => {
         setName(event.target.value);
@@ -24,17 +23,19 @@ export default function Profile() {
         >
             <Avatar
                 alt="Remy Sharp"
-                src="/logo192.png"
+                src={props.userData.user.data.picture}
                 sx={{ width: "80px", height: "80px" }}
             />
             <TextField
                 id="outlined-name"
                 label="Name"
-                value={name}
+                value={props.userData.user.data.name}
                 onChange={handleChange}
                 size="small"
             />
-            <Typography>Email: {email}</Typography>
+            <Typography>Email: {props.userData.user.data.email}</Typography>
+            <Typography>Group: {props.userData.user.data.hd}</Typography>
+            <Typography>Drive Type: {props.userData.user.driveType}</Typography>
         </Box>
 
     );
