@@ -5,8 +5,9 @@ import BasicButtons from "./Button";
 import {useEffect, useContext, useState} from "react"
 import BasicModal from "./Modal";
 import Button from '@mui/material/Button';
+import DataTable from "./AddRequirement";
 
-
+const accessDataTable = <DataTable/>
 const columns = [
     { field: 'id', headerName: 'Index', width: 90 ,editable: true },
     {
