@@ -3,7 +3,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useDemoData } from '@mui/x-data-grid-generator';
 import BasicButtons from "./Button";
 import {useEffect, useContext, useState} from "react"
-
+import Modal from "./Modal";
+import BasicModal from "./Modal";
 
 export default function ColumnMenuGrid( props) {
     const { data } = useDemoData({
@@ -16,7 +17,8 @@ export default function ColumnMenuGrid( props) {
         console.log(isModalReqAddClicked)
         props.isModalReqAddClickedPage(isModalReqAddClicked)
     }
-
+    const addButton = <BasicButtons name="Add" />
+    const editButton = <BasicButtons name="Edit"/>
     return (
 
         <div>
@@ -28,8 +30,9 @@ export default function ColumnMenuGrid( props) {
         </div>
         <div style={{display:"inline-flex"}}>
             <br/>
-            <BasicButtons name="Add" isModalReqAddClicked = {clickModalReq} />
-            <BasicButtons name="Edit"/>
+            <BasicModal icon={ addButton}/>
+            <BasicModal icon={ editButton}/>
+
         </div>
             
         </div>

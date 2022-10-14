@@ -26,7 +26,7 @@ const MyPage = (props)=> {
     return (
         <Grid>
             <MiniDrawer  components={sharingInfo} type = "myPage"/>
-            <Modal isModalOpen = {modalReq} isModalReqAddClickedPage = {getModalReq}  />
+            {/*<Modal isModalOpen = {modalReq} isModalReqAddClickedPage = {getModalReq}  />*/}
             {/* {modalReq === true ? <Modal  /> : null} */}
         </Grid>
     );

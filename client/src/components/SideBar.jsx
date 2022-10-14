@@ -23,15 +23,13 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import RestoreIcon from '@mui/icons-material/Restore';
 import BasicModal from "./Modal";
 import MultipleSelectPlaceholder from "./DropDownList";
-import {GoogleDriveButton} from "./GoogleDriveButton";
-import {OneDriveButton} from "./OneDriveButton";
-import {colors} from "@mui/material";
-import {blue} from "@mui/material/colors";
+
 
 
 const drawerWidth = 240;
 const photoIcon = <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
 const restoreIcon = <RestoreIcon style={{float:"right", marginLeft:"30px"}}/>
+
 const openedMixin = (theme) => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {

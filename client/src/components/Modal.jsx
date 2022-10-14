@@ -18,29 +18,21 @@ const style = {
 };
 
 export default function BasicModal(props) {
-    const [open, setOpen] = React.useState(props.isModalOpen);
-    console.log(props.isModalOpen)
-    console.log(open)
-    const handleOpen = () => setOpen(props.isModalOpen);
-    const handleClose = () => {
-        setOpen(false);
-        props.isModalReqAddClickedPage(false);
-    }
-
-
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     return (
         <>
-            {/* <Button onClick={handleOpen} style={{float:"right"}}>{props.icon}</Button> */}
+             <Button onClick={handleOpen} style={{float:"right"}}>{props.icon}</Button>
             <Modal
-                open={props.isModalOpen}
-                onClose={open}
+                open={open}
+                onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
                 
                 <Box sx={style}>
-                <Button onClick={handleClose}>X</Button>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         Text in a modal
                     </Typography>
