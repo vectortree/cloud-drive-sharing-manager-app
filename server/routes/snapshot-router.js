@@ -110,9 +110,13 @@ router.post('/createfilesharingsnapshot', (req, res) => {
         console.log("Creating file-sharing snapshot");
         const defaultName = "fs_snapshot";
         const snapshotNumber = userProfile.fileSharingSnapshots.length + 1;
+        // Create a default name
+        let snapshotName = defaultName + snapshotNumber;
+        // If name specified, replace snapshotName with user-specified name
+        if(req.body.name) snapshotName = req.body.name;
         const currentDate = new Date();
         const snapshot = {
-            name: defaultName + snapshotNumber,
+            name: snapshotName,
             createdAt: currentDate,
             updatedAt: currentDate,
             data: fileDataList
