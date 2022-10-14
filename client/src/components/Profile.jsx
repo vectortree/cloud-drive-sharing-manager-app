@@ -28,7 +28,7 @@ export default function Profile(props) {
             />
             <Typography >{props.userData.name}</Typography>
             <Typography>Email: {props.userData.email}</Typography>
-            <Typography>Group: {props.userData.domain}</Typography>
+            <Typography>Domain: {props.userData.domain}</Typography>
             <Typography>Drive Type: {props.userData.driveType}</Typography>
         </Box>
 

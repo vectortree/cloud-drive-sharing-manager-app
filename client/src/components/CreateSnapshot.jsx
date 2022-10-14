@@ -42,6 +42,8 @@ export default function ColorRadioButtons() {
             <Radio {...controlProps('c')} color="success" checked />
                 Take file sharing snapshot
             </div>
+            <br/>
+            <br/>
             {/* <div>
             <Radio
                 {...controlProps('e')}
