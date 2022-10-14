@@ -1,8 +1,19 @@
+// All necessary back-end operations (e.g., CRUD) for snapshots will be written here
+// Note that there's no need for the client to "GET" a snapshot
+// since the client will be able to access all the snapshots in the user profile
 const router = require("express").Router();
 const { google } = require('googleapis');
 const UserProfile = require('../models/UserProfile');
 const refresh = require('passport-oauth2-refresh');
 const graph = require('../graph.js');
+
+function sendUserProfile(res, userProfile) {
+    // Make a copy of user profile object before sending to client
+    const profile = JSON.parse(JSON.stringify(userProfile));
+    // No need to send token data to front-end
+    profile.user.tokens = undefined;
+    return res.status(200).json({success: true, data: profile});
+}
 
 router.post('/createfilesharingsnapshot', (req, res) => {
     if(!req.user) return res.status(500).json({success: false, message: "Error"});

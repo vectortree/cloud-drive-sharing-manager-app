@@ -43,7 +43,9 @@ const UserProfileSchema = new Schema({
             allowedReaders: [String],
             allowedWriters: [String],
             deniedReaders: [String],
-            deniedWriters: [String]
+            deniedWriters: [String],
+            createdAt: Date,
+            updatedAt: Date
         }],
         required: false
     },

@@ -27,7 +27,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={userProfile ? 
+          <Route path="/" element={userProfile ?
               <MyPage /> : 
               <Login/>
             }/>
