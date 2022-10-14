@@ -23,19 +23,19 @@ export default function Profile(props) {
         >
             <Avatar
                 alt="Remy Sharp"
-                src={props.userData.user.data.picture}
+                src={props.userData.picture}
                 sx={{ width: "80px", height: "80px" }}
             />
             <TextField
                 id="outlined-name"
                 label="Name"
-                value={props.userData.user.data.name}
+                value={props.userData.name}
                 onChange={handleChange}
                 size="small"
             />
-            <Typography>Email: {props.userData.user.data.email}</Typography>
-            <Typography>Group: {props.userData.user.data.hd}</Typography>
-            <Typography>Drive Type: {props.userData.user.driveType}</Typography>
+            <Typography>Email: {props.userData.email}</Typography>
+            <Typography>Group: {props.userData.domain}</Typography>
+            <Typography>Drive Type: {props.userData.driveType}</Typography>
         </Box>
 
     );

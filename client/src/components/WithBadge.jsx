@@ -34,7 +34,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function BadgeAvatars(props) {
-    console.log(props.profileData.user.data.picture);
+    console.log(props.profileData.picture);
     return (
         <Stack direction="row" spacing={2}>
             <StyledBadge
@@ -42,7 +42,7 @@ export default function BadgeAvatars(props) {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
             >
-                <Avatar alt="Remy Sharp" src={props.profileData.user.data.picture} />
+                <Avatar alt="Remy Sharp" src={props.profileData.picture} />
             </StyledBadge>
         </Stack>
     );

@@ -19,21 +19,45 @@ const Layout = () =>{
 function App() {
 
   const {userProfile} = useContext(AuthContext);
-  let userData;
+  let userData ={};
   if(userProfile){
-      if(userProfile.userData.user.driveType == "microsoft"){
-          userData.name = userProfile.userData.user.displayName;
-      }else if(userProfile.userData.user.driveType == "google"){
-          userData.name = userProfile.userData.user.name;
-      }
+    console.log(userProfile);
+      if(userProfile.user.driveType == "microsoft"){
+           userData.name = userProfile.user.displayName;
+           userData.email = userProfile.user.data.mail;
+           userData.picture = userProfile.user.data.picture;
+          let beforeHd = userProfile.user.data.mail;
+          let hd = beforeHd.split('@');
+          console.log(hd[1]);
+           userData.domain = hd[1]; //stonybrook.edu
+           userData.driveType = userProfile.user.driveType; 
+
+           userData.accessControlRequirements = userProfile.accessControlRequirements;
+           userData.fileSharingSnapshots = userProfile.fileSharingSnapshots;
+           userData.groupMembershipSnapshots = userProfile.groupMembershipSnapshots;
+           userData.searchQueryHistory = userProfile.searchQueryHistory;
+
+       }else if(userProfile.user.driveType == "google"){
+           userData.name = userProfile.user.data.name;
+           userData.email = userProfile.user.data.email;
+           userData.picture = userProfile.user.data.picture;
+           userData.domain = userProfile.user.data.hd; //stonybrook.edu
+           userData.driveType = userProfile.user.driveType; 
+
+           userData.accessControlRequirements = userProfile.accessControlRequirements;
+           userData.fileSharingSnapshots = userProfile.fileSharingSnapshots;
+           userData.groupMembershipSnapshots = userProfile.groupMembershipSnapshots;
+           userData.searchQueryHistory = userProfile.searchQueryHistory;
+       }
   }
+console.log(userData);
       return (
           <BrowserRouter>
               <Routes>
                   {userProfile && (
                       <Route path={"/"} element={<Layout />}>
-                          <Route index element={<MyPage userData = {userProfile}/>} />
-                          <Route path="home" element={<Home userData = {userProfile}/>}/>
+                          <Route index element={<MyPage userData = {userData}/>} />
+                          <Route path="home" element={<Home userData = {userData}/>}/>
                       </Route>
                       )}
                   <Route path="*" element={<Login/>}></Route>
