@@ -135,7 +135,7 @@ router.put('/editaccesscontrolrequirement/:id', (req, res) => {
         let currentDate = new Date();
         let accessControlRequirement = {
             name: requirementName,
-            searchQuery, searchQuery,
+            searchQuery: searchQuery,
             allowedReaders: allowedReaders,
             allowedWriters: allowedWriters,
             deniedReaders: deniedReaders,
