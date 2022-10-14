@@ -5,8 +5,11 @@ import BasicButtons from "./Button";
 import {useEffect, useContext, useState} from "react"
 import Modal from "./Modal";
 import BasicModal from "./Modal";
+import DataTable from "./AddRequirement";
 
 export default function ColumnMenuGrid( props) {
+
+    const accessDataTable = <DataTable/>
     const { data } = useDemoData({
         dataSet: 'Commodity',
         rowLength: 20,
@@ -30,8 +33,8 @@ export default function ColumnMenuGrid( props) {
         </div>
         <div style={{display:"inline-flex"}}>
             <br/>
-            <BasicModal icon={ addButton}/>
-            <BasicModal icon={ editButton}/>
+            <BasicModal icon={ addButton} title="Add Requirement" contents={accessDataTable}/>
+            <BasicModal icon={ editButton} title="Edit Requirement" contents={accessDataTable}/>
 
         </div>
             

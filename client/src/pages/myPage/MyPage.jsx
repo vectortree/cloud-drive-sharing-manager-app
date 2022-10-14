@@ -5,6 +5,7 @@ import ColumnMenuGrid from "../../components/ListsBar"
 import Profile from "../../components/Profile";
 
 
+
 const MyPage = (props)=> {
 
     const sharingInfo= [
@@ -14,7 +15,6 @@ const MyPage = (props)=> {
         <ColumnMenuGrid name="Group Sharing Snapshot"/>,
         <ColumnMenuGrid name="User's Recent Query"/>
     ];
-
 
     return (
         <Grid>
