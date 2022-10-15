@@ -17,7 +17,7 @@ function sendUserProfile(res, userProfile) {
 }
 
 router.post('/createaccesscontrolrequirement', (req, res) => {
-    if(!req.user) return res.status(500).json({success: false, message: "Error"});
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
@@ -73,7 +73,7 @@ router.post('/createaccesscontrolrequirement', (req, res) => {
 });
 
 router.delete('/removeaccesscontrolrequirement/:id', (req, res) => {
-    if(!req.user) return res.status(500).json({success: false, message: "Error"});
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
@@ -94,7 +94,7 @@ router.put('/editaccesscontrolrequirement/:id', (req, res) => {
     // Note: This is pretty much the same as creating an access control requirement,
     // except that it replaces the selected access control requirement with a new one
     // based on the new form values
-    if(!req.user) return res.status(500).json({success: false, message: "Error"});
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);

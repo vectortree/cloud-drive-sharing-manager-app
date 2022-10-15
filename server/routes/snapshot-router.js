@@ -36,7 +36,7 @@ async function getDriveItems(accessToken, path) {
 }
 
 router.post('/createfilesharingsnapshot', (req, res) => {
-    if(!req.user) return res.status(500).json({success: false, message: "Error"});
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
@@ -145,7 +145,7 @@ router.post('/creategroupmembershipsnapshot', (req, res) => {
     // from this HTML file and saves it as a snapshot with the following properties:
     // Snapshot name, group name, group email address, timestamp (date), and list of members
     // Note: A group-membership snapshot refers to the saved membership (i.e., a list of members) of a single group.
-    if(!req.user) return res.status(500).json({success: false, message: "Error"});
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(userProfile.user.driveType !== "google")
             return res.status(401).json({success: false, message: "Invalid drive type"});
