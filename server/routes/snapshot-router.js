@@ -134,4 +134,53 @@ router.post('/createfilesharingsnapshot', (req, res) => {
     });
 });
 
+router.post('/creategroupmembershipsnapshot', (req, res) => {
+    // Note: This is only supported for Google Drive.
+    // The user enters the name and email address of a Google group
+    // and a timestamp (given as a date object).
+    // In addition, the user uploads an HTML file (which is obtained by
+    // manually visiting and saving the group's Members page).
+    // Note: In principle, the timestamp should be the time when the HTML file was saved.
+    // If there is a way to extract the saved date of the HTML file, use that as the timestamp.
+    // In the back-end, the system extracts the group membership information
+    // from this HTML file and saves it as a snapshot with the following properties:
+    // Snapshot name, group name, group email address, timestamp (date), and list of members
+    // Note: A group-membership snapshot refers to the saved membership (i.e., a list of members) of a single group.
+    UserProfile.findById(req.user._id, async (err, userProfile) => {
+        if(userProfile.user.driveType !== "google")
+            return res.status(401).json({success: false, message: "Invalid drive type"});
+
+        const {name, groupName, groupAddress, timestamp, htmlFile} = req.body;
+
+        // Group name, group email address, timestamp, and HTML file must be specified
+        if(!groupName || !groupAddress || !timestamp || !htmlFile)
+            return res.status(401).json({success: false, message: "Invalid data format"});
+        
+        // TODO: Extract group membership information from the HTML file and store it in an array
+        let membersList = [];
+
+        // Create group-membership snapshot
+        console.log("Creating group-membership snapshot");
+        const defaultName = "gm_snapshot";
+        const snapshotNumber = userProfile.groupMembershipSnapshots.length + 1;
+        // Create a default name
+        let snapshotName = defaultName + snapshotNumber;
+        // If name specified, replace snapshotName with user-specified name
+        if(name) snapshotName = name;
+
+        const snapshot = {
+            name: snapshotName,
+            groupName: groupName,
+            groupAddress: groupAddress,
+            timestamp: timestamp,
+            membersList: membersList
+        };
+    
+        userProfile.groupMembershipSnapshots.push(snapshot);
+        // Save to database
+        userProfile.save();
+        return sendUserProfile(res, userProfile);
+    });
+});
+
 module.exports = router;
