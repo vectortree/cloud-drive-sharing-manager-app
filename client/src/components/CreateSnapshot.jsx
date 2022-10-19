@@ -8,7 +8,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../auth/auth';
 import api from '../api/api';
 
-export default function ColorRadioButtons() {
+export default function ColorRadioButtons(props) {
     const [selectedValue, setSelectedValue] = React.useState('a');
 
     const { userProfile, setUserProfile } = useContext(AuthContext);
@@ -17,24 +17,15 @@ export default function ColorRadioButtons() {
         setSelectedValue(event.target.value);
     };
 
-    const handleCreateFileSharingSnapshot = () => {
+    const handleCreateFileSnapshot = () => {
         api.createFileSharingSnapshot().then((res) => {
             if(res.data.profile) {
                 console.log(res);
                 setUserProfile(res.data.profile);
-                console.log("Created file-sharing snapshot");
+                console.log("Created snapshot");
             }
         });
-    }
-
-    const handleCreateGroupMembershipSnapshot = () => {
-        api.createGroupMembershipSnapshot().then((res) => {
-            if(res.data.profile) {
-                console.log(res);
-                setUserProfile(res.data.profile);
-                console.log("Created group-membership snapshot");
-            }
-        });
+        if(props.onClick) props.onClick()
     }
 
     const controlProps = (item) => ({
@@ -50,7 +41,7 @@ export default function ColorRadioButtons() {
             <h3>Snapshot Type</h3>
             <div>
             <Radio {...controlProps('c')} color="success" checked />
-                Take file-sharing snapshot
+                Take file sharing snapshot
             </div>
             <br/>
             <br/>
@@ -64,7 +55,7 @@ export default function ColorRadioButtons() {
                     },
                 }}
             />
-                Take group-membership snapshot
+                Take group membership snapshot
             </div>
             <h3>Snapshot Information</h3>
 
@@ -93,7 +84,7 @@ export default function ColorRadioButtons() {
                     />
                 </div>
             </Box> */}
-            <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateFileSharingSnapshot}>
+            <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateFileSnapshot}>
                 Submit
             </Button>
         </div>

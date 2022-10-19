@@ -24,7 +24,7 @@ const Home = (props) =>{
     console.log("this is home page");
     return (
         <Grid>
-            <MiniDrawer components={sharingInfo} type = "home" profileData = {props.userData}/>
+            <MiniDrawer components={sharingInfo} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }

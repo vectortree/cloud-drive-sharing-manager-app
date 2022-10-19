@@ -156,7 +156,7 @@ export default function PrimarySearchAppBar(props) {
                     aria-haspopup="true"
                     color="black"
                 >
-                    <BadgeAvatars profileData={props.profileData}/>
+                    <BadgeAvatars userData={props.userData}/>
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>
@@ -202,7 +202,7 @@ export default function PrimarySearchAppBar(props) {
                             onClick={handleProfileMenuOpen}
                             color="black"
                         >
-                            <BadgeAvatars profileData={props.profileData}/>
+                            <BadgeAvatars userData={props.userData}/>
                         </IconButton>
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

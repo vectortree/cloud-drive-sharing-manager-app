@@ -16,14 +16,6 @@ const MenuProps = {
     },
 };
 
-const names = [
-    'Current Snapshot : Group1-snapshot1-101',
-    'Current Snapshot : Group1-snapshot1-102',
-    'Current Snapshot : Group1-snapshot1-103',
-    'Current Snapshot : Group1-snapshot1-104',
-    'Current Snapshot : Group2-snapshot1-106',
-    'Current Snapshot : Group2-snapshot1-109',
-];
 
 function getStyles(name, personName, theme) {
     return {
@@ -34,7 +26,7 @@ function getStyles(name, personName, theme) {
     };
 }
 
-export default function MultipleSelectPlaceholder() {
+export default function MultipleSelectPlaceholder(props) {
     const theme = useTheme();
     const [personName, setPersonName] = React.useState([]);
 
@@ -59,7 +51,7 @@ export default function MultipleSelectPlaceholder() {
                     input={<OutlinedInput style={{padding:0}}/>}
                     renderValue={(selected) => {
                         if (selected.length === 0) {
-                            return "Current Snapshot";
+                            return "Select Your Snapshot";
                         }
 
                         return selected.join(', ');
@@ -70,15 +62,15 @@ export default function MultipleSelectPlaceholder() {
                     style={{padding:0}}
                 >
                     <MenuItem disabled value="" style={{padding:0}}>
-                        <em>Current Snapshot</em>
+                        <em>Select Your Snapshot</em>
                     </MenuItem>
-                    {names.map((name) => (
+                    {props.userData.fileSharingSnapshots.map((obj) => (
                         <MenuItem
-                            key={name}
-                            value={name}
-                            style={getStyles(name, personName, theme)}
+                            key={obj.name}
+                            value={obj.name}
+                            style={getStyles(obj.name, personName, theme)}
                         >
-                            {name}
+                            {obj.name}
                         </MenuItem>
                     ))}
                 </Select>

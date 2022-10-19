@@ -24,12 +24,13 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import BasicModal from "./Modal";
 import MultipleSelectPlaceholder from "./DropDownList";
 import Stack from '@mui/material/Stack';
-import LoadingButtons from "./LoadingButton";
 import ColorRadioButtons from "./CreateSnapshot";
+import Button from "@mui/material/Button";
+
+
 
 const drawerWidth = 240;
 const photoIcon = <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
-const snapshotToggle = <ColorRadioButtons/>
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -101,6 +102,10 @@ export default function MiniDrawer(props) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
 
+    const [openModal, setOpenModal] = React.useState(false);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -126,7 +131,7 @@ export default function MiniDrawer(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <PrimarySearchAppBar profileData = {props.profileData}/>
+                    <PrimarySearchAppBar userData = {props.userData}/>
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>
@@ -213,11 +218,12 @@ export default function MiniDrawer(props) {
                 <DrawerHeader />
                 {/*Need to get data and fix it*/}
                 <Typography>Google Drive &emsp;&emsp;CSE416 {'>'} HomeWorkSubmission
-                    <MultipleSelectPlaceholder />
-                    <IconButton aria-label="delete"style={{float:"right", padding:"5px", marginLeft:"30px", marginRight:"30px"}}>
+                    <MultipleSelectPlaceholder userData={props.userData}/>
+                    <IconButton style={{float:"right", padding:"5px", marginLeft:"30px", marginRight:"30px"}}>
                         <RestoreIcon/>
                     </IconButton>
-                    <BasicModal icon={ photoIcon} title={"Create Snapshot"} contents={snapshotToggle}/>
+                    <Button onClick={handleOpenModal} style={{float:"right"}}>{photoIcon}</Button>
+                    <BasicModal open={openModal} handleClose={handleCloseModal} title={"Create Snapshot"} ><ColorRadioButtons onClick={handleCloseModal}/></BasicModal>
                 </Typography><hr/>
 
                 {/*Here to Start flexible components*/}

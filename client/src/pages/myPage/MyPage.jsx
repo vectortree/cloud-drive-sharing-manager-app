@@ -18,7 +18,7 @@ const MyPage = (props)=> {
     console.log(props.userData);
     return (
         <Grid>
-            <MiniDrawer  components={sharingInfo} type = "myPage" profileData = {props.userData}/>
+            <MiniDrawer  components={sharingInfo} type = "myPage" userData = {props.userData}/>
         </Grid>
     );
 }
