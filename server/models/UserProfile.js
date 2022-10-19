@@ -5,8 +5,11 @@ const Schema = mongoose.Schema;
 const UserProfileSchema = new Schema({
     // User
     user: {
-        type: {driveType: {type: String, enum: ['google', 'microsoft']},
-            data: Object, tokens: Object},
+        type: {
+            driveType: {type: String, enum: ['google', 'microsoft']},
+            data: Object,
+            tokens: Object
+        },
         required: true
 
     },
@@ -24,11 +27,11 @@ const UserProfileSchema = new Schema({
     groupMembershipSnapshots: {
         type: [{
             name: String,
+            groupName: String,
+            groupAddress: String,
             createdAt: Date,
             updatedAt: Date,
-            data: [{
-                Group: Object
-            }]
+            members: [String]
         }],
         required: false
     },

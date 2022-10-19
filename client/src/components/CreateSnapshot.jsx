@@ -17,12 +17,22 @@ export default function ColorRadioButtons() {
         setSelectedValue(event.target.value);
     };
 
-    const handleCreateFileSnapshot = () => {
+    const handleCreateFileSharingSnapshot = () => {
         api.createFileSharingSnapshot().then((res) => {
             if(res.data.profile) {
                 console.log(res);
                 setUserProfile(res.data.profile);
-                console.log("Created snapshot");
+                console.log("Created file-sharing snapshot");
+            }
+        });
+    }
+
+    const handleCreateGroupMembershipSnapshot = () => {
+        api.createGroupMembershipSnapshot().then((res) => {
+            if(res.data.profile) {
+                console.log(res);
+                setUserProfile(res.data.profile);
+                console.log("Created group-membership snapshot");
             }
         });
     }
@@ -40,7 +50,7 @@ export default function ColorRadioButtons() {
             <h3>Snapshot Type</h3>
             <div>
             <Radio {...controlProps('c')} color="success" checked />
-                Take file sharing snapshot
+                Take file-sharing snapshot
             </div>
             <br/>
             <br/>
@@ -54,7 +64,7 @@ export default function ColorRadioButtons() {
                     },
                 }}
             />
-                Take group membership snapshot
+                Take group-membership snapshot
             </div>
             <h3>Snapshot Information</h3>
 
@@ -83,7 +93,7 @@ export default function ColorRadioButtons() {
                     />
                 </div>
             </Box> */}
-            <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateFileSnapshot}>
+            <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateFileSharingSnapshot}>
                 Submit
             </Button>
         </div>
