@@ -9,6 +9,7 @@ import { AuthContext } from './auth/auth';
 
 import './App.css';
 import {createAccessControlRequirement, createFileSharingSnapshot, createGroupMembershipSnapshot} from "./api/api";
+import AccessControlPage from "./pages/accessControlPage/AccessControlPage";
 
 const Layout = () =>{
       return(
@@ -62,6 +63,7 @@ function App() {
                       <Route path={"/"} element={<Layout />}>
                           <Route index element={<MyPage userData = {userData}/>} />
                           <Route path="home" element={<Home userData = {userData}/>}/>
+                          <Route path="accessControl" element={<AccessControlPage userData = {userData}/>}/>
                       </Route>
                       )}
                   <Route path="*" element={<Login/>}></Route>

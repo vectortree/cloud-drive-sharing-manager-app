@@ -26,11 +26,12 @@ import MultipleSelectPlaceholder from "./DropDownList";
 import Stack from '@mui/material/Stack';
 import ColorRadioButtons from "./CreateSnapshot";
 import Button from "@mui/material/Button";
-
+import {useNavigate} from "react-router-dom";
 
 
 const drawerWidth = 240;
 const photoIcon = <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
+
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -99,6 +100,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 export default function MiniDrawer(props) {
+    const navigate = useNavigate()
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
 
@@ -112,6 +114,14 @@ export default function MiniDrawer(props) {
 
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+    const navigateAccessControl = () => {
+        // 👇️ navigate to /
+        navigate('/accessControl')
+
+    };
+    const navigateMyProfile = () =>{
+        navigate('/')
     };
 
     return (
@@ -213,22 +223,65 @@ export default function MiniDrawer(props) {
                         </ListItem>
                     ))}
                 </List>
+                {['Setting'].map((text, index) => (
+                    <ListItem key={text} disablePadding sx={{ pt : 1, display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: open ? 'initial' : 'center',
+                                px: 1.5,
+                                backgroundColor: open ? "#E1E1E1" : '' ,
+                            }}
+                        >
+                            <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+                <List>
+                    {['My Profile', 'Access Control Policy'].map((text, index) => (
+                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                            {
+                                text === "Access Control Policy" ?
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            px: 1.5,
+                                        }}
+                                        onClick={navigateAccessControl}
+                                    ><ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                        :
+                                        <ListItemButton
+                                            sx={{
+                                                minHeight: 48,
+                                                justifyContent: open ? 'initial' : 'center',
+                                                px: 1.5,
+                                            }}
+                                            onClick={navigateMyProfile}
+                                        ><ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
+                                        </ListItemButton>
+                            }
+                        </ListItem>
+                    ))}
+                </List>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 {/*Need to get data and fix it*/}
-                <Typography>Google Drive &emsp;&emsp;CSE416 {'>'} HomeWorkSubmission
-                    <MultipleSelectPlaceholder userData={props.userData}/>
-                    <IconButton style={{float:"right", padding:"5px", marginLeft:"30px", marginRight:"30px"}}>
-                        <RestoreIcon/>
-                    </IconButton>
-                    <Button onClick={handleOpenModal} style={{float:"right"}}>{photoIcon}</Button>
-                    <BasicModal open={openModal} handleClose={handleCloseModal} title={"Create Snapshot"} ><ColorRadioButtons onClick={handleCloseModal}/></BasicModal>
-                </Typography><hr/>
 
                 {/*Here to Start flexible components*/}
-                {props.type === "home" ?
-
+                {props.type === "home"?
+                    <>
+                    <Typography>Google Drive &emsp;&emsp;CSE416 {'>'} HomeWorkSubmission
+                        <MultipleSelectPlaceholder userData={props.userData}/>
+                        <IconButton style={{float:"right", padding:"5px", marginLeft:"30px", marginRight:"30px"}}>
+                            <RestoreIcon/>
+                        </IconButton>
+                        <Button onClick={handleOpenModal} style={{float:"right"}}>{photoIcon}</Button>
+                        <BasicModal open={openModal} handleClose={handleCloseModal} title={"Create Snapshot"} ><ColorRadioButtons onClick={handleCloseModal}/></BasicModal>
+                    </Typography>
+                    <hr/>
                     <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{display:"inline-flex"}}>
                         {
                             props.components.map((element)=>(
@@ -236,6 +289,7 @@ export default function MiniDrawer(props) {
                             ))
                         }
                     </Box>
+                    </>
                     :
                     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                         {
