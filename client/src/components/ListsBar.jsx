@@ -8,38 +8,38 @@ import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
 import ColorRadioButtons from "./CreateSnapshot";
 
-const accessDataTable = <DataTable/>
-const columns = [
-    { field: 'id', headerName: 'Index', width: 90 ,editable: true },
-    {
-      field: 'name',
-      headerName: 'Requirement Name',
-      width: 550,
-      editable: true,
-    },
-    {
-        renderCell: (params) => (
-        <strong>
-            {params.value}
-          <Button
-            variant="outlined"
-            size = 'small'
-            sx={{ color : "black" }}
-          >
-            X
-          </Button>
-        </strong>
-      ),}
-  ];
 
 export default function ColumnMenuGrid( props) {
+    const accessDataTable = <DataTable dataSet={props.dataSet}/>
+    const columns = [
+        { field: 'id', headerName: 'Index', width: 90 ,editable: true },
+        {
+            field: 'Name',
+            headerName: 'Requirement Name',
+            width: 550,
+            editable: true,
+        },
+        {
+            renderCell: (params) => (
+                <strong>
+                    {params.value}
+                    <Button
+                        variant="outlined"
+                        size = 'small'
+                        sx={{ color : "black" }}
+                    >
+                        X
+                    </Button>
+                </strong>
+            ),}
+    ];
     const [openModal, setOpenModal] = React.useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
-
-    for(let i = 0; i < props.userData.length; i++)
+    console.log(props.dataSet);
+    for(let i = 0; i < props.dataSet.length; i++)
     {
-        props.userData[i].id = i;
+        props.dataSet[i].id = i;
     }
 
     const addButton = <BasicButtons name="Add" />
@@ -51,7 +51,7 @@ export default function ColumnMenuGrid( props) {
         <div style={{display:"inline-flex", width : "80%"}}>
             
         <div style={{ height: 280, width: '100%', 'padding-right' : '10%' }}>
-            <DataGrid rows={props.userData}
+            <DataGrid rows={props.dataSet}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}

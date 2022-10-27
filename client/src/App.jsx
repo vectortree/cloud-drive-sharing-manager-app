@@ -56,6 +56,15 @@ function App() {
            userData.searchQueryHistory = userProfile.searchQueryHistory;
        }
   }
+  //temporary
+    userData.accessControlRequirements = [
+      { id: 1, Name: 'Access Control Policy#1', Query: 'folder:\'CSE416\'', ReadAccess:"Sije, Zalman",WriteAccess:"Sije, JeongYoon",DenyReadAccess:"JeongYoon",DenyWriteAccess:"Starr"},
+      { id: 2, Name: 'Access Control Policy#2', Query: 'file:\'mid.pdf\'', ReadAccess:"JeongYoon, Satrr",WriteAccess:"Sije",DenyReadAccess:"Zalman",DenyWriteAccess:"Starr"},
+      { id: 3, Name: 'Access Control Policy#3', Query: 'folder:\'Document\'', ReadAccess:"Starr",WriteAccess:"Zalman",DenyReadAccess:"Sije",DenyWriteAccess:"JeongYoon"},
+      { id: 4, Name: 'Access Control Policy#4', Query: 'file:\'beauty.jpeg\'', ReadAccess:"Zalman",WriteAccess:"Sije",DenyReadAccess:"Starr",DenyWriteAccess:"JeongYoon"},
+      { id: 5, Name: 'Access Control Policy#5', Query: 'file:\'ScreenShot.peg\'', ReadAccess:"Starr",WriteAccess:"JeongYoon",DenyReadAccess:"Zalman",DenyWriteAccess:"Sije"},
+  ]
+    console.log(userProfile);
       return (
           <BrowserRouter>
               <Routes>
