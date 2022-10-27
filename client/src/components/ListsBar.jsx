@@ -6,6 +6,7 @@ import {useEffect, useContext, useState} from "react"
 import BasicModal from "./Modal";
 import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
+import ColorRadioButtons from "./CreateSnapshot";
 
 const accessDataTable = <DataTable/>
 const columns = [
@@ -30,16 +31,12 @@ const columns = [
         </strong>
       ),}
   ];
-  
-  const rows = [
-    { id: 1, reqName: 'Requirement1'},
-    { id: 2, reqName: 'Requirement222222222222222'},
-  ];
-
-
-  
 
 export default function ColumnMenuGrid( props) {
+    const [openModal, setOpenModal] = React.useState(false);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+
     for(let i = 0; i < props.userData.length; i++)
     {
         props.userData[i].id = i;
@@ -64,8 +61,9 @@ export default function ColumnMenuGrid( props) {
         </div>
         <div style={{display:"inline-flex"}}>
             <br/>
-            <BasicModal icon={ addButton} title="Add Requirement" contents={accessDataTable}/>
-            <BasicModal icon={ editButton} title="Edit Requirement" contents={accessDataTable}/>
+            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Manage Access Control</Button>
+
+            <BasicModal title={"Add Requirement"} open={openModal} handleClose={handleCloseModal}  >{accessDataTable}</BasicModal>
 
         </div>
             

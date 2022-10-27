@@ -113,7 +113,7 @@ export default function MiniDrawer(props) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
+    console.log(props.components[0]);
     return (
         <Box sx={{ display: 'flex'}}>
             <CssBaseline />

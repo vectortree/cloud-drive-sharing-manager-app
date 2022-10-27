@@ -34,7 +34,6 @@ export default function BasicModal({children, ...props}) {
                         <h2>{props.title}</h2>
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-
                         {children}
                     </Typography>
                 </Box>
