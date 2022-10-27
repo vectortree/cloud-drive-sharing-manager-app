@@ -179,6 +179,7 @@ export default function PrimarySearchAppBar(props) {
                             marginRight: "auto",
                             width: "5%",
                             zIndex: 1,
+                            cursor:"pointer"
                         }}
                         onClick={navigateHome}
                     />

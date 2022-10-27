@@ -4,7 +4,7 @@ import MiniDrawer from "../../components/SideBar";
 import AccessControlComponent from "../../components/AccessControlComponent";
 
 const sharingInfo= [
-    <AccessControlComponent/>
+    <AccessControlComponent size={700}/>
 ];
 const AccessControlPage = (props) =>{
     return (
