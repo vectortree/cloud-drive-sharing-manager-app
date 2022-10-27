@@ -21,8 +21,12 @@ import axios from "axios";
 import api from '../api/api';
 import BadgeAvatars from "./WithBadge";
 import {useNavigate} from "react-router-dom";
+import AlignVerticalCenterIcon from '@mui/icons-material/AlignVerticalCenter';
+import SearchQueryModal from "./CreateSearchQuery";
+import BasicModal from "./Modal";
+import Button from "@mui/material/Button";
 
-
+const searchQueryIcon = <AlignVerticalCenterIcon style = {{marginRight : "8px", marginBottom : "7px"}}></AlignVerticalCenterIcon>
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -69,6 +73,11 @@ export default function PrimarySearchAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const navigate = useNavigate()
+
+    const [openModal, setOpenModal] = React.useState(false);
+    const searchQueryModalOPen = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+
     const navigateHome = () => {
         // 👇️ navigate to /
         navigate('/home');
@@ -189,7 +198,12 @@ export default function PrimarySearchAppBar(props) {
                         <StyledInputBase
                             placeholder="Search…"
                             inputProps={{ 'aria-label': 'search' }}
+                            style={{
+                                width: "50ch",
+                            }}
                         />
+                        <Button color = "black" onClick = {searchQueryModalOPen} > {searchQueryIcon}</Button>
+                        <div></div>
                     </Search>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -221,6 +235,7 @@ export default function PrimarySearchAppBar(props) {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Search Query"} ><SearchQueryModal onClick={handleCloseModal}/></BasicModal>
         </Box>
     );
 }
