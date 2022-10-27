@@ -93,16 +93,6 @@ export default function AddRequirement(props) {
                         defaultValue=""
                     />
                 </div>
-                {/*search*/}
-                <Search>
-                    <SearchIconWrapper>
-                        <SearchIcon />
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                        placeholder="Search…"
-                        inputProps={{ 'aria-label': 'search' }}
-                    />
-                </Search>
             </Box>
             <div>
                 <h3 style={{margin:"0px"}}>Query Language</h3>
