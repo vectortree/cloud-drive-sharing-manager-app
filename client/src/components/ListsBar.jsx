@@ -8,6 +8,9 @@ import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
 import ColorRadioButtons from "./CreateSnapshot";
 
+// This is for the content on the User Profile page.
+// It manages all of the Table of requirement, snapshot and recent query
+
 const accessDataTable = <DataTable/>
 const columns = [
     { field: 'id', headerName: 'Index', width: 90 ,editable: true },

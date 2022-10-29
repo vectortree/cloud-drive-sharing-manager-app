@@ -26,6 +26,8 @@ import SearchQueryModal from "./CreateSearchQuery";
 import BasicModal from "./Modal";
 import Button from "@mui/material/Button";
 
+// This is for the Header which is the very top of our website
+
 const searchQueryIcon = <AlignVerticalCenterIcon style = {{marginRight : "8px", marginBottom : "7px"}}></AlignVerticalCenterIcon>
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',

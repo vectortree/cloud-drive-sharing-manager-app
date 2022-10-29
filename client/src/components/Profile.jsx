@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from "@mui/material/Typography";
-
+// For the showing user information in the user profile page
 
 export default function Profile(props) {
     const [name, setName] = React.useState('Cat in the Hat');

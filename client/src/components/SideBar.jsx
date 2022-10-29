@@ -28,6 +28,7 @@ import ColorRadioButtons from "./CreateSnapshot";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 
+//This is for the left side bar
 
 const drawerWidth = 240;
 const photoIcon = <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>

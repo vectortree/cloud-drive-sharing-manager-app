@@ -12,12 +12,36 @@ const folderInfo ={
     sharing:["sije.park@stonybrook.edu"],
     owner:"sije.park@stonybrook.edu"
 }
+const folderInfo1 ={
+    name: "HW2",
+    fileSize:"180MB",
+    description:"This is HW2 Folder",
+    accessPermission:"read and write",
+    sharing:["sije.park@stonybrook.edu"],
+    owner:"sije.park@stonybrook.edu"
+}
+const folderInfo2 ={
+    name: "HW3",
+    fileSize:"180MB",
+    description:"This is HW3 Folder",
+    accessPermission:"read and write",
+    sharing:["sije.park@stonybrook.edu"],
+    owner:"sije.park@stonybrook.edu"
+}
+const folderInfo3 ={
+    name: "HW4",
+    fileSize:"180MB",
+    description:"This is HW4 Folder",
+    accessPermission:"read and write",
+    sharing:["sije.park@stonybrook.edu"],
+    owner:"sije.park@stonybrook.edu"
+}
 
 const sharingInfo= [
     <MultiActionAreaCard folderList={folderInfo}/>,
-    <MultiActionAreaCard folderList={folderInfo}/>,
-    <MultiActionAreaCard folderList={folderInfo}/>,
-    <MultiActionAreaCard folderList={folderInfo}/>,
+    <MultiActionAreaCard folderList={folderInfo1}/>,
+    <MultiActionAreaCard folderList={folderInfo2}/>,
+    <MultiActionAreaCard folderList={folderInfo3}/>,
 
 ];
 const Home = (props) =>{
