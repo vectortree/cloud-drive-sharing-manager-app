@@ -3,10 +3,10 @@ import React from "react";
 import MiniDrawer from "../../components/SideBar";
 import AccessControlComponent from "../../components/AccessControlComponent";
 
-const sharingInfo= [
-    <AccessControlComponent size={700}/>
-];
 const AccessControlPage = (props) =>{
+    const sharingInfo= [
+        <AccessControlComponent size={700} userData={props.userData}/>
+    ];
     return (
         <Grid>
             <MiniDrawer components={sharingInfo} type = "accessControl" userData = {props.userData}/>
