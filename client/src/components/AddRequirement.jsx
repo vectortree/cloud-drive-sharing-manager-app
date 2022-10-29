@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import TextField from "@mui/material/TextField";
+import DeleteIcon from '@mui/icons-material/Delete';
+import SecurityIcon from '@mui/icons-material/Security';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
 import { styled, alpha } from '@mui/material/styles';
@@ -50,35 +53,105 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         },
     },
 }));
-const columns = [
-    {field: 'Name', headerName: 'Name', type: 'Name', width: 150,editable: true,},
-    {field: 'ReadAccess', headerName: 'RA', type: 'ReadAccess', width: 80,editable: true,},
-    {field: 'WriteAccess', headerName: 'WA', type: 'WriteAccess', width: 80 ,editable: true,},
-    {field: 'DenyReadAccess', headerName: 'DA', type: 'DenyReadAccess', width: 80,editable: true,},
-    {
-        field: 'DenyWriteAccess',
-        headerName: 'DW',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 80
-        // valueGetter: (params) => `${params.row.Name || ''} ${params.row.Name || ''}`,
-    }
-];
+
 
 export default function AddRequirement(props) {
     const [QueryType, setQueryType] = React.useState('');
     const [DataState, setDataState] = React.useState(
-        {id: 1 , Name:"Sije",ReadAccess:"O",WriteAccess:"O", DenyReadAccess:"X", DenyWriteAccess:"X"}
+        [
+            {id: 1 , Type:"Group", Name:"Sije",ReadAccess:true,WriteAccess:false, DenyReadAccess:true, DenyWriteAccess:false}
+        ]
     );
-    // const row =[
-    //     {id: 1 , Name:"Sije",ReadAccess:"O",WriteAccess:"O", DenyReadAccess:"X", DenyWriteAccess:"X"},
-    //     {id: 2 , Name:"",ReadAccess:"",WriteAccess:"", DenyReadAccess:"", DenyWriteAccess:""}
-    // ]
+    const [requirementName,setRequirementName] =React.useState('');
+    const [addPersonName,setAddPersonName] =React.useState('');
+    const handleRequirmentName = (event) =>{setRequirementName(event.target.value);}
+    const handleAddPersonName = (event) =>{setAddPersonName(event.target.value);}
+    const handleChange = (event) => {setQueryType(event.target.value);};
+    const handleAddPerson = (event) =>{
+        const dataSet = {id: 1 , Name:{addPersonName},ReadAccess:true,WriteAccess:false, DenyReadAccess:true, DenyWriteAccess:false }
 
-    const handleChange = (event) => {
-        setQueryType(event.target.value);
-    };
+    }
 
+    // const {
+    //     name,
+    //     searchQuery,
+    //     allowedReaders,
+    //     allowedWriters,
+    //     deniedReaders,
+    //     deniedWriters } = req.body;
+    const deleteUser = React.useCallback(
+        (id) => () => {
+            setTimeout(() => {
+                setDataState((prevRows) => prevRows.filter((row) => row.id !== id));
+            });
+        },
+        [],
+    );
+
+    const toggleAdmin = React.useCallback(
+        (id) => () => {
+            setDataState((prevRows) =>
+                prevRows.map((row) =>
+                    row.id === id ? { ...row, isAdmin: !row.isAdmin } : row,
+                ),
+            );
+        },
+        [],
+    );
+
+    const duplicateUser = React.useCallback(
+        (id) => () => {
+            setDataState((prevRows) => {
+                const rowToDuplicate = prevRows.find((row) => row.id === id);
+                return [...prevRows, { ...rowToDuplicate, id: Date.now() }];
+            });
+        },
+        [],
+    );
+
+    const handleSubmit = (event) =>{
+        alert('A name was submitted: ' + this.state.value);
+        event.preventDefault();
+    }
+    const columns = [
+        {field: 'Type', headerName: 'Type', width: 100},
+        {field: 'Name', headerName: 'Name', width: 150},
+        {field: 'ReadAccess', headerName: 'RA', width: 80,type:"boolean",sortable: true,editable: true,},
+        {field: 'WriteAccess', headerName: 'WA', width: 80 ,type:"boolean",editable: true,sortable: true,},
+        {field: 'DenyReadAccess', headerName: 'DA', width: 80,type:"boolean",editable: true,sortable: true,},
+        {
+            field: 'DenyWriteAccess',
+            headerName: 'DW',
+            type:"boolean",
+            sortable: true,
+            width: 80
+            // valueGetter: (params) => `${params.row.Name || ''} ${params.row.Name || ''}`,
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            width: 80,
+            getActions: (params) => [
+                <GridActionsCellItem
+                    icon={<DeleteIcon />}
+                    label="Delete"
+                    onClick={deleteUser(params.id)}
+                />,
+                <GridActionsCellItem
+                    icon={<SecurityIcon />}
+                    label="Toggle Admin"
+                    onClick={toggleAdmin(params.id)}
+                    showInMenu
+                />,
+                <GridActionsCellItem
+                    icon={<FileCopyIcon />}
+                    label="Duplicate User"
+                    onClick={duplicateUser(params.id)}
+                    showInMenu
+                />,
+            ],
+        },
+    ];
     return (
         <div>
             <Box
@@ -94,7 +167,8 @@ export default function AddRequirement(props) {
                         required
                         id="outlined-required"
                         label="Requirement Name"
-                        defaultValue=""
+                        defaultValue={requirementName}
+                        onChange={handleRequirmentName}
                     />
                 </div>
             </Box>
@@ -104,6 +178,7 @@ export default function AddRequirement(props) {
                 <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
                     <InputLabel id="demo-select-small">QueryType</InputLabel>
                     <Select
+                        required
                         labelId="demo-select-small"
                         id="demo-select-small"
                         value={QueryType}
@@ -115,19 +190,15 @@ export default function AddRequirement(props) {
                         <MenuItem value={"Folder"}>Folder</MenuItem>
                     </Select>
                 </FormControl>
-                <Search >
-                    <SearchIconWrapper >
-                        <SearchIcon />
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                        placeholder="Search…"
-                        inputProps={{ 'aria-label': 'search' }}
+                    <TextField
+                        required
+                        id="standard-required"
+                        label="Name"
+                        defaultValue={addPersonName}
+                        onChange={handleAddPersonName}
+                        variant="standard"
                     />
-                </Search>
-                    <Button variant="contained" color="secondary" style={{backgroundColor:"lightgray", marginLeft:"10px"}}>
-                        Edit
-                    </Button>
-                    <Button variant="contained" color="success" style={{marginLeft:"10px"}}>
+                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleAddPerson}>
                         Add
                     </Button>
                 </div>
