@@ -56,20 +56,31 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 export default function AddRequirement(props) {
+    let indexId = 1;
     const [QueryType, setQueryType] = React.useState('');
-    const [DataState, setDataState] = React.useState(
-        [
-            {id: 1 , Type:"Group", Name:"Sije",ReadAccess:true,WriteAccess:false, DenyReadAccess:true, DenyWriteAccess:false}
-        ]
-    );
+    const [QueryName, setQueryName] = React.useState('');
     const [requirementName,setRequirementName] =React.useState('');
     const [addPersonName,setAddPersonName] =React.useState('');
+    const [DataState, setDataState] = React.useState(
+        [
+            {id: indexId , Type:"Group", Name:"Sije",ReadAccess:true,WriteAccess:false, DenyReadAccess:true, DenyWriteAccess:false}
+        ]
+    );
+    const [queryString,setQueryString] = React.useState('');
+    const addingQuery = (event) => {
+        const query = QueryType + ":" + QueryName;
+        console.log(query);
+        setQueryString(query);
+    }
+    const handleQueryName = (event) =>{setQueryName(event.target.value);}
     const handleRequirmentName = (event) =>{setRequirementName(event.target.value);}
     const handleAddPersonName = (event) =>{setAddPersonName(event.target.value);}
     const handleChange = (event) => {setQueryType(event.target.value);};
     const handleAddPerson = (event) =>{
-        const dataSet = {id: 1 , Name:{addPersonName},ReadAccess:true,WriteAccess:false, DenyReadAccess:true, DenyWriteAccess:false }
-
+        setDataState((prevRows) => {
+            // const newData = prevRows.find((row) => row.id === indexId);
+            return [...prevRows, {id: {indexId} , Name:{addPersonName} ,ReadAccess:false,WriteAccess:false}];
+        });
     }
 
     // const {
@@ -114,19 +125,19 @@ export default function AddRequirement(props) {
         event.preventDefault();
     }
     const columns = [
-        {field: 'Type', headerName: 'Type', width: 100},
-        {field: 'Name', headerName: 'Name', width: 150},
-        {field: 'ReadAccess', headerName: 'RA', width: 80,type:"boolean",sortable: true,editable: true,},
-        {field: 'WriteAccess', headerName: 'WA', width: 80 ,type:"boolean",editable: true,sortable: true,},
-        {field: 'DenyReadAccess', headerName: 'DA', width: 80,type:"boolean",editable: true,sortable: true,},
-        {
-            field: 'DenyWriteAccess',
-            headerName: 'DW',
-            type:"boolean",
-            sortable: true,
-            width: 80
-            // valueGetter: (params) => `${params.row.Name || ''} ${params.row.Name || ''}`,
-        },
+        {field: 'Type', headerName: 'Type', width: 150,editable: true,sortable: true},
+        {field: 'Name', headerName: 'Name', width: 150,editable: true,sortable: true},
+        {field: 'ReadAccess', headerName: 'Read Allow', width: 130,type:"boolean",sortable: true,editable: true,},
+        {field: 'WriteAccess', headerName: 'Wright Allow', width: 130 ,type:"boolean",editable: true,sortable: true,},
+        // {field: 'DenyReadAccess', headerName: 'DA', width: 80,type:"boolean",editable: true,sortable: true,},
+        // {
+        //     field: 'DenyWriteAccess',
+        //     headerName: 'DW',
+        //     type:"boolean",
+        //     sortable: true,
+        //     width: 80
+        //     // valueGetter: (params) => `${params.row.Name || ''} ${params.row.Name || ''}`,
+        // },
         {
             field: 'actions',
             type: 'actions',
@@ -194,13 +205,16 @@ export default function AddRequirement(props) {
                         required
                         id="standard-required"
                         label="Name"
-                        defaultValue={addPersonName}
-                        onChange={handleAddPersonName}
+                        defaultValue={QueryName}
+                        onChange={handleQueryName}
                         variant="standard"
                     />
-                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleAddPerson}>
+                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQuery}>
                         Add
                     </Button>
+                </div>
+                <div style={{fontWeight: 500}}>
+                    <i>Expected Query String</i> => <b style={{color:"red"}}>{queryString}</b>
                 </div>
             </div>
             <div >
