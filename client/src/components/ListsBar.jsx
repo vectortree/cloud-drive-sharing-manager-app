@@ -36,6 +36,30 @@ const columns = [
   ];
 
 export default function ColumnMenuGrid( props) {
+    console.log(props.dataSet);
+    const accessDataTable = <DataTable dataSet={props.dataSet}/>
+    const columns = [
+        { field: 'id', headerName: 'Index', width: 90 ,editable: true },
+        {
+            field: 'Name',
+            headerName: 'Requirement Name',
+            width: 550,
+            editable: true,
+        },
+        {
+            renderCell: (params) => (
+                <strong>
+                    {params.value}
+                    <Button
+                        variant="outlined"
+                        size = 'small'
+                        sx={{ color : "black" }}
+                    >
+                        X
+                    </Button>
+                </strong>
+            ),}
+    ];
     const [openModal, setOpenModal] = React.useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);

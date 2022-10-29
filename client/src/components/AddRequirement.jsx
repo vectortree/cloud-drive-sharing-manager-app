@@ -10,7 +10,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import BasicButtons from "./Button";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -52,10 +51,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 const columns = [
-    {field: 'Name', headerName: 'Name', type: 'Name', width: 150,},
-    {field: 'ReadAccess', headerName: 'RA', type: 'ReadAccess', width: 80,},
-    {field: 'WriteAccess', headerName: 'WA', type: 'WriteAccess', width: 80 ,},
-    {field: 'DenyReadAccess', headerName: 'DA', type: 'DenyReadAccess', width: 80,},
+    {field: 'Name', headerName: 'Name', type: 'Name', width: 150,editable: true,},
+    {field: 'ReadAccess', headerName: 'RA', type: 'ReadAccess', width: 80,editable: true,},
+    {field: 'WriteAccess', headerName: 'WA', type: 'WriteAccess', width: 80 ,editable: true,},
+    {field: 'DenyReadAccess', headerName: 'DA', type: 'DenyReadAccess', width: 80,editable: true,},
     {
         field: 'DenyWriteAccess',
         headerName: 'DW',
@@ -65,11 +64,16 @@ const columns = [
         // valueGetter: (params) => `${params.row.Name || ''} ${params.row.Name || ''}`,
     }
 ];
-const row =[
-    {id: 1 , Name:"Sije",ReadAccess:"O",WriteAccess:"O", DenyReadAccess:"X", DenyWriteAccess:"X"}
-]
+
 export default function AddRequirement(props) {
     const [QueryType, setQueryType] = React.useState('');
+    const [DataState, setDataState] = React.useState(
+        {id: 1 , Name:"Sije",ReadAccess:"O",WriteAccess:"O", DenyReadAccess:"X", DenyWriteAccess:"X"}
+    );
+    // const row =[
+    //     {id: 1 , Name:"Sije",ReadAccess:"O",WriteAccess:"O", DenyReadAccess:"X", DenyWriteAccess:"X"},
+    //     {id: 2 , Name:"",ReadAccess:"",WriteAccess:"", DenyReadAccess:"", DenyWriteAccess:""}
+    // ]
 
     const handleChange = (event) => {
         setQueryType(event.target.value);
@@ -131,16 +135,16 @@ export default function AddRequirement(props) {
             <div >
                 <h3 style={{margin:"0px"}}>Adding Access Control</h3>
                 <div style={{ display:"inline-flex", height: 280, width: '90%'}}>
+
                     <DataGrid
-                        rows={row}
+                        rows={DataState}
                         columns={columns}
                         pageSize={3}
                         rowsPerPageOptions={[5]}
                         checkboxSelection
+                        disableSelectionOnClick
+                        experimentalFeatures={{ newEditingApi: true }}
                     />
-                    <Button variant="contained" color="success" style={{marginLeft:"10px", height:"60px", marginTop:"20%"}}>
-                        Add
-                    </Button>
                 </div>
             </div>
             <div>
