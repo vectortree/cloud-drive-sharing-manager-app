@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridCellModes } from '@mui/x-data-grid';
 import TextField from "@mui/material/TextField";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SecurityIcon from '@mui/icons-material/Security';
@@ -15,77 +15,138 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import PropTypes from 'prop-types';
 
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(3),
-        width: 'auto',
-    },
-}));
+function EditToolbar(props) {
+    const { selectedCellParams, cellMode, cellModesModel, setCellModesModel } = props;
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-}));
+    const handleSaveOrEdit = () => {
+        if (!selectedCellParams) {
+            return;
+        }
+        const { id, field } = selectedCellParams;
+        if (cellMode === 'edit') {
+            setCellModesModel({
+                ...cellModesModel,
+                [id]: { ...cellModesModel[id], [field]: { mode: GridCellModes.View } },
+            });
+        } else {
+            setCellModesModel({
+                ...cellModesModel,
+                [id]: { ...cellModesModel[id], [field]: { mode: GridCellModes.Edit } },
+            });
+        }
+    };
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: '20ch',
-        },
-    },
-}));
+    const handleCancel = () => {
+        if (!selectedCellParams) {
+            return;
+        }
+        const { id, field } = selectedCellParams;
+        setCellModesModel({
+            ...cellModesModel,
+            [id]: {
+                ...cellModesModel[id],
+                [field]: { mode: GridCellModes.View, ignoreModifications: true },
+            },
+        });
+    };
 
+    const handleMouseDown = (event) => {
+        // Keep the focus in the cell
+        event.preventDefault();
+    };
+
+    return (
+        <Box
+            sx={{
+                borderBottom: 1,
+                borderColor: 'divider',
+                p: 1,
+            }}
+        >
+            <Button
+                onClick={handleSaveOrEdit}
+                onMouseDown={handleMouseDown}
+                disabled={!selectedCellParams}
+                variant="outlined"
+            >
+                {cellMode === 'edit' ? 'Save' : 'Edit'}
+            </Button>
+            <Button
+                onClick={handleCancel}
+                onMouseDown={handleMouseDown}
+                disabled={cellMode === 'view'}
+                variant="outlined"
+                sx={{ ml: 1 }}
+            >
+                Cancel
+            </Button>
+        </Box>
+    );
+}
+
+EditToolbar.propTypes = {
+    cellMode: PropTypes.oneOf(['edit', 'view']).isRequired,
+    cellModesModel: PropTypes.object.isRequired,
+    selectedCellParams: PropTypes.shape({
+        field: PropTypes.string.isRequired,
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    }),
+    setCellModesModel: PropTypes.func.isRequired,
+};
+
+EditToolbar.propTypes = {
+    cellMode: PropTypes.oneOf(['edit', 'view']).isRequired,
+    cellModesModel: PropTypes.object.isRequired,
+    selectedCellParams: PropTypes.shape({
+        field: PropTypes.string.isRequired,
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    }),
+    setCellModesModel: PropTypes.func.isRequired,
+};
+
+const useFakeMutation = () => {
+    return React.useCallback(
+        (user) =>
+            new Promise((resolve, reject) =>
+                setTimeout(() => {
+                    console.log(resolve);
+                    if (user.name?.trim() === '') {
+                        reject(new Error("Error while saving user: name can't be empty."));
+                    } else {
+                        resolve({ ...user, name: user.name?.toUpperCase() });
+                    }
+                }, 200),
+            ),
+        [],
+    );
+};
 
 export default function AddRequirement(props) {
-    let indexId = 1;
     const [QueryType, setQueryType] = React.useState('');
     const [QueryName, setQueryName] = React.useState('');
     const [requirementName,setRequirementName] =React.useState('');
-    const [addPersonName,setAddPersonName] =React.useState('');
+    const [addPersonEmail,setAddPersonEmail] =React.useState('');
     const [openSuccess, setOpenSuccess] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
     const [DataState, setDataState] = React.useState(
         [
-            {id: indexId , Type:"Group", Name:"Sije",ReadAccess:true,WriteAccess:false, DenyReadAccess:true, DenyWriteAccess:false}
         ]
     );
     const [queryString,setQueryString] = React.useState('');
+    const [selectedCellParams, setSelectedCellParams] = React.useState(null);
+    const [cellModesModel, setCellModesModel] = React.useState({});
 
     const handleSuccessAlertOpen = () => {setOpenSuccess(true);};
     const handleSuccessAlertClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
+        if (reason === 'clickaway')return;
         setOpenSuccess(false);
     };
     const handleErrorAlertOpen = () => {setOpenError(true);};
     const handleErrorAlertClose = (event,reason) =>{
-        if (reason === 'clickaway') {
-            return;
-        }
-        console.log("work");
+        if (reason === 'clickaway') return;
         setOpenError(false);
     }
     const addingQuery = (event) => {
@@ -98,16 +159,27 @@ export default function AddRequirement(props) {
         }
     }
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
-    const handleRequirmentName = (event) =>{setRequirementName(event.target.value);}
-    const handleAddPersonName = (event) =>{setAddPersonName(event.target.value);}
-    const handleChange = (event) => {setQueryType(event.target.value);};
-    const handleAddPerson = (event) =>{
-        setDataState((prevRows) => {
-            // const newData = prevRows.find((row) => row.id === indexId);
-            return [...prevRows, {id: {indexId} , Name:{addPersonName} ,ReadAccess:false,WriteAccess:false}];
-        });
-    }
+    const handleRequirementName = (event) =>{setRequirementName(event.target.value);}
 
+
+    const handleChange = (event) => {setQueryType(event.target.value);};
+    const handleSavePerson = (newRow) => () => {
+            deleteUser(newRow);
+            console.log(newRow);
+            setDataState((prevRows) => {
+                // const newData = prevRows.find((row) => row.id === newRow.id);
+                return [...prevRows, {id: newRow.id, Email: newRow.Email, ReadAccess: newRow.Read, WriteAccess: false}];
+            })
+        };
+
+    const handleAddPerson = React.useCallback(
+        () => () => {
+                    setDataState((prevRows) => {
+                        // const newData = prevRows.find((row) => row.id === newRow.id);
+                        return [...prevRows, {id: prevRows.length, Email: "", ReadAccess: false, WriteAccess: false}];
+                    });
+            }
+    );
     // const {
     //     name,
     //     searchQuery,
@@ -117,12 +189,31 @@ export default function AddRequirement(props) {
     //     deniedWriters } = req.body;
     const deleteUser = React.useCallback(
         (id) => () => {
+            console.log(id);
             setTimeout(() => {
                 setDataState((prevRows) => prevRows.filter((row) => row.id !== id));
             });
         },
         [],
     );
+    const mutateRow = useFakeMutation();
+
+    const [snackbar, setSnackbar] = React.useState(null);
+
+    const handleCloseSnackbar = () => setSnackbar(null);
+
+    const processRowUpdate = React.useCallback(
+        async (newRow) => {
+            // Make the HTTP request to save in the backend
+            const response = await mutateRow(newRow);
+            setSnackbar({ children: 'User successfully saved', severity: 'success' });
+            return response;
+        },
+        [mutateRow],
+    );
+    const handleProcessRowUpdateError = React.useCallback((error) => {
+        setSnackbar({ children: error.message, severity: 'error' });
+    }, []);
 
     const toggleAdmin = React.useCallback(
         (id) => () => {
@@ -145,49 +236,81 @@ export default function AddRequirement(props) {
         [],
     );
 
+    const handleCellFocus = React.useCallback((event) => {
+        const row = event.currentTarget.parentElement;
+        const id = row.dataset.id;
+        const field = event.currentTarget.dataset.field;
+        setSelectedCellParams({ id, field });
+    }, []);
+
+    const cellMode = React.useMemo(() => {
+        if (!selectedCellParams) {
+            return 'view';
+        }
+        const { id, field } = selectedCellParams;
+        return cellModesModel[id]?.[field]?.mode || 'view';
+    }, [cellModesModel, selectedCellParams]);
+
+    const handleCellKeyDown = React.useCallback(
+        (params, event) => {
+            const row = event.currentTarget.parentElement;
+            // const id = row.dataset.id;
+            // const field = event.currentTarget.dataset.field;
+            // const email = row.getElementsByClassName("MuiInputBase-input").item(id).value;
+            // console.log("row "+ row + "id " + id + "field " + field + "email " + email);
+            // setDataState((prevRows) => {
+            //     const rowToDuplicate = prevRows.find((row) => row.id === id);
+            //     return [...prevRows, { ...rowToDuplicate, id: Date.now() }];
+            // });
+            if (cellMode === 'edit') {
+                // Prevents calling event.preventDefault() if Tab is pressed on a cell in edit mode
+                event.defaultMuiPrevented = true;
+            }
+        },
+        [cellMode],
+    );
+
+
     const handleSubmit = (event) =>{
         alert('A name was submitted: ' + this.state.value);
         event.preventDefault();
     }
+    function getFullName() {
+        console.log(addPersonEmail);
+        return addPersonEmail;
+    }
+
+    function writeName(params) {
+        console.log("test"+params);
+        setAddPersonEmail(params.value.toString());
+    }
+
+    function parseFullName(value) {
+        return addPersonEmail;
+    }
+
     const columns = [
-        {field: 'Type', headerName: 'Type', width: 150,editable: true,sortable: true},
-        {field: 'Name', headerName: 'Name', width: 150,editable: true,sortable: true},
+        {field: 'Email', headerName: 'Email', width: 250,editable: true,sortable: true,},
         {field: 'ReadAccess', headerName: 'Read Allow', width: 130,type:"boolean",sortable: true,editable: true,},
         {field: 'WriteAccess', headerName: 'Wright Allow', width: 130 ,type:"boolean",editable: true,sortable: true,},
-        // {field: 'DenyReadAccess', headerName: 'DA', width: 80,type:"boolean",editable: true,sortable: true,},
-        // {
-        //     field: 'DenyWriteAccess',
-        //     headerName: 'DW',
-        //     type:"boolean",
-        //     sortable: true,
-        //     width: 80
-        //     // valueGetter: (params) => `${params.row.Name || ''} ${params.row.Name || ''}`,
-        // },
         {
             field: 'actions',
             type: 'actions',
             width: 80,
+            headerName: <AddCircleOutlineIcon onClick={handleAddPerson()}/>,
             getActions: (params) => [
                 <GridActionsCellItem
                     icon={<DeleteIcon />}
                     label="Delete"
                     onClick={deleteUser(params.id)}
                 />,
-                <GridActionsCellItem
-                    icon={<SecurityIcon />}
-                    label="Toggle Admin"
-                    onClick={toggleAdmin(params.id)}
-                    showInMenu
-                />,
-                <GridActionsCellItem
-                    icon={<FileCopyIcon />}
-                    label="Duplicate User"
-                    onClick={duplicateUser(params.id)}
-                    showInMenu
-                />,
+
             ],
         },
     ];
+
+
+
     return (
         <div>
             <Box
@@ -204,7 +327,7 @@ export default function AddRequirement(props) {
                         id="outlined-required"
                         label="Requirement Name"
                         defaultValue={requirementName}
-                        onChange={handleRequirmentName}
+                        onChange={handleRequirementName}
                     />
                 </div>
             </Box>
@@ -245,14 +368,30 @@ export default function AddRequirement(props) {
             <div >
                 <h3 style={{margin:"0px"}}>Adding Access Control</h3>
                 <div style={{ display:"inline-flex", height: 280, width: '90%'}}>
-
                     <DataGrid
                         rows={DataState}
                         columns={columns}
-                        pageSize={3}
-                        rowsPerPageOptions={[5]}
-                        checkboxSelection
-                        disableSelectionOnClick
+                        onCellKeyDown={handleCellKeyDown}
+                        cellModesModel={cellModesModel}
+                        processRowUpdate={processRowUpdate}
+                        onProcessRowUpdateError={handleProcessRowUpdateError}
+                        onCellModesModelChange={(model) => setCellModesModel(model)
+                    }
+                        components={{
+                            Toolbar: EditToolbar,
+                        }}
+                        componentsProps={{
+                            toolbar: {
+                                cellMode,
+                                selectedCellParams,
+                                setSelectedCellParams,
+                                cellModesModel,
+                                setCellModesModel,
+                            },
+                            cell: {
+                                onFocus: handleCellFocus,
+                            },
+                        }}
                         experimentalFeatures={{ newEditingApi: true }}
                     />
                 </div>
@@ -262,7 +401,17 @@ export default function AddRequirement(props) {
                     Submit
                 </Button>
             </div>
-            <Snackbar open={openSuccess} autoHideDuration={2000} onClose={handleSuccessAlertClose}>
+            {!!snackbar && (
+                <Snackbar
+                    open
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    onClose={handleCloseSnackbar}
+                    autoHideDuration={6000}
+                >
+                    <Alert {...snackbar} onClose={handleCloseSnackbar} />
+                </Snackbar>
+            )}
+            <Snackbar open={openSuccess} autoHideDuration={1000} onClose={handleSuccessAlertClose}>
                 <Alert onClose={handleSuccessAlertClose} severity="success" sx={{ width: '100%' }}>
                     Successfully Creating a Query
                 </Alert>
