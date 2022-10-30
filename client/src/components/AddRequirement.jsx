@@ -8,7 +8,9 @@ import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
+import Alert from '@mui/material/Alert';
 import SearchIcon from '@mui/icons-material/Search';
+import Snackbar from '@mui/material/Snackbar';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -61,16 +63,39 @@ export default function AddRequirement(props) {
     const [QueryName, setQueryName] = React.useState('');
     const [requirementName,setRequirementName] =React.useState('');
     const [addPersonName,setAddPersonName] =React.useState('');
+    const [openSuccess, setOpenSuccess] = React.useState(false);
+    const [openError, setOpenError] = React.useState(false);
     const [DataState, setDataState] = React.useState(
         [
             {id: indexId , Type:"Group", Name:"Sije",ReadAccess:true,WriteAccess:false, DenyReadAccess:true, DenyWriteAccess:false}
         ]
     );
     const [queryString,setQueryString] = React.useState('');
+
+    const handleSuccessAlertOpen = () => {setOpenSuccess(true);};
+    const handleSuccessAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccess(false);
+    };
+    const handleErrorAlertOpen = () => {setOpenError(true);};
+    const handleErrorAlertClose = (event,reason) =>{
+        if (reason === 'clickaway') {
+            return;
+        }
+        console.log("work");
+        setOpenError(false);
+    }
     const addingQuery = (event) => {
-        const query = QueryType + ":" + QueryName;
-        console.log(query);
-        setQueryString(query);
+        if(QueryType === "" || QueryName == ""){
+            handleErrorAlertOpen();
+        }else{
+            const query = QueryType + ":" + QueryName;
+            setQueryString(query);
+            handleSuccessAlertOpen();
+        }
     }
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
     const handleRequirmentName = (event) =>{setRequirementName(event.target.value);}
@@ -237,6 +262,16 @@ export default function AddRequirement(props) {
                     Submit
                 </Button>
             </div>
+            <Snackbar open={openSuccess} autoHideDuration={2000} onClose={handleSuccessAlertClose}>
+                <Alert onClose={handleSuccessAlertClose} severity="success" sx={{ width: '100%' }}>
+                    Successfully Creating a Query
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openError} autoHideDuration={2000} onClose={handleErrorAlertClose}>
+                <Alert onClose={handleErrorAlertClose} severity="error" sx={{ width: '100%' }}>
+                    Please filled all the requirements
+                </Alert>
+            </Snackbar>
         </div>
     );
 }
