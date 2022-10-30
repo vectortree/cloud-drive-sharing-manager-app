@@ -121,6 +121,11 @@ export default function MiniDrawer(props) {
         navigate('/accessControl')
 
     };
+    const navigateRedundantSharing = () => {
+        // 👇️ navigate to /
+        navigate('/redundantSharing')
+
+    };
     const navigateMyProfile = () =>{
         navigate('/')
     };
@@ -212,15 +217,31 @@ export default function MiniDrawer(props) {
                 <List>
                     {['Redundant Sharing', 'Deviant Sharing', 'File-folder Sharing Differences', 'Sharing changes'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 1.5,
-                                }}
-                            >
-                                <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
+                            {
+                                text === "Redundant Sharing" ?
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            px: 1.5,
+                                        }}
+                                        onClick={navigateRedundantSharing}
+                                    >
+                                        <ListItemText primaryTypographyProps={{fontSize: '15px'}} primary={text}
+                                                      sx={{opacity: open ? 1 : 0}}/>
+                                    </ListItemButton> :
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            px: 1.5,
+                                        }}
+                                        onClick={navigateRedundantSharing}
+                                    >
+                                        <ListItemText primaryTypographyProps={{fontSize: '15px'}} primary={text}
+                                                      sx={{opacity: open ? 1 : 0}}/>
+                                    </ListItemButton>
+                            }
                         </ListItem>
                     ))}
                 </List>

@@ -361,9 +361,11 @@ export default function AddRequirement(props) {
                         Add
                     </Button>
                 </div>
+                <br/><br/>
                 <div style={{fontWeight: 500}}>
-                    <i>Expected Query String</i> => <b style={{color:"red"}}>{queryString}</b>
+                    Expected Query String : <b style={{color:"red"}}>{queryString}</b>
                 </div>
+                <br/>
             </div>
             <div >
                 <h3 style={{margin:"0px"}}>Adding Access Control</h3>
