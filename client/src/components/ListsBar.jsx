@@ -6,13 +6,15 @@ import {useEffect, useContext, useState} from "react"
 import BasicModal from "./Modal";
 import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
+import api from '../api/api';
 import ColorRadioButtons from "./CreateSnapshot";
 
 // This is for the content on the User Profile page.
 // It manages all of the Table of requirement, snapshot and recent query
 
 const accessDataTable = <DataTable/>
-const columns = [
+
+  const columns = [
     { field: 'id', headerName: 'Index', width: 90 ,editable: true },
     {
       field: 'name',
@@ -28,6 +30,7 @@ const columns = [
             variant="outlined"
             size = 'small'
             sx={{ color : "black" }}
+            // onClick = {handleRemoveFileSnapshot}
           >
             X
           </Button>
@@ -98,3 +101,4 @@ export default function ColumnMenuGrid( props) {
         </div>
     );
 }
+
