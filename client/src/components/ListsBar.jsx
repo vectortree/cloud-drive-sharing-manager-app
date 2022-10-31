@@ -6,13 +6,39 @@ import {useEffect, useContext, useState} from "react"
 import BasicModal from "./Modal";
 import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
+import api from '../api/api';
 import ColorRadioButtons from "./CreateSnapshot";
 
 // This is for the content on the User Profile page.
 // It manages all of the Table of requirement, snapshot and recent query
 
 const accessDataTable = <DataTable/>
-const columns = [
+
+
+export default function ColumnMenuGrid( props) {
+    const [openModal, setOpenModal] = React.useState(false);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+    console.log(props.dataSet);
+    for(let i = 0; i < props.dataSet.length; i++)
+    {
+        props.dataSet[i].id = i;
+    }
+
+    const addButton = <BasicButtons name="Add" />
+    const editButton = <BasicButtons name="Edit"/>
+    
+  const handleRemoveFileSnapshot = () => {
+    api.removeAccessControlRequirement().then((res) => {
+        if(res.data.profile) {
+            console.log(res);
+            // setUserProfile(res.data.profile);
+            console.log("Created snapshot");
+        }
+    });
+    if(props.onClick) props.onClick()
+  }
+  const columns = [
     { field: 'id', headerName: 'Index', width: 90 ,editable: true },
     {
       field: 'name',
@@ -28,6 +54,7 @@ const columns = [
             variant="outlined"
             size = 'small'
             sx={{ color : "black" }}
+            onClick = {handleRemoveFileSnapshot}
           >
             X
           </Button>
@@ -35,18 +62,6 @@ const columns = [
       ),}
   ];
 
-export default function ColumnMenuGrid( props) {
-    const [openModal, setOpenModal] = React.useState(false);
-    const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
-    console.log(props.dataSet);
-    for(let i = 0; i < props.dataSet.length; i++)
-    {
-        props.dataSet[i].id = i;
-    }
-
-    const addButton = <BasicButtons name="Add" />
-    const editButton = <BasicButtons name="Edit"/>
     return (
 
         <div>
