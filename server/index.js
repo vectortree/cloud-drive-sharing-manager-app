@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 const mongoose = require("mongoose");
 const cors = require('cors');
 require("dotenv").config();
@@ -11,6 +12,7 @@ require('./passport/passport-microsoft');
 
 const port = process.env.PORT || 5001;
 
+app.use(compression());
 app.use(express.json());
 
 app.use(cors({
