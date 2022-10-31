@@ -14,30 +14,6 @@ import ColorRadioButtons from "./CreateSnapshot";
 
 const accessDataTable = <DataTable/>
 
-
-export default function ColumnMenuGrid( props) {
-    const [openModal, setOpenModal] = React.useState(false);
-    const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
-    console.log(props.dataSet);
-    for(let i = 0; i < props.dataSet.length; i++)
-    {
-        props.dataSet[i].id = i;
-    }
-
-    const addButton = <BasicButtons name="Add" />
-    const editButton = <BasicButtons name="Edit"/>
-    
-  const handleRemoveFileSnapshot = () => {
-    api.removeAccessControlRequirement().then((res) => {
-        if(res.data.profile) {
-            console.log(res);
-            // setUserProfile(res.data.profile);
-            console.log("Created snapshot");
-        }
-    });
-    if(props.onClick) props.onClick()
-  }
   const columns = [
     { field: 'id', headerName: 'Index', width: 90 ,editable: true },
     {
@@ -54,7 +30,7 @@ export default function ColumnMenuGrid( props) {
             variant="outlined"
             size = 'small'
             sx={{ color : "black" }}
-            onClick = {handleRemoveFileSnapshot}
+            // onClick = {handleRemoveFileSnapshot}
           >
             X
           </Button>
@@ -125,3 +101,4 @@ export default function ColumnMenuGrid( props) {
         </div>
     );
 }
+
