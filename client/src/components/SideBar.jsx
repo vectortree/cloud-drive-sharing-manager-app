@@ -126,6 +126,21 @@ export default function MiniDrawer(props) {
         navigate('/redundantSharing')
 
     };
+    const navigateDeviantSharing = () => {
+        // 👇️ navigate to /
+        navigate('/deviantSharing')
+
+    };
+    const navigateFileFolderSharing = () => {
+        // 👇️ navigate to /
+        navigate('/fileFolderSharing')
+
+    };
+    const navigateSharingChanges = () => {
+        // 👇️ navigate to /
+        navigate('/sharingChanges')
+
+    };
     const navigateMyProfile = () =>{
         navigate('/')
     };
@@ -217,31 +232,23 @@ export default function MiniDrawer(props) {
                 <List>
                     {['Redundant Sharing', 'Deviant Sharing', 'File-folder Sharing Differences', 'Sharing changes'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            {
-                                text === "Redundant Sharing" ?
-                                    <ListItemButton
-                                        sx={{
-                                            minHeight: 48,
-                                            justifyContent: open ? 'initial' : 'center',
-                                            px: 1.5,
-                                        }}
-                                        onClick={navigateRedundantSharing}
-                                    >
-                                        <ListItemText primaryTypographyProps={{fontSize: '15px'}} primary={text}
-                                                      sx={{opacity: open ? 1 : 0}}/>
-                                    </ListItemButton> :
-                                    <ListItemButton
-                                        sx={{
-                                            minHeight: 48,
-                                            justifyContent: open ? 'initial' : 'center',
-                                            px: 1.5,
-                                        }}
-                                        onClick={navigateRedundantSharing}
-                                    >
-                                        <ListItemText primaryTypographyProps={{fontSize: '15px'}} primary={text}
-                                                      sx={{opacity: open ? 1 : 0}}/>
-                                    </ListItemButton>
-                            }
+                                <ListItemButton
+                                    sx={{
+                                        minHeight: 48,
+                                        justifyContent: open ? 'initial' : 'center',
+                                        px: 1.5,
+                                    }}
+
+                                    onClick=
+                                        {text === "Redundant Sharing" ? navigateRedundantSharing :
+                                            text === "Deviant Sharing" ? navigateDeviantSharing :
+                                                text === "File-folder Sharing Differences" ? navigateFileFolderSharing :
+                                                    navigateSharingChanges
+                                        }
+                                >
+                                    <ListItemText primaryTypographyProps={{fontSize: '15px'}} primary={text}
+                                                  sx={{opacity: open ? 1 : 0}}/>
+                                </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
@@ -262,28 +269,15 @@ export default function MiniDrawer(props) {
                 <List>
                     {['My Profile', 'Access Control Policy'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            {
-                                text === "Access Control Policy" ?
-                                    <ListItemButton
-                                        sx={{
-                                            minHeight: 48,
-                                            justifyContent: open ? 'initial' : 'center',
-                                            px: 1.5,
-                                        }}
-                                        onClick={navigateAccessControl}
-                                    ><ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
-                                    </ListItemButton>
-                                        :
-                                        <ListItemButton
-                                            sx={{
-                                                minHeight: 48,
-                                                justifyContent: open ? 'initial' : 'center',
-                                                px: 1.5,
-                                            }}
-                                            onClick={navigateMyProfile}
-                                        ><ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
-                                        </ListItemButton>
-                            }
+                                <ListItemButton
+                                    sx={{
+                                        minHeight: 48,
+                                        justifyContent: open ? 'initial' : 'center',
+                                        px: 1.5,
+                                    }}
+                                    onClick={ text === "Access Control Policy" ? navigateAccessControl :navigateMyProfile }
+                                ><ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
+                                </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
