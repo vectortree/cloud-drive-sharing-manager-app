@@ -1,6 +1,6 @@
 // All necessary back-end operations (e.g., CRUD) for the user's search query history will be written here
 // Note that there's no need for the client to "GET" the user's search query history
-// since the client will be able to access all it in the user profile
+// since the client will be able to access it in the user profile
 
 const router = require("express").Router();
 const UserProfile = require('../models/UserProfile');
