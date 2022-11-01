@@ -165,7 +165,7 @@ export default function AddRequirement(props) {
     const handleAddPerson = () => {
                     setDataState((prevRows) => {
                         // const newData = prevRows.find((row) => row.id === newRow.id);
-                        return [...prevRows, {id: prevRows.length, Email: "", ReadAccess: false, WriteAccess: false}];
+                        return [...prevRows, {id: prevRows.length, Email: "", ReadAccess: false, WriteAccess: false, DenyReadAccess: false, DenyWriteAccess: false}];
                     });
             }
 
