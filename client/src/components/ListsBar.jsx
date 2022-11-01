@@ -48,7 +48,7 @@ export default function ColumnMenuGrid( props) {
     const columns = [
         { field: 'id', headerName: 'Index', width: 90 ,editable: true },
         {
-            field: 'Name',
+            field: 'name',
             headerName: 'Requirement Name',
             width: 550,
             editable: true,
