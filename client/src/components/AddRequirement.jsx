@@ -49,7 +49,7 @@ function EditToolbar(props) {
         // Keep the focus in the cell
         event.preventDefault();
     };
-    
+
     return (
         <Box
             sx={{
@@ -174,7 +174,15 @@ export default function AddRequirement(props) {
                 setDataState((prevRows) => prevRows.filter((row) => row.id !== id));
             });
         }
-
+    const submit = () =>{
+        if(requirementName ==='' && DataState === [] && QueryType === '' && QueryName === '')
+        {
+            setOpenError(true);
+        }else{
+            setOpenSuccess(true);
+            props.onClick();
+        }
+    }
     const mutateRow = useFakeMutation();
     const processRowUpdate = React.useCallback(
         async (newRow) => {
@@ -321,7 +329,7 @@ export default function AddRequirement(props) {
                 </div>
             </div>
             <div>
-                <Button variant="contained" color="success" style={{marginLeft:"10px", marginTop:"10px"}}>
+                <Button variant="contained" color="success" style={{marginLeft:"10px", marginTop:"10px"}} onClick={submit}>
                     Submit
                 </Button>
             </div>
