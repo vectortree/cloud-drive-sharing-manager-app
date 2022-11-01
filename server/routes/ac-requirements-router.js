@@ -133,7 +133,7 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         
         // Must have at least one nonempty access control set (e.g., AR, AW, DR, DW)
         if(allowedReaders === [] && allowedWriters === [] && deniedReaders === [] && deniedWriters === [])
-        return res.status(401).json({success: false, message: "Must specify least one nonempty access control set"});
+            return res.status(401).json({success: false, message: "Must specify least one nonempty access control set"});
 
         // Check that there are no contradictions in the access control requirement
         // The following pairs of sets must not have a nonempty intersection:
