@@ -120,7 +120,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         // Create a default name
         let snapshotName = defaultName + snapshotNumber;
         // If name specified, replace snapshotName with user-specified name
-        if(req.body.name) snapshotName = req.body.name;
+        if(req.body.name && req.body.name.trim() !== "") snapshotName = req.body.name;
         const currentDate = new Date();
         const snapshot = {
             name: snapshotName,
@@ -187,7 +187,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
         // Create a default name
         let snapshotName = defaultName + snapshotNumber;
         // If name specified, replace snapshotName with user-specified name
-        if(name) snapshotName = name;
+        if(name && name.trim() !== "") snapshotName = name;
 
         // This is for timestamp fields related to the snapshot itself
         let currentDate = new Date();
@@ -207,6 +207,78 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
     
         userProfile.groupMembershipSnapshots.push(snapshot);
         // Save to database
+        userProfile.save();
+        return sendUserProfile(res, userProfile);
+    });
+});
+
+router.put('/editfilesharingsnapshot/:id', async (req, res) => {
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
+    UserProfile.findById(req.user._id, async (err, userProfile) => {
+        if(err) console.log(err);
+        if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        console.log("Editing name of file-sharing snapshot");
+        if(!req.body.name || req.body.name.trim() === "")
+            return res.status(401).json({success: false, message: "Invalid data format"});
+        // Check that provided index is valid
+        if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
+            return res.status(401).json({success: false, message: "Index out of bounds"});
+        const currentDate = new Date();
+        userProfile.fileSharingSnapshots[req.params.id].name = req.body.name;
+        userProfile.fileSharingSnapshots[req.params.id].updatedAt = currentDate;
+        // Save changes to database
+        userProfile.save();
+        return sendUserProfile(res, userProfile);
+    });
+});
+
+router.delete('/removefilesharingsnapshot/:id', async (req, res) => {
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
+    UserProfile.findById(req.user._id, async (err, userProfile) => {
+        if(err) console.log(err);
+        if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        // Check that provided index is valid
+        if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
+            return res.status(401).json({success: false, message: "Index out of bounds"});
+        console.log("Deleting file-sharing snapshot");
+        userProfile.fileSharingSnapshots.splice(req.params.id, 1);
+        // Save changes to database
+        userProfile.save();
+        return sendUserProfile(res, userProfile);
+    });
+});
+
+router.put('/editgroupmembershipsnapshot/:id', async (req, res) => {
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
+    UserProfile.findById(req.user._id, async (err, userProfile) => {
+        if(err) console.log(err);
+        if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        console.log("Editing name of group-membership snapshot");
+        if(!req.body.name || req.body.name.trim() === "")
+            return res.status(401).json({success: false, message: "Invalid data format"});
+        // Check that provided index is valid
+        if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
+            return res.status(401).json({success: false, message: "Index out of bounds"});
+        const currentDate = new Date();
+        userProfile.groupMembershipSnapshots[req.params.id].name = req.body.name;
+        userProfile.groupMembershipSnapshots[req.params.id].updatedAt = currentDate;
+        // Save changes to database
+        userProfile.save();
+        return sendUserProfile(res, userProfile);
+    });
+});
+
+router.delete('/removegroupmembershipsnapshot/:id', async (req, res) => {
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
+    UserProfile.findById(req.user._id, async (err, userProfile) => {
+        if(err) console.log(err);
+        if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        // Check that provided index is valid
+        if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
+            return res.status(401).json({success: false, message: "Index out of bounds"});
+        console.log("Deleting group-membership snapshot");
+        userProfile.groupMembershipSnapshots.splice(req.params.id, 1);
+        // Save changes to database
         userProfile.save();
         return sendUserProfile(res, userProfile);
     });
