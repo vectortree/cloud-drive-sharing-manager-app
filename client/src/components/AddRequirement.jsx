@@ -2,14 +2,9 @@ import * as React from 'react';
 import { DataGrid, GridActionsCellItem, GridCellModes } from '@mui/x-data-grid';
 import TextField from "@mui/material/TextField";
 import DeleteIcon from '@mui/icons-material/Delete';
-//import SecurityIcon from '@mui/icons-material/Security';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
 import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
 import Alert from '@mui/material/Alert';
-import SearchIcon from '@mui/icons-material/Search';
 import Snackbar from '@mui/material/Snackbar';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -20,7 +15,6 @@ import PropTypes from 'prop-types';
 
 function EditToolbar(props) {
     const { selectedCellParams, cellMode, cellModesModel, setCellModesModel } = props;
-
     const handleSaveOrEdit = () => {
         if (!selectedCellParams) {
             return;
@@ -38,7 +32,6 @@ function EditToolbar(props) {
             });
         }
     };
-
     const handleCancel = () => {
         if (!selectedCellParams) {
             return;
@@ -52,12 +45,11 @@ function EditToolbar(props) {
             },
         });
     };
-
     const handleMouseDown = (event) => {
         // Keep the focus in the cell
         event.preventDefault();
     };
-
+    
     return (
         <Box
             sx={{
@@ -125,20 +117,22 @@ const useFakeMutation = () => {
 };
 
 export default function AddRequirement(props) {
+    //State
     const [QueryType, setQueryType] = React.useState('');
     const [QueryName, setQueryName] = React.useState('');
     const [requirementName,setRequirementName] =React.useState('');
-    const [addPersonEmail,setAddPersonEmail] =React.useState('');
     const [openSuccess, setOpenSuccess] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
-    const [DataState, setDataState] = React.useState(
-        [
-        ]
-    );
+    const [DataState, setDataState] = React.useState([]);
     const [queryString,setQueryString] = React.useState('');
     const [selectedCellParams, setSelectedCellParams] = React.useState(null);
     const [cellModesModel, setCellModesModel] = React.useState({});
-
+    const [snackbar, setSnackbar] = React.useState(null);
+    //Handler
+    const handleCloseSnackbar = () => setSnackbar(null);
+    const handleQueryName = (event) =>{setQueryName(event.target.value);}
+    const handleRequirementName = (event) =>{setRequirementName(event.target.value);}
+    const handleChange = (event) => {setQueryType(event.target.value);};
     const handleSuccessAlertOpen = () => {setOpenSuccess(true);};
     const handleSuccessAlertClose = (event, reason) => {
         if (reason === 'clickaway')return;
@@ -158,52 +152,34 @@ export default function AddRequirement(props) {
             handleSuccessAlertOpen();
         }
     }
-    const handleQueryName = (event) =>{setQueryName(event.target.value);}
-    const handleRequirementName = (event) =>{setRequirementName(event.target.value);}
-
-
-    const handleChange = (event) => {setQueryType(event.target.value);};
-    const handleSavePerson = (newRow) => () => {
-            deleteUser(newRow);
+    const handleSavePerson = (newRow) => {
+            // deleteUser(newRow);
             console.log(newRow);
             setDataState((prevRows) => {
-                // const newData = prevRows.find((row) => row.id === newRow.id);
-                return [...prevRows, {id: newRow.id, Email: newRow.Email, ReadAccess: newRow.Read, WriteAccess: false}];
+                const newData = prevRows.map( (row)=> row.id === newRow.id ? newRow : row);
+                return newData;
             })
         };
 
-    const handleAddPerson = React.useCallback(
-        () => () => {
+    const handleAddPerson = () => {
                     setDataState((prevRows) => {
                         // const newData = prevRows.find((row) => row.id === newRow.id);
                         return [...prevRows, {id: prevRows.length, Email: "", ReadAccess: false, WriteAccess: false}];
                     });
             }
-    );
-    // const {
-    //     name,
-    //     searchQuery,
-    //     allowedReaders,
-    //     allowedWriters,
-    //     deniedReaders,
-    //     deniedWriters } = req.body;
-    const deleteUser = React.useCallback(
-        (id) => () => {
+
+    const deleteUser = (id) => {
             console.log(id);
             setTimeout(() => {
                 setDataState((prevRows) => prevRows.filter((row) => row.id !== id));
             });
-        },
-        [],
-    );
+        }
+
     const mutateRow = useFakeMutation();
-
-    const [snackbar, setSnackbar] = React.useState(null);
-
-    const handleCloseSnackbar = () => setSnackbar(null);
-
     const processRowUpdate = React.useCallback(
         async (newRow) => {
+            console.log(newRow);
+            handleSavePerson(newRow);
             // Make the HTTP request to save in the backend
             const response = await mutateRow(newRow);
             setSnackbar({ children: 'User successfully saved', severity: 'success' });
@@ -214,27 +190,6 @@ export default function AddRequirement(props) {
     const handleProcessRowUpdateError = React.useCallback((error) => {
         setSnackbar({ children: error.message, severity: 'error' });
     }, []);
-
-    const toggleAdmin = React.useCallback(
-        (id) => () => {
-            setDataState((prevRows) =>
-                prevRows.map((row) =>
-                    row.id === id ? { ...row, isAdmin: !row.isAdmin } : row,
-                ),
-            );
-        },
-        [],
-    );
-
-    const duplicateUser = React.useCallback(
-        (id) => () => {
-            setDataState((prevRows) => {
-                const rowToDuplicate = prevRows.find((row) => row.id === id);
-                return [...prevRows, { ...rowToDuplicate, id: Date.now() }];
-            });
-        },
-        [],
-    );
 
     const handleCellFocus = React.useCallback((event) => {
         const row = event.currentTarget.parentElement;
@@ -253,15 +208,6 @@ export default function AddRequirement(props) {
 
     const handleCellKeyDown = React.useCallback(
         (params, event) => {
-            const row = event.currentTarget.parentElement;
-            // const id = row.dataset.id;
-            // const field = event.currentTarget.dataset.field;
-            // const email = row.getElementsByClassName("MuiInputBase-input").item(id).value;
-            // console.log("row "+ row + "id " + id + "field " + field + "email " + email);
-            // setDataState((prevRows) => {
-            //     const rowToDuplicate = prevRows.find((row) => row.id === id);
-            //     return [...prevRows, { ...rowToDuplicate, id: Date.now() }];
-            // });
             if (cellMode === 'edit') {
                 // Prevents calling event.preventDefault() if Tab is pressed on a cell in edit mode
                 event.defaultMuiPrevented = true;
@@ -270,41 +216,17 @@ export default function AddRequirement(props) {
         [cellMode],
     );
 
-
-    const handleSubmit = (event) =>{
-        alert('A name was submitted: ' + this.state.value);
-        event.preventDefault();
-    }
-    function getFullName() {
-        console.log(addPersonEmail);
-        return addPersonEmail;
-    }
-
-    function writeName(params) {
-        console.log("test"+params);
-        setAddPersonEmail(params.value.toString());
-    }
-
-    function parseFullName(value) {
-        return addPersonEmail;
-    }
-
     const columns = [
         {field: 'Email', headerName: 'Email', width: 250,editable: true,sortable: true,},
         {field: 'ReadAccess', headerName: 'Read Allow', width: 130,type:"boolean",sortable: true,editable: true,},
         {field: 'WriteAccess', headerName: 'Wright Allow', width: 130 ,type:"boolean",editable: true,sortable: true,},
-        {
-            field: 'actions',
-            type: 'actions',
-            width: 80,
-            headerName: <AddCircleOutlineIcon onClick={handleAddPerson()}/>,
+        {field: 'actions', type: 'actions', width: 80, headerName: <AddCircleOutlineIcon onClick={handleAddPerson}/>,
             getActions: (params) => [
                 <GridActionsCellItem
                     icon={<DeleteIcon />}
                     label="Delete"
-                    onClick={deleteUser(params.id)}
+                    onClick={()=>deleteUser(params.id)}
                 />,
-
             ],
         },
     ];

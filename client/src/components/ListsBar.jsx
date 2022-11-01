@@ -57,6 +57,7 @@ export default function ColumnMenuGrid( props) {
                         variant="outlined"
                         size = 'small'
                         sx={{ color : "black" }}
+                        onClick={deleteRequirement(params.id)}
                     >
                         X
                     </Button>
@@ -74,6 +75,19 @@ export default function ColumnMenuGrid( props) {
 
     const addButton = <BasicButtons name="Add" />
     const editButton = <BasicButtons name="Edit"/>
+    const deleteRequirement = React.useCallback(
+      (id) => () => {
+          console.log(id);
+          setTimeout(() => {
+            setRequirementState((prevRows) => prevRows.filter((row) => row.id !== id));
+          });
+      },
+      [],
+  );
+  const [RequirementState, setRequirementState] = React.useState(
+    [
+    ]
+  );
     return (
 
         <div>
