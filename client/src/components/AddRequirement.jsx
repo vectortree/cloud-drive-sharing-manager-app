@@ -176,7 +176,8 @@ export default function AddRequirement(props) {
             });
         }
     const submit = () =>{
-        if(requirementName ==='' && DataState === [] && QueryType === '' && QueryName === '')
+        
+        if(requirementName ==='' || DataState.length === 0 || QueryType === '' || QueryName === '')
         {
             setOpenError(true);
         }else{
