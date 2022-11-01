@@ -15,7 +15,7 @@ const MyPage = (props)=> {
         <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {props.userData.groupMembershipSnapshots}/>,
         <ColumnMenuGrid name="User's Recent Query" dataSet = {props.userData.searchQueryHistory}/>
     ];
-    console.log(props.userData);
+
     return (
         <Grid>
             <MiniDrawer  components={sharingInfo} type = "myPage" userData = {props.userData}/>

@@ -1,5 +1,5 @@
 const express = require('express');
-//const compression = require('compression');
+const compression = require('compression');
 const mongoose = require("mongoose");
 const cors = require('cors');
 require("dotenv").config();
@@ -12,7 +12,7 @@ require('./passport/passport-microsoft');
 
 const port = process.env.PORT || 5001;
 
-//app.use(compression());
+app.use(compression());
 app.use(express.json());
 
 app.use(cors({
@@ -37,6 +37,7 @@ app.use(passport.session());
 
 app.use(require("./routes/auth-router"));
 app.use(require("./routes/ac-requirements-router"));
+app.use(require("./routes/query-history-router"));
 app.use(require("./routes/snapshot-router"));
   
 app.listen(port, () => {

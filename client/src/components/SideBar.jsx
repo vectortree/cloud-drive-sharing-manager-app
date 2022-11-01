@@ -28,6 +28,17 @@ import ColorRadioButtons from "./CreateSnapshot";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 
+import SettingsIcon from '@mui/icons-material/Settings';
+
+import CloudIcon from '@mui/icons-material/Cloud';
+
+import InsightsIcon from '@mui/icons-material/Insights';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import AddToDriveIcon from '@mui/icons-material/AddToDrive';
+import GoogleIcon from '@mui/icons-material/Google';
+import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+
 //This is for the left side bar
 
 const drawerWidth = 240;
@@ -181,9 +192,20 @@ export default function MiniDrawer(props) {
                                     minHeight: 48,
                                     justifyContent: open ? 'initial' : 'center',
                                     px: 1.5,
-                                    backgroundColor: open ? "#E1E1E1" : '' , 
+                                    // backgroundColor: open ? "#E1E1E1" : '' , 
+                                    backgroundColor: "#E1E1E1" , 
                                 }}
                             >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        // opacity: open ? 1 : 0
+                                    }}
+                                >
+                                    <AddToDriveIcon></AddToDriveIcon>
+                                </ListItemIcon>
                                 <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
                             </ListItemButton>
                         </ListItem>
@@ -195,7 +217,7 @@ export default function MiniDrawer(props) {
                                 sx={{
                                     minHeight: 48,
                                     justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
+                                    px: 1.5,
                                 }}
                             >
                                 <ListItemIcon
@@ -203,10 +225,28 @@ export default function MiniDrawer(props) {
                                         minWidth: 0,
                                         mr: open ? 3 : 'auto',
                                         justifyContent: 'center',
-                                        opacity: open ? 1 : 0
+                                        // opacity: open ? 1 : 0
                                     }}
                                 >
-                                    {index % 2 === 0 ? <img src={"/img/googledrive.png"} width="18dp" height="18dp" /> : <img src={"/img/onedrive.jpg"} width="28dp" height="20dp"/>}
+                                    {index % 2 === 0 ? <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        // opacity: open ? 1 : 0
+                                    }}
+                                >
+                                    <GoogleIcon></GoogleIcon>
+                                </ListItemIcon> : <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        // opacity: open ? 1 : 0
+                                    }}
+                                >
+                                    <CloudIcon></CloudIcon>
+                                </ListItemIcon>}
                                 </ListItemIcon>
                                 <ListItemText primaryTypographyProps={{fontSize: '15px'}} 
  primary={text} sx={{ opacity: open ? 1 :0 }} />
@@ -222,9 +262,20 @@ export default function MiniDrawer(props) {
                                     minHeight: 48,
                                     justifyContent: open ? 'initial' : 'center',
                                     px: 1.5,
-                                    backgroundColor: open ? "#E1E1E1" : '' , 
+                                    // backgroundColor: open ? "#E1E1E1" : '' , 
+                                    backgroundColor:"#E1E1E1" , 
                                 }}
                             >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        // opacity: open ? 1 : 0
+                                    }}
+                                >
+                                    <InsightsIcon></InsightsIcon>
+                                </ListItemIcon>
                                 <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
                             </ListItemButton>
                         </ListItem>
@@ -246,12 +297,23 @@ export default function MiniDrawer(props) {
                                                     navigateSharingChanges
                                         }
                                 >
+                                    <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        // opacity: open ? 1 : 0
+                                    }}
+                                >
+                                    <FolderOpenIcon></FolderOpenIcon>
+                                </ListItemIcon>
                                     <ListItemText primaryTypographyProps={{fontSize: '15px'}} primary={text}
                                                   sx={{opacity: open ? 1 : 0}}/>
                                 </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
+                <Divider />
                 {['Setting'].map((text, index) => (
                     <ListItem key={text} disablePadding sx={{ pt : 1, display: 'block' }}>
                         <ListItemButton
@@ -259,9 +321,20 @@ export default function MiniDrawer(props) {
                                 minHeight: 48,
                                 justifyContent: open ? 'initial' : 'center',
                                 px: 1.5,
-                                backgroundColor: open ? "#E1E1E1" : '' ,
+                                // backgroundColor: open ? "#E1E1E1" : '' ,
+                                backgroundColor: "#E1E1E1" ,
                             }}
                         >
+                            <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        // opacity: open ? 1 : 0
+                                    }}
+                                >
+                                    <SettingsIcon></SettingsIcon>
+                                </ListItemIcon>
                             <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
                         </ListItemButton>
                     </ListItem>
@@ -276,7 +349,18 @@ export default function MiniDrawer(props) {
                                         px: 1.5,
                                     }}
                                     onClick={ text === "Access Control Policy" ? navigateAccessControl :navigateMyProfile }
-                                ><ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
+                                >
+                                    <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        // opacity: open ? 1 : 0
+                                    }}
+                                >
+                                    <PermIdentityIcon></PermIdentityIcon>
+                                </ListItemIcon>
+                                <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
                                 </ListItemButton>
                         </ListItem>
                     ))}

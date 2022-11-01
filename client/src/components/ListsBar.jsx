@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
 import api from '../api/api';
 import ColorRadioButtons from "./CreateSnapshot";
+import AddRequirement from "./AddRequirement";
 
 // This is for the content on the User Profile page.
 // It manages all of the Table of requirement, snapshot and recent query
@@ -39,8 +40,11 @@ const accessDataTable = <DataTable/>
   ];
 
 export default function ColumnMenuGrid( props) {
-    console.log(props.dataSet);
-    const accessDataTable = <DataTable dataSet={props.dataSet}/>
+    const [openModal, setOpenModal] = React.useState(false);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+
+    const accessDataTable = <AddRequirement opdataSet={props.dataSet} onClick={handleCloseModal}/>
     const columns = [
         { field: 'id', headerName: 'Index', width: 90 ,editable: true },
         {
@@ -64,9 +68,7 @@ export default function ColumnMenuGrid( props) {
                 </strong>
             ),}
     ];
-    const [openModal, setOpenModal] = React.useState(false);
-    const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
+
     console.log(props.dataSet);
     for(let i = 0; i < props.dataSet.length; i++)
     {
@@ -106,7 +108,6 @@ export default function ColumnMenuGrid( props) {
         <div style={{display:"inline-flex"}}>
             <br/>
             <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Manage Access Control</Button>
-
             <BasicModal title={"Add Requirement"} open={openModal} handleClose={handleCloseModal}  >{accessDataTable}</BasicModal>
 
         </div>
