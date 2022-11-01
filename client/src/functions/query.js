@@ -116,7 +116,7 @@ function deserializeSearchQuery(sq) {
     if (!sq["children"]) {
         if (sq["negative"])
             s += "-";
-        s += sq["operator"] + ":" + "\"" + sq["argument"] + "\"";
+        s += sq["operator"] + ":\"" + sq["argument"] + "\"";
         return s;
     }
 
@@ -129,4 +129,198 @@ function deserializeSearchQuery(sq) {
     return "(" + s + ")";
 }
 
-export { serializeSearchQuery, deserializeSearchQuery };
+// Returns a set of files within a snapshot that satisfy the given search query
+function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
+    let set = new Set();
+    let arr = [];
+    let regex = new RegExp();
+    if (sq.operator && driveType === "microsoft") { // checks if the search query is a single operator for OneDrive
+        switch (sq.operator) {
+            case "drive":
+                arr = snapshot.filter(file => {
+                    let drive = file.parentReference.path.split("/")[1];
+                    return drive.toLowerCase() === sq.argument.toLowerCase();
+                });
+                return new Set(arr);
+
+            case "owner":
+                arr = snapshot.filter(file => {
+                    for (const permission of file.permissions.value) {
+                        if (permission.roles.includes("owner") && permission.grantedToV2.user.email.toLowerCase() === sq.argument.toLowerCase())
+                            return true;
+                    };
+                    return false;
+                });
+                return new Set(arr);
+
+            case "creator":
+                arr = snapshot.filter(file => {
+                    return file.createdBy.user.email.toLowerCase() === sq.argument.toLowerCase();
+                });
+                return new Set(arr);
+
+            case "from":
+                arr = snapshot.filter(file => {
+                    return file.shared?.sharedBy?.user.email.toLowerCase() === sq.argument.toLowerCase();
+                });
+                return new Set(arr);
+
+            case "to":
+                arr = snapshot.filter(file => {
+                    for (const permission of file.permissions.value) {
+                        if (!permission.inheritedFrom && permission.grantedToIdentitiesV2) {
+                            for (const user of permission.grantedToIdentitiesV2) {
+                                if (user.user.email.toLowerCase() === sq.argument.toLowerCase()) return true;
+                            }
+                        }
+                    };
+                    return false;
+                });
+                return new Set(arr);
+            
+            case "readable":
+                arr = snapshot.filter(file => {
+                    for (const permission of file.permissions.value) {
+                        if (permission.roles.includes("read")) {
+                            for (const user of permission.grantedToIdentitiesV2) {
+                                if (user.user.email.toLowerCase() === sq.argument.toLowerCase()) return true;
+                            }
+                        }
+                    };
+                    return false;
+                });
+                return new Set(arr);
+
+            case "writable":
+                arr = snapshot.filter(file => {
+                    for (const permission of file.permissions.value) {
+                        if (permission.roles.includes("write")) {
+                            for (const user of permission.grantedToIdentitiesV2) {
+                                if (user.user.email.toLowerCase() === sq.argument.toLowerCase()) return true;
+                            }
+                        }
+                    };
+                    return false;
+                });
+                return new Set(arr);
+
+            case "sharable":
+                arr = snapshot.filter(file => {
+                    for (const permission of file.permissions.value) {
+                        if (permission.link.type === "edit" && permission.grantedToV2.user.email === sq.argument)
+                            return true;
+                    };
+                    return false;
+                });
+                return new Set(arr);
+
+            case "name":
+                regex = new RegExp(sq.argument);
+                arr = snapshot.filter(file => {
+                    return regex.test(file.name);
+                });
+                return new Set(arr);
+        
+            case "inFolder":
+                regex = new RegExp(sq.argument);
+                arr = snapshot.filter(file => {
+                    let folders = file.parentReference.path.split("/");
+                    let parent = folders[folders.length - 1];
+                    return regex.test(parent);
+                });
+                return new Set(arr);
+
+            case "folder":
+                regex = new RegExp(sq.argument);
+                console.log(regex);
+                arr = snapshot.filter(file => {
+                    let folders = file.parentReference.path.split("/");
+                    for (const folder of folders) {
+                        if (regex.test(folder)) {
+                            console.log(folder);
+                            return true;
+                        }
+                    };
+                    return false;
+                });
+                return new Set(arr);
+
+            case "path":
+                arr = snapshot.filter(file => {
+                    return file.parentReference.path.includes(sq.argument);
+                });
+                return new Set(arr);
+
+            case "sharing":
+                if (sq.argument === "none")
+                    arr = snapshot.filter(file => {
+                        return !file.shared;
+                    });
+                else if (sq.argument === "anyone")
+                    arr = snapshot.filter(file => {
+                        return file.shared?.scope === "anonymous";
+                    });
+                else if (sq.argument === "individual")
+                    arr = snapshot.filter(file => {
+                        return file.shared?.scope === "users";
+                    });
+                else if (sq.argument === "domain")
+                    arr = snapshot.filter(file => {
+                        return file.shared?.scope === "organization";
+                    });
+                return new Set(arr);
+            
+            default:
+                return new Set();
+        }
+    } else if (sq.operator && driveType === "google") { // checks if the search query is a single operator for Google Drive
+
+    }
+
+    let sets = [];
+    for (const child of sq.children) {
+        set = filterSnapshotBySearchQuery(snapshot, child, driveType);
+        sets.push(set)
+    }
+
+    let result;
+    if (sq.logicalOp === "and") {
+        result = new Set(snapshot); // initialize to universal set since this is an intersection
+        sets.forEach(set => {
+            result = intersect(result, set);
+        });
+    } else {
+        result = new Set(); // initialize to empty set since this is a union
+        sets.forEach(set => {
+            result = union(result, set);
+        });
+    }
+
+    return result;
+}
+
+// Returns the union of two sets
+function union(s1, s2) {
+    let union = new Set();
+    for (const file of s1) {
+        if (!union.has(file))
+            union.add(file);
+    }
+    for (const file of s2) {
+        if (!union.has(file))
+            union.add(file);
+    }
+    return union;
+}
+
+// Returns the intersection of two sets
+function intersect(s1, s2) {
+    let intersect = new Set();
+    for (const file of s1) {
+        if (s2.has(file))
+            intersect.add(file);
+    }
+    return intersect;
+}
+
+export { serializeSearchQuery, deserializeSearchQuery, filterSnapshotBySearchQuery };
