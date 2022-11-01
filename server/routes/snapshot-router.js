@@ -176,8 +176,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
 
         const members = $('a[href^="mailto:"]');
 
-        if(!members.length)
-        return res.status(401).json({success: false, message: "Invalid HTML file"});
+        if(!members.length) return res.status(401).json({success: false, message: "Invalid HTML file"});
 
         members.each((index, element) => membersList.push($(element).attr("href").replace("mailto:", "")));
 
