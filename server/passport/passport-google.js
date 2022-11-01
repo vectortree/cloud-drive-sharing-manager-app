@@ -10,6 +10,7 @@ const strategy = new GoogleStrategy({
   },
   function(accessToken, refreshToken, otherTokenDetails, profile, cb) {
     // On successful authentication, save tokens and find or create user profile in database
+    console.log(profile);
     let tokens = {
         access_token: accessToken,
         refresh_token: refreshToken,

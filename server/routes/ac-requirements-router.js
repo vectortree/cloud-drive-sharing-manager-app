@@ -29,7 +29,7 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
             allowedWriters,
             deniedReaders,
             deniedWriters } = req.body;
-
+        
         // Check that the provided search query is non-null
         if(!searchQuery) return res.status(401).json({success: false, message: "Invalid data format"});
 

@@ -193,7 +193,7 @@ export default function AddRequirement(props) {
                 }
             }
                 const searchQuery = QueryType + ":" + QueryName;
-            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReaders:allowedReaderArray, allowedWriters: allowedWriter};
+            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReaders:allowedReaderArray, allowedWriters: allowedWriter, deniedReaders: [], deniedWriters: []};
             console.log(accessControlData);
             createAccessControlRequirement(accessControlData);
             props.onClick();
