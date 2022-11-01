@@ -163,39 +163,29 @@ export default function AddRequirement(props) {
 
 
     const handleChange = (event) => {setQueryType(event.target.value);};
-    const handleSavePerson = (newRow) => () => {
-            deleteUser(newRow);
+    const handleSavePerson = (newRow) => {
+            // deleteUser(newRow);
             console.log(newRow);
             setDataState((prevRows) => {
-                // const newData = prevRows.find((row) => row.id === newRow.id);
-                return [...prevRows, {id: newRow.id, Email: newRow.Email, ReadAccess: newRow.Read, WriteAccess: false}];
+                const newData = prevRows.map( (row)=> row.id === newRow.id ? newRow : row);
+                return newData;
             })
         };
 
-    const handleAddPerson = React.useCallback(
-        () => () => {
+    const handleAddPerson = () => {
                     setDataState((prevRows) => {
                         // const newData = prevRows.find((row) => row.id === newRow.id);
                         return [...prevRows, {id: prevRows.length, Email: "", ReadAccess: false, WriteAccess: false}];
                     });
             }
-    );
-    // const {
-    //     name,
-    //     searchQuery,
-    //     allowedReaders,
-    //     allowedWriters,
-    //     deniedReaders,
-    //     deniedWriters } = req.body;
-    const deleteUser = React.useCallback(
-        (id) => () => {
+
+    const deleteUser = (id) => {
             console.log(id);
             setTimeout(() => {
                 setDataState((prevRows) => prevRows.filter((row) => row.id !== id));
             });
-        },
-        [],
-    );
+        }
+
     const mutateRow = useFakeMutation();
 
     const [snackbar, setSnackbar] = React.useState(null);
@@ -204,6 +194,8 @@ export default function AddRequirement(props) {
 
     const processRowUpdate = React.useCallback(
         async (newRow) => {
+            console.log(newRow);
+            handleSavePerson(newRow);
             // Make the HTTP request to save in the backend
             const response = await mutateRow(newRow);
             setSnackbar({ children: 'User successfully saved', severity: 'success' });
@@ -253,15 +245,6 @@ export default function AddRequirement(props) {
 
     const handleCellKeyDown = React.useCallback(
         (params, event) => {
-            const row = event.currentTarget.parentElement;
-            // const id = row.dataset.id;
-            // const field = event.currentTarget.dataset.field;
-            // const email = row.getElementsByClassName("MuiInputBase-input").item(id).value;
-            // console.log("row "+ row + "id " + id + "field " + field + "email " + email);
-            // setDataState((prevRows) => {
-            //     const rowToDuplicate = prevRows.find((row) => row.id === id);
-            //     return [...prevRows, { ...rowToDuplicate, id: Date.now() }];
-            // });
             if (cellMode === 'edit') {
                 // Prevents calling event.preventDefault() if Tab is pressed on a cell in edit mode
                 event.defaultMuiPrevented = true;
@@ -297,12 +280,12 @@ export default function AddRequirement(props) {
             field: 'actions',
             type: 'actions',
             width: 80,
-            headerName: <AddCircleOutlineIcon onClick={handleAddPerson()}/>,
+            headerName: <AddCircleOutlineIcon onClick={handleAddPerson}/>,
             getActions: (params) => [
                 <GridActionsCellItem
                     icon={<DeleteIcon />}
                     label="Delete"
-                    onClick={deleteUser(params.id)}
+                    onClick={()=>deleteUser(params.id)}
                 />,
 
             ],
