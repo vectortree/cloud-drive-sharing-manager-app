@@ -176,7 +176,7 @@ export default function AddRequirement(props) {
             });
         }
     const submit = () =>{
-        
+
         if(requirementName ==='' || DataState.length === 0 || QueryType === '' || QueryName === '')
         {
             setOpenError(true);
@@ -193,7 +193,7 @@ export default function AddRequirement(props) {
                 }
             }
                 const searchQuery = QueryType + ":" + QueryName;
-            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReader:allowedReaderArray, allowedWriter: allowedWriter};
+            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReaders:allowedReaderArray, allowedWriters: allowedWriter};
             console.log(accessControlData);
             createAccessControlRequirement(accessControlData);
             props.onClick();
