@@ -37,6 +37,7 @@ app.use(passport.session());
 
 app.use(require("./routes/auth-router"));
 app.use(require("./routes/ac-requirements-router"));
+app.use(require("./routes/query-history-router"));
 app.use(require("./routes/snapshot-router"));
   
 app.listen(port, () => {

@@ -14,7 +14,7 @@ passport.authenticate('microsoft', { scope: ['user.read', 'files.read'], accessT
 router.get('/auth/microsoft/callback',
   passport.authenticate('microsoft', { successRedirect: process.env.CLIENT_URL, failureRedirect: '/auth/microsoft' }));
 
-router.get('/getuserprofile', (req, res) => {
+router.get('/getuserprofile', async (req, res) => {
     if(req.user) {
       // Make a copy of user profile object before sending to client
       let userProfile = JSON.parse(JSON.stringify(req.user));
@@ -25,7 +25,7 @@ router.get('/getuserprofile', (req, res) => {
     return res.status(401).json({success: true, profile: null});
 });
 
-router.get('/logout', (req, res) => {
+router.get('/logout', async (req, res) => {
     if(req.user) {
         req.logout(function(err) {
             if(err) return next(err);

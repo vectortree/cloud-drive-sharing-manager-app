@@ -12,6 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PropTypes from 'prop-types';
+import {createAccessControlRequirement} from "../api/api";
 
 function EditToolbar(props) {
     const { selectedCellParams, cellMode, cellModesModel, setCellModesModel } = props;
@@ -49,7 +50,7 @@ function EditToolbar(props) {
         // Keep the focus in the cell
         event.preventDefault();
     };
-    
+
     return (
         <Box
             sx={{
@@ -174,7 +175,30 @@ export default function AddRequirement(props) {
                 setDataState((prevRows) => prevRows.filter((row) => row.id !== id));
             });
         }
+    const submit = () =>{
 
+        if(requirementName ==='' || DataState.length === 0 || QueryType === '' || QueryName === '')
+        {
+            setOpenError(true);
+        }else{
+            setOpenSuccess(true);
+            let allowedReaderArray =[];
+            let allowedWriter =[];
+            for( let i = 0; i < DataState.length; i++){
+                if(DataState[i].ReadAccess == true){
+                    allowedReaderArray.push(DataState[i].Email);
+                }
+                if(DataState[i].WriteAccess == true){
+                    allowedWriter.push(DataState[i].Email);
+                }
+            }
+                const searchQuery = QueryType + ":" + QueryName;
+            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReaders:allowedReaderArray, allowedWriters: allowedWriter};
+            console.log(accessControlData);
+            createAccessControlRequirement(accessControlData);
+            props.onClick();
+        }
+    }
     const mutateRow = useFakeMutation();
     const processRowUpdate = React.useCallback(
         async (newRow) => {
@@ -321,7 +345,7 @@ export default function AddRequirement(props) {
                 </div>
             </div>
             <div>
-                <Button variant="contained" color="success" style={{marginLeft:"10px", marginTop:"10px"}}>
+                <Button variant="contained" color="success" style={{marginLeft:"10px", marginTop:"10px"}} onClick={submit}>
                     Submit
                 </Button>
             </div>

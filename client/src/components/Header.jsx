@@ -25,6 +25,7 @@ import AlignVerticalCenterIcon from '@mui/icons-material/AlignVerticalCenter';
 import SearchQueryModal from "./CreateSearchQuery";
 import BasicModal from "./Modal";
 import Button from "@mui/material/Button";
+import { serializeSearchQuery, deserializeSearchQuery } from "../functions/query"
 
 // This is for the Header which is the very top of our website
 
@@ -73,6 +74,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function PrimarySearchAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [searchQuery, setSearchQuery] = React.useState("");
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const navigate = useNavigate()
 
@@ -118,6 +120,18 @@ export default function PrimarySearchAppBar(props) {
                 }
             });
         }
+    }
+
+    const handleSearchQueryChange = (event) => {
+        setSearchQuery(event.target.value);
+    }
+
+    const handleSubmitSearchQuery = () => {
+        //console.log(searchQuery.trim());
+        const parsedSQ = serializeSearchQuery(searchQuery.trim());
+        console.log(parsedSQ);
+        const textualSQ = deserializeSearchQuery(parsedSQ);
+        console.log(textualSQ);
     }
 
     const menuId = 'primary-search-account-menu';
@@ -195,12 +209,19 @@ export default function PrimarySearchAppBar(props) {
                         onClick={navigateHome}
                     />
                     <Search>
-                        <SearchIconWrapper>
+                        <IconButton
+                            size="medium"
+                            edge="end"
+                            aria-label="submit search query"
+                            onClick={handleSubmitSearchQuery}
+                            color="black"
+                        >
                             <SearchIcon />
-                        </SearchIconWrapper>
+                        </IconButton>
                         <StyledInputBase
                             placeholder="Search…"
                             inputProps={{ 'aria-label': 'search' }}
+                            onChange={(e) => handleSearchQueryChange(e)}
                             style={{
                                 width: "50ch",
                             }}
