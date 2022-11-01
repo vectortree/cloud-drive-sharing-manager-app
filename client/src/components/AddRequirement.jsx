@@ -12,6 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PropTypes from 'prop-types';
+import {createAccessControlRequirement} from "../api/api";
 
 function EditToolbar(props) {
     const { selectedCellParams, cellMode, cellModesModel, setCellModesModel } = props;
@@ -180,6 +181,20 @@ export default function AddRequirement(props) {
             setOpenError(true);
         }else{
             setOpenSuccess(true);
+            let allowedReaderArray =[];
+            let allowedWriter =[];
+            for( let i = 0; i < DataState.length; i++){
+                if(DataState[i].ReadAccess == true){
+                    allowedReaderArray.push(DataState[i].Email);
+                }
+                if(DataState[i].WriteAccess == true){
+                    allowedWriter.push(DataState[i].Email);
+                }
+            }
+                const searchQuery = QueryType + ":" + QueryName;
+            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReader:allowedReaderArray, allowedWriter: allowedWriter};
+            console.log(accessControlData);
+            createAccessControlRequirement(accessControlData);
             props.onClick();
         }
     }
