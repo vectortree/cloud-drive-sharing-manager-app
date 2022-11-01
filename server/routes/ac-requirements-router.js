@@ -41,7 +41,7 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         
         // Must have at least one nonempty access control set (e.g., AR, AW, DR, DW)
         if(allowedReaders === [] && allowedWriters === [] && deniedReaders === [] && deniedWriters === [])
-            return res.status(401).json({success: false, message: "Invalid data format"});
+            return res.status(401).json({success: false, message: "Must specify least one nonempty access control set"});
 
         // Check that there are no contradictions in the access control requirement
         // The following pairs of sets must not have a nonempty intersection:
@@ -52,7 +52,7 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         let intersection3 = allowedWriters.filter(x => deniedWriters.includes(x));
 
         if(intersection1.length > 0 || intersection2.length > 0 || intersection3.length > 0)
-            return res.status(401).json({success: false, message: "Invalid data format"});
+            return res.status(401).json({success: false, message: "The following pairs of sets must be disjoint:\nAllowed Readers and Denied Readers\nAllowed Writers and Denied Readers\nAllowed Writers and Denied Writers"});
         
         // Note: An access control set must be a list (of Strings)
 
@@ -133,7 +133,7 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         
         // Must have at least one nonempty access control set (e.g., AR, AW, DR, DW)
         if(allowedReaders === [] && allowedWriters === [] && deniedReaders === [] && deniedWriters === [])
-            return res.status(401).json({success: false, message: "Invalid data format"});
+        return res.status(401).json({success: false, message: "Must specify least one nonempty access control set"});
 
         // Check that there are no contradictions in the access control requirement
         // The following pairs of sets must not have a nonempty intersection:
@@ -144,7 +144,7 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         let intersection3 = allowedWriters.filter(x => deniedWriters.includes(x));
 
         if(intersection1.length > 0 || intersection2.length > 0 || intersection3.length > 0)
-            return res.status(401).json({success: false, message: "Invalid data format"});
+            return res.status(401).json({success: false, message: "The following pairs of sets must be disjoint:\nAllowed Readers and Denied Readers\nAllowed Writers and Denied Readers\nAllowed Writers and Denied Writers"});
         
         // Check that provided index is valid
         if(req.params.id < 0 || req.params.id >= userProfile.accessControlRequirements.length) {
