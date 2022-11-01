@@ -40,8 +40,10 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
             return res.status(401).json({success: false, message: "Invalid data format"});
         
         // Must have at least one nonempty access control set (e.g., AR, AW, DR, DW)
-        if(allowedReaders === [] && allowedWriters === [] && deniedReaders === [] && deniedWriters === [])
+        if(allowedReaders.length == 0 && allowedWriters.length == 0 && deniedReaders.length == 0 && deniedWriters.length == 0) {
+            console.log("All access control sets are empty");
             return res.status(401).json({success: false, message: "Must specify least one nonempty access control set"});
+        }
 
         // Check that there are no contradictions in the access control requirement
         // The following pairs of sets must not have a nonempty intersection:
@@ -51,9 +53,10 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         let intersection2 = allowedWriters.filter(x => deniedReaders.includes(x));
         let intersection3 = allowedWriters.filter(x => deniedWriters.includes(x));
 
-        if(intersection1.length > 0 || intersection2.length > 0 || intersection3.length > 0)
+        if(intersection1.length > 0 || intersection2.length > 0 || intersection3.length > 0) {
+            console.log("Contradiction detected");
             return res.status(401).json({success: false, message: "The following pairs of sets must be disjoint:\nAllowed Readers and Denied Readers\nAllowed Writers and Denied Readers\nAllowed Writers and Denied Writers"});
-        
+        }
         // Note: An access control set must be a list (of Strings)
 
         // Note: The front-end will validate the search query before making a request to this endpoint
@@ -131,9 +134,10 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         if(!allowedReaders || !allowedWriters || !deniedReaders || !deniedWriters)
             return res.status(401).json({success: false, message: "Invalid data format"});
         
-        // Must have at least one nonempty access control set (e.g., AR, AW, DR, DW)
-        if(allowedReaders === [] && allowedWriters === [] && deniedReaders === [] && deniedWriters === [])
+        if(allowedReaders.length == 0 && allowedWriters.length == 0 && deniedReaders.length == 0 && deniedWriters.length == 0) {
+            console.log("All access control sets are empty");
             return res.status(401).json({success: false, message: "Must specify least one nonempty access control set"});
+        }
 
         // Check that there are no contradictions in the access control requirement
         // The following pairs of sets must not have a nonempty intersection:
@@ -143,8 +147,10 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         let intersection2 = allowedWriters.filter(x => deniedReaders.includes(x));
         let intersection3 = allowedWriters.filter(x => deniedWriters.includes(x));
 
-        if(intersection1.length > 0 || intersection2.length > 0 || intersection3.length > 0)
+        if(intersection1.length > 0 || intersection2.length > 0 || intersection3.length > 0) {
+            console.log("Contradiction detected");
             return res.status(401).json({success: false, message: "The following pairs of sets must be disjoint:\nAllowed Readers and Denied Readers\nAllowed Writers and Denied Readers\nAllowed Writers and Denied Writers"});
+        }
         
         // Check that provided index is valid
         if(req.params.id < 0 || req.params.id >= userProfile.accessControlRequirements.length) {
