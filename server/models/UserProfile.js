@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Create schema for User Profile
 const UserProfileSchema = new Schema({
     // User
     user: {
@@ -39,10 +38,7 @@ const UserProfileSchema = new Schema({
     accessControlRequirements: {
         type: [{
             name: String,
-            searchQuery: [{
-                operator: String,
-                argument: String
-            }],
+            searchQuery: Object,
             allowedReaders: [String],
             allowedWriters: [String],
             deniedReaders: [String],
@@ -52,12 +48,9 @@ const UserProfileSchema = new Schema({
         }],
         required: false
     },
-    // List of search queries
+    // List of search queries (serialized as objects)
     searchQueryHistory: {
-        type: [[{
-            operator: String,
-            argument: String
-        }]],
+        type: [Object],
         required: false
     }
 });

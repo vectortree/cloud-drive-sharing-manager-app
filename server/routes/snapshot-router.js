@@ -98,7 +98,7 @@ router.post('/createfilesharingsnapshot', (req, res) => {
                 const files = response1.data.files;
                 // Get file metadata and permissions
                 files.map((file) => {
-                    googleDrive.files.get({fileId: file.id, fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, permissions"}, (err, response2) => {
+                    googleDrive.files.get({fileId: file.id, fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, sharingUser, owners, lastModifyingUser, permissions"}, (err, response2) => {
                         if(err) {
                             console.log(err);
                             return res.status(500).json({success: false, message: "Error"});
