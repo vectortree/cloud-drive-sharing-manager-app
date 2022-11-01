@@ -19,6 +19,9 @@ export const createGroupMembershipSnapshot = () => api.post('/creategroupmembers
 export const createAccessControlRequirement = (payload) => api.post('/createaccesscontrolrequirement', payload);
 export const editAccessControlRequirement = (id, payload) => api.put(`/editaccesscontrolrequirement/${id}`, payload);
 export const removeAccessControlRequirement = (id) => api.delete(`/removeaccesscontrolrequirement/${id}`);
+export const addSearchQuery = (payload) => api.post('/addsearchquery', payload);
+export const clearSearchQueries = () => api.delete('clearsearchqueries');
+export const removeSearchQuery = (id) => api.delete(`/removesearchquery/${id}`);
 export const getUserProfile = () => api.get('/getuserprofile');
 export const logout = () => api.get('/logout');
 
@@ -29,6 +32,9 @@ const requests = {
     createAccessControlRequirement,
     editAccessControlRequirement,
     removeAccessControlRequirement,
+    addSearchQuery,
+    clearSearchQueries,
+    removeSearchQuery,
     getUserProfile,
     logout
 };

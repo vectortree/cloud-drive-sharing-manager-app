@@ -7,9 +7,10 @@ const UserProfile = require('../models/UserProfile');
 const refresh = require('passport-oauth2-refresh');
 const graph = require('../graph.js');
 const cheerio = require('cheerio');
+const validator = require('html-validator');
 const fs = require('fs');
 
-function sendUserProfile(res, userProfile) {
+async function sendUserProfile(res, userProfile) {
     // Make a copy of user profile object before sending to client
     const profile = JSON.parse(JSON.stringify(userProfile));
     // No need to send token data to front-end
@@ -37,7 +38,7 @@ async function getDriveItems(accessToken, path) {
     }));
 }
 
-router.post('/createfilesharingsnapshot', (req, res) => {
+router.post('/createfilesharingsnapshot', async (req, res) => {
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
@@ -135,13 +136,14 @@ router.post('/createfilesharingsnapshot', (req, res) => {
     });
 });
 
-router.post('/creategroupmembershipsnapshot', (req, res) => {
+router.post('/creategroupmembershipsnapshot', async (req, res) => {
     // Note: This is only supported for Google Drive.
     // The user enters the name and email address of a Google group.
     // In addition, the user uploads an HTML file (which is obtained by
     // manually visiting and saving the group's Members page).
     // Note: In principle, the timestamp should be the time when the HTML file was saved.
-    // The server-side will generate an approximate timestamp for the user.
+    // The server-side will generate an approximate timestamp for the user, if none specified by the user.
+    // In the front-end, the timestamp field is optional.
     // In the back-end, the system extracts the group membership information
     // from this HTML file and saves it as a snapshot with the following properties:
     // Snapshot name, group name, group email address, timestamp (date), and list of members
@@ -155,6 +157,7 @@ router.post('/creategroupmembershipsnapshot', (req, res) => {
             name,
             groupName,
             groupAddress,
+            timestamp,
             htmlFile } = req.body;
 
         // Group name, group email address, and HTML file must be specified
@@ -162,18 +165,21 @@ router.post('/creategroupmembershipsnapshot', (req, res) => {
             return res.status(401).json({success: false, message: "Invalid data format"});
         
         // TODO: Validate HTML file
+        // The system should only be able to scrape the membership of a group if the user has
+        // permission to see the email addresses of the group members
 
         // Extract group membership information from the HTML file and store it in an array
         let membersList = [];
 
         // Load the HTML markup using cheerio.load
         const $ = cheerio.load(htmlFile);
-        // Note: Due to obfuscation practices by Google to hide business logic,
-        // the HTML class attribute is subject to change at any moment
 
-        // Select all elements with class "LnLepd"
-        const members = $(".LnLepd");
-        members.each((index, element) => membersList.push($(element).text()));
+        const members = $('a[href^="mailto:"]');
+
+        if(!members.length)
+        return res.status(401).json({success: false, message: "Invalid HTML file"});
+
+        members.each((index, element) => membersList.push($(element).attr("href").replace("mailto:", "")));
 
         // Create group-membership snapshot
         console.log("Creating group-membership snapshot");
@@ -184,13 +190,17 @@ router.post('/creategroupmembershipsnapshot', (req, res) => {
         // If name specified, replace snapshotName with user-specified name
         if(name) snapshotName = name;
 
-        // Timestamp of snapshot
+        // This is for timestamp fields related to the snapshot itself
         let currentDate = new Date();
+        // If timestamp not specified by user, use an approximate timestamp
+        let stamp = currentDate;
+        if(timestamp) stamp = timestamp;
 
         const snapshot = {
             name: snapshotName,
             groupName: groupName,
             groupAddress: groupAddress,
+            timestamp: stamp,
             createdAt: currentDate,
             updatedAt: currentDate,
             members: membersList

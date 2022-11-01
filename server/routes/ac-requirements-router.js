@@ -8,7 +8,7 @@
 const router = require("express").Router();
 const UserProfile = require('../models/UserProfile');
 
-function sendUserProfile(res, userProfile) {
+async function sendUserProfile(res, userProfile) {
     // Make a copy of user profile object before sending to client
     const profile = JSON.parse(JSON.stringify(userProfile));
     // No need to send token data to front-end
@@ -16,7 +16,7 @@ function sendUserProfile(res, userProfile) {
     return res.status(200).json({success: true, profile: profile});
 }
 
-router.post('/createaccesscontrolrequirement', (req, res) => {
+router.post('/createaccesscontrolrequirement', async (req, res) => {
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
@@ -72,7 +72,7 @@ router.post('/createaccesscontrolrequirement', (req, res) => {
     });
 });
 
-router.delete('/removeaccesscontrolrequirement/:id', (req, res) => {
+router.delete('/removeaccesscontrolrequirement/:id', async (req, res) => {
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
@@ -90,7 +90,7 @@ router.delete('/removeaccesscontrolrequirement/:id', (req, res) => {
     });
 });
 
-router.put('/editaccesscontrolrequirement/:id', (req, res) => {
+router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
     // Note: This is pretty much the same as creating an access control requirement,
     // except that it replaces the selected access control requirement with a new one
     // based on the new form values
