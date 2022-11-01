@@ -9,13 +9,36 @@ export default function AnalysisComponent(props) {
         maxColumns: 10,
     });
 
+    const columns = [
+        {field: 'Title', headerName: 'Title', width: 400,editable: true,sortable: true,},
+        {field: 'Date', headerName: 'Date', width: 300,sortable: true,editable: true,},
+        {field: 'Owner', headerName: 'Owner', width: 250 ,editable: true,sortable: true,},
+        {field: 'Status', headerName: 'Status', width: 130 ,type:"boolean",editable: true,sortable: true,},
+        {field: 'Permission', headerName: 'Permission', width: 130 ,editable: true,sortable: true,},
+        // {
+        //     field: 'actions',
+        //     type: 'actions',
+        //     width: 80,
+        //     headerName: <AddCircleOutlineIcon onClick={handleAddPerson()}/>,
+        //     getActions: (params) => [
+        //         <GridActionsCellItem
+        //             icon={<DeleteIcon />}
+        //             label="Delete"
+        //             onClick={deleteUser(params.id)}
+        //         />,
+
+        //     ],
+        // },
+    ];
+
+
     return (
         <>
             <h3>{props.text}</h3>
         <div style={{ height: 600, width: '100%' }}>
             <DataGrid
                 {...data}
-                loading={loading}
+                columns={columns}
                 initialState={{
                     ...data.initialState,
                     filter: {
