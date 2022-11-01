@@ -1,4 +1,4 @@
-const operators = ["drive", "owner", "creator", "from", "to", "readable", "writable", "sharable", "name", "inFolder", "folder", "path", "sharing"]
+const operators = ["drive", "owner", "creator", "from", "to", "readable", "writable", "sharable", "name", "inFolder", "folder", "path", "sharing"];
 
 /* 
     This function parses a textual query into a tree data structure 
@@ -107,7 +107,7 @@ function serializeSearchQuery(s) {
 
 /* 
     This function takes a structured search query, sq, and deserializes it into a string 
-    that the user can undertand.
+    that the user can understand.
 */
 function deserializeSearchQuery(sq) {
     let s = "";
