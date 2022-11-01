@@ -273,8 +273,11 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
             default:
                 return new Set();
         }
-    } else if (sq.operator && driveType === "google") { // checks if the search query is a single operator for Google Drive
-
+    } 
+    
+    // TODO: Filter snapshots for Google Drive
+    else if (sq.operator && driveType === "google") { // checks if the search query is a single operator for Google Drive
+        return new Set();
     }
 
     let sets = [];
