@@ -184,6 +184,8 @@ export default function AddRequirement(props) {
             setOpenSuccess(true);
             let allowedReaderArray =[];
             let allowedWriter =[];
+            let DenyReadAccess =[];
+            let DenyWriteAccess =[];
             for( let i = 0; i < DataState.length; i++){
                 if(DataState[i].ReadAccess == true){
                     allowedReaderArray.push(DataState[i].Email);
@@ -191,9 +193,15 @@ export default function AddRequirement(props) {
                 if(DataState[i].WriteAccess == true){
                     allowedWriter.push(DataState[i].Email);
                 }
+                if(DataState[i].DenyReadAccess == true){
+                    DenyReadAccess.push(DataState[i].Email);
+                }
+                if(DataState[i].DenyWriteAccess == true){
+                    DenyWriteAccess.push(DataState[i].Email);
+                }
             }
                 const searchQuery = QueryType + ":" + QueryName;
-            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReaders:allowedReaderArray, allowedWriters: allowedWriter, deniedReaders: [], deniedWriters: []};
+            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReaders:allowedReaderArray, allowedWriters: allowedWriter, deniedReaders: DenyReadAccess, deniedWriters: DenyWriteAccess};
             console.log(accessControlData);
             createAccessControlRequirement(accessControlData);
             props.onClick();
@@ -242,8 +250,10 @@ export default function AddRequirement(props) {
 
     const columns = [
         {field: 'Email', headerName: 'Email', width: 250,editable: true,sortable: true,},
-        {field: 'ReadAccess', headerName: 'Read Allow', width: 130,type:"boolean",sortable: true,editable: true,},
-        {field: 'WriteAccess', headerName: 'Wright Allow', width: 130 ,type:"boolean",editable: true,sortable: true,},
+        {field: 'ReadAccess', headerName: 'AR', width: 80,type:"boolean",sortable: true,editable: true,},
+        {field: 'WriteAccess', headerName: 'AW', width: 80 ,type:"boolean",editable: true,sortable: true,},
+        {field: 'DenyReadAccess', headerName: 'DR', width: 80,type:"boolean",sortable: true,editable: true,},
+        {field: 'DenyWrightAccess', headerName: 'DW', width: 80 ,type:"boolean",editable: true,sortable: true,},
         {field: 'actions', type: 'actions', width: 80, headerName: <AddCircleOutlineIcon onClick={handleAddPerson}/>,
             getActions: (params) => [
                 <GridActionsCellItem

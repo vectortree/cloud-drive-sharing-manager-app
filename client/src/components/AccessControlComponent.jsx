@@ -4,13 +4,13 @@ import { DataGrid } from '@mui/x-data-grid';
 //Dummy Data
 const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'Name', headerName: 'Name', width: 200 },
-    { field: 'Query', headerName: 'Query', width: 200 },
-    {field: 'ReadAccess', headerName: 'ReadAccess', type: 'ReadAccess', width: 150,},
-    {field: 'WriteAccess', headerName: 'WriteAccess', type: 'WriteAccess', width: 180,},
-    {field: 'DenyReadAccess', headerName: 'DenyReadAccess', type: 'DenyReadAccess', width: 180,},
+    { field: 'name', headerName: 'Name', width: 200 },
+    { field: 'searchQuery', headerName: 'Query', width: 200 },
+    {field: 'allowedReaders', headerName: 'ReadAccess', type: 'ReadAccess', width: 150,},
+    {field: 'allowedWriters', headerName: 'WriteAccess', type: 'WriteAccess', width: 180,},
+    {field: 'deniedReaders', headerName: 'DenyReadAccess', type: 'DenyReadAccess', width: 180,},
     {
-        field: 'DenyWriteAccess',
+        field: 'deniedWriters',
         headerName: 'DenyWriteAccess',
         description: 'This column has a value getter and is not sortable.',
         sortable: false,
