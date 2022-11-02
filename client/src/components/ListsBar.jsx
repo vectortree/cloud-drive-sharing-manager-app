@@ -6,7 +6,7 @@ import {useEffect, useContext, useState} from "react"
 import BasicModal from "./Modal";
 import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
-import api from '../api/api';
+import api, {removeAccessControlRequirement} from '../api/api';
 import ColorRadioButtons from "./CreateSnapshot";
 import AddRequirement from "./AddRequirement";
 
@@ -31,7 +31,7 @@ const accessDataTable = <DataTable/>
             variant="outlined"
             size = 'small'
             sx={{ color : "black" }}
-            // onClick = {handleRemoveFileSnapshot}
+            // onClick = {(id)=>}
           >
             X
           </Button>
@@ -69,7 +69,7 @@ export default function ColumnMenuGrid( props) {
             ),}
     ];
 
-    console.log(props.dataSet);
+
     for(let i = 0; i < props.dataSet.length; i++)
     {
         props.dataSet[i].id = i;
@@ -80,6 +80,7 @@ export default function ColumnMenuGrid( props) {
     const deleteRequirement = React.useCallback(
       (id) => () => {
           console.log(id);
+          removeAccessControlRequirement(id);
           setTimeout(() => {
             setRequirementState((prevRows) => prevRows.filter((row) => row.id !== id));
           });
