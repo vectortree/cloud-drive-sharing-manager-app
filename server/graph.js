@@ -4,7 +4,7 @@ require('isomorphic-fetch');
 module.exports = {
     getDriveItemsPath: async function(accessToken, path) {
         const client = getAuthenticatedClient(accessToken);
-        const driveItems = await client.api(`/me${path}/children?$select=id, name, size, webUrl, createdDateTime, lastModifiedDateTime, parentReference, file, folder`).get();
+        const driveItems = await client.api(`/me${path}/children?$select=id, name, size, webUrl, createdDateTime, lastModifiedDateTime, shared, createdBy, parentReference, file, folder`).get();
 
         return driveItems;
     },

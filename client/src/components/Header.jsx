@@ -25,7 +25,7 @@ import AlignVerticalCenterIcon from '@mui/icons-material/AlignVerticalCenter';
 import SearchQueryModal from "./CreateSearchQuery";
 import BasicModal from "./Modal";
 import Button from "@mui/material/Button";
-import { serializeSearchQuery, deserializeSearchQuery } from "../functions/query"
+import { serializeSearchQuery, deserializeSearchQuery, filterSnapshotBySearchQuery } from "../functions/query"
 
 // This is for the Header which is the very top of our website
 
@@ -127,11 +127,12 @@ export default function PrimarySearchAppBar(props) {
     }
 
     const handleSubmitSearchQuery = () => {
-        //console.log(searchQuery.trim());
         const parsedSQ = serializeSearchQuery(searchQuery.trim());
         console.log(parsedSQ);
-        const textualSQ = deserializeSearchQuery(parsedSQ);
-        console.log(textualSQ);
+        if (!parsedSQ.error) {
+            const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[8].data, parsedSQ, userProfile.user.driveType);
+            console.log(filteredFiles);
+        }
     }
 
     const menuId = 'primary-search-account-menu';
@@ -259,7 +260,7 @@ export default function PrimarySearchAppBar(props) {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
-            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Query Builder"} ><SearchQueryModal onClick={handleCloseModal}/></BasicModal>
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Search Query"} ><SearchQueryModal onClick={handleCloseModal}/></BasicModal>
         </Box>
     );
 }
