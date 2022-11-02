@@ -11,8 +11,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { MuiChipsInput } from 'mui-chips-input'
-import Chip from "@material-ui/core/Chip";
+//import { MuiChipsInput } from 'mui-chips-input'
+//import Chip from "@material-ui/core/Chip";
 
 export default function SearchQueryModal(props) {
     const [selectedValue, setSelectedValue] = React.useState('a');

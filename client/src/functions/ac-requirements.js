@@ -219,6 +219,7 @@ function checkRequirements(currentSnapshot, requirements, driveType) {
     else if(driveType === "microsoft") {
 
     }
+    console.log(violations);
     return violations;
 }
 
