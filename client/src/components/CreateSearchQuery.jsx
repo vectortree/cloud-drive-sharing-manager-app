@@ -7,84 +7,153 @@ import Button from '@mui/material/Button';
 import { useContext } from 'react';
 import { AuthContext } from '../auth/auth';
 import api from '../api/api';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { MuiChipsInput } from 'mui-chips-input'
+import Chip from "@material-ui/core/Chip";
 
 export default function SearchQueryModal(props) {
     const [selectedValue, setSelectedValue] = React.useState('a');
+    const [queryString,setQueryString] = React.useState([]);
+    const [QueryType, setQueryType] = React.useState('');
+    const [QueryName, setQueryName] = React.useState('');
 
-    const { userProfile, setUserProfile } = useContext(AuthContext);
+    const [openSuccess, setOpenSuccess] = React.useState(false);
+    const [openError, setOpenError] = React.useState(false);
 
-    const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-    };
+    const handleQueryName = (event) =>{setQueryName(event.target.value);}
 
-    const handleCreateFileSnapshot = () => {
-        api.createFileSharingSnapshot().then((res) => {
-            if(res.data.profile) {
-                console.log(res);
-                setUserProfile(res.data.profile);
-                console.log("Created snapshot");
-            }
-        });
-        if(props.onClick) props.onClick()
+    const addingQuery = (event) => {
+        if(QueryType === "" || QueryName == ""){
+            handleErrorAlertOpen();
+        }else{
+            const query = "{" +QueryType + ":" + QueryName + "} ";
+            console.log(query)
+            // setQueryString(query);
+            setQueryString([...queryString, query])
+            handleSuccessAlertOpen();
+        }
     }
 
-    const controlProps = (item) => ({
-        checked: selectedValue === item,
-        onChange: handleChange,
-        value: item,
-        name: 'color-radio-button-demo',
-        inputProps: { 'aria-label': item },
-    });
+    const handleSuccessAlertOpen = () => {setOpenSuccess(true);};
+    const handleSuccessAlertClose = (event, reason) => {
+        if (reason === 'clickaway')return;
+        setOpenSuccess(false);
+    };
+    const handleErrorAlertOpen = () => {setOpenError(true);};
+    const handleErrorAlertClose = (event,reason) =>{
+        if (reason === 'clickaway') return;
+        setOpenError(false);
+    }
+
+    const handleChange = (event) => {setQueryType(event.target.value);};
+
+    const [inputValue, setInputValue] = React.useState('');
+    const [chips, setChips] = React.useState([])
+    const inputChange = ({target: {value}}) => {setInputValue(value)};
+    const handleKeyDown = ({key}) => {
+        console.log("check here")
+    if(key === 'Enter') {
+    setChips([...chips, inputValue])
+    }
+};
 
     return (
         <div>
-            <h3>Snapshot Type</h3>
             <div>
-            <Radio {...controlProps('c')} color="success" checked />
-                Take file sharing snapshot
-            </div>
-            <br/>
-            <br/>
-            {/* <div>
-            <Radio
-                {...controlProps('e')}
-                sx={{
-                    color: pink[800],
-                    '&.Mui-checked': {
-                        color: pink[600],
-                    },
+                <div style={{display:"inline-flex"}}>
+                <div style={{fontWeight: 500}}>
+                Current query : <b style={{color:"blue"}}>{queryString}</b>
+                    {/* <TextField
+                fullWidth
+                variant="outlined"
+                label="Query"
+                // value={inputValue}
+                onChange={inputChange}
+                multiline
+                InputProps={{
+                startAdornment: queryString.map((item) => (
+                    <Chip
+                    key={item}
+                    label={item}
+                    />
+                )),
                 }}
             />
-                Take group membership snapshot
+                    <br/> */}
+                </div>
             </div>
-            <h3>Snapshot Information</h3>
+            <div>    
+                <br/>
+                <h3 style={{margin:"0px"}}>Query Language</h3>
+            </div>
+            <div>
+                <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
+                    <InputLabel id="demo-select-small">QueryType</InputLabel>
+                    <Select
+                        required
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        value={QueryType}
+                        label="QueryType"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={"Drive"}>drive</MenuItem>
+                        <MenuItem value={"Owner"}>Owner</MenuItem>
+                        <MenuItem value={"Creator"}>Creator</MenuItem>
+                        <MenuItem value={"From"}>from</MenuItem>
+                        <MenuItem value={"To"}>to</MenuItem>
+                        <MenuItem value={"Readable"}>readable</MenuItem>
+                        <MenuItem value={"Writable"}>writable</MenuItem>
+                        <MenuItem value={"Sharable"}>sharable</MenuItem>
+                        <MenuItem value={"name"}>name</MenuItem>
+                        <MenuItem value={"inFolder"}>inFolder</MenuItem>
+                        <MenuItem value={"folder"}>folder</MenuItem>
+                        <MenuItem value={"path"}>path</MenuItem>
+                        <MenuItem value={"sharing"}>Sharing</MenuItem>
 
-            <Box
-                component="form"
-                sx={{
-                    '& .MuiTextField-root': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-            >
-                <div>
+                    </Select>
+                </FormControl>
                     <TextField
                         required
-                        id="outlined-required"
-                        label="Snapshot Name"
-                        defaultValue=""
+                        id="standard-required"
+                        label="Query"
+                        defaultValue={QueryName}
+                        onChange={handleQueryName}
+                        variant="standard"
                     />
+                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQuery}>
+                        Add
+                    </Button>
                 </div>
+                <br></br>
+            </div>
+            <h3 style={{margin:"0px"}}>Recent Query</h3>  
                 <div>
-                    <TextField
+                <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
+                    <InputLabel id="demo-select-small">Recent Query</InputLabel>
+                    <Select
                         required
-                        id="outlined-required"
-                        label="Group"
-                        defaultValue=""
-                    />
-                </div>
-            </Box> */}
-            <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateFileSnapshot}>
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        value={QueryType}
+                        label="Recent Query"
+                        onChange={handleChange}
+                        style={{ width: 600 }}
+                    >
+                        <MenuItem value={"RecentQuery1"}>groups : CSE416 </MenuItem>
+                        <MenuItem value={"RecentQuery2"}>Owner : JeongYoon</MenuItem>
+                        <MenuItem value={"RecentQuery3"}>Folder : HW2 </MenuItem>
+                    </Select>
+                </FormControl>
+                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQuery}>
+                        Add
+                    </Button>
+            </div>
+            <br></br>
+            <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}}>
                 Submit
             </Button>
         </div>
