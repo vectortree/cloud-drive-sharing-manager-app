@@ -282,15 +282,27 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     });
                 else if (sq.argument === "anyone")
                     arr = snapshot.filter(file => {
-                        return file.shared?.scope === "anonymous";
+                        for (const permission of file.permissions.value) {
+                            if (file.shared && permission.link?.scope === "anonymous")
+                                return true;
+                        };
+                        return false;
                     });
                 else if (sq.argument === "individual")
                     arr = snapshot.filter(file => {
-                        return file.shared?.scope === "users";
+                        for (const permission of file.permissions.value) {
+                            if (file.shared && permission.link?.scope === "users")
+                                return true;
+                        };
+                        return false;
                     });
                 else if (sq.argument === "domain")
                     arr = snapshot.filter(file => {
-                        return file.shared?.scope === "organization";
+                        for (const permission of file.permissions.value) {
+                            if (file.shared && permission.link?.scope === "organization")
+                                return true;
+                        };
+                        return false;
                     });
                 if (sq.negative)
                     return complement(new Set(snapshot), new Set(arr));

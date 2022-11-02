@@ -130,7 +130,7 @@ export default function PrimarySearchAppBar(props) {
         const parsedSQ = serializeSearchQuery(searchQuery.trim());
         console.log(parsedSQ);
         if (!parsedSQ.error) {
-            const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[8].data, parsedSQ, userProfile.user.driveType);
+            const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, userProfile.user.driveType);
             console.log(filteredFiles);
         }
     }
