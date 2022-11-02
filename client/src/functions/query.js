@@ -141,6 +141,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     let drive = file.parentReference.path.split("/")[1];
                     return drive.toLowerCase() === sq.argument.toLowerCase();
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "owner":
@@ -151,18 +153,24 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     };
                     return false;
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "creator":
                 arr = snapshot.filter(file => {
                     return file.createdBy.user.email.toLowerCase() === sq.argument.toLowerCase();
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "from":
                 arr = snapshot.filter(file => {
                     return file.shared?.sharedBy?.user.email.toLowerCase() === sq.argument.toLowerCase();
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "to":
@@ -176,6 +184,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     };
                     return false;
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
             
             case "readable":
@@ -189,6 +199,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     };
                     return false;
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "writable":
@@ -202,6 +214,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     };
                     return false;
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "sharable":
@@ -212,6 +226,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     };
                     return false;
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "name":
@@ -219,6 +235,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 arr = snapshot.filter(file => {
                     return regex.test(file.name);
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
         
             case "inFolder":
@@ -228,6 +246,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     let parent = folders[folders.length - 1];
                     return regex.test(parent);
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "folder":
@@ -243,12 +263,16 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     };
                     return false;
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "path":
                 arr = snapshot.filter(file => {
                     return file.parentReference.path.includes(sq.argument);
                 });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "sharing":
@@ -268,6 +292,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                     arr = snapshot.filter(file => {
                         return file.shared?.scope === "organization";
                     });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
             
             default:
@@ -324,6 +350,16 @@ function intersect(s1, s2) {
             intersect.add(file);
     }
     return intersect;
+}
+
+// Returns the complement of set s1 based on the universal set u
+function complement(u, s1) {
+    let complement = new Set();
+    for (const file of u) {
+        if (!s1.has(file))
+            complement.add(file);
+    }
+    return complement;
 }
 
 export { serializeSearchQuery, deserializeSearchQuery, filterSnapshotBySearchQuery };
