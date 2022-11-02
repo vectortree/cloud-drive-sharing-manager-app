@@ -30,8 +30,8 @@ function checkRequirements(currentSnapshot, requirements, driveType) {
                 };
                 file.permissions.forEach((permission) => {
                     // Check each permission against current requirement
-                    let readerRoles = ["commenter, reader"];
-                    let writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
+                    const readerRoles = ["commenter, reader"];
+                    const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
                     if(permission.type === "user" || permission.type === "group") {
                         // The following must be satisfied:
                         // 1) If the permission role is in
