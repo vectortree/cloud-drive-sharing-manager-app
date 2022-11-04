@@ -84,7 +84,10 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         // Store access control requirement in user profile
         userProfile.accessControlRequirements.push(accessControlRequirement);
         // Save to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
@@ -103,7 +106,10 @@ router.delete('/removeaccesscontrolrequirement/:id', async (req, res) => {
         // Delete access control requirement in user profile
         userProfile.accessControlRequirements.splice(req.params.id, 1);
         // Save changes to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
@@ -182,7 +188,10 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         // Replace access control requirement in user profile
         userProfile.accessControlRequirements[req.params.id] = accessControlRequirement;
         // Save to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
