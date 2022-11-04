@@ -10,6 +10,8 @@ const cheerio = require('cheerio');
 const validator = require('html-validator');
 const fs = require('fs');
 
+let fileDataList = [];
+
 async function sendUserProfile(res, userProfile) {
     // Make a copy of user profile object before sending to client
     const profile = JSON.parse(JSON.stringify(userProfile));
@@ -17,9 +19,6 @@ async function sendUserProfile(res, userProfile) {
     profile.user.tokens = undefined;
     return res.status(200).json({success: true, profile: profile});
 }
-
-// TODO: Remove global variable from back-end router
-let fileDataList = [];
 
 async function getDriveItems(accessToken, path) {
     const driveItems = await graph.getDriveItemChildren(accessToken, path);
@@ -37,6 +36,68 @@ async function getDriveItems(accessToken, path) {
             }
         });
     }));
+}
+
+async function getGoogleDriveFileResponses(googleDrive, files) {
+    const getFileResponses = files.map((file) => {
+        let parameters = {
+            fileId: file.id,
+            supportsAllDrives: true,
+            fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, sharingUser, owners, lastModifyingUser, permissions, driveId"
+        };
+        return googleDrive.files.get(parameters);
+    });
+    const fileResponses = await Promise.all(getFileResponses);
+    return fileResponses;
+}
+
+async function pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDriveCache) {
+    for(const resp of fileResponses) {
+        let metadata = resp.data;
+        // If driveId is non-null (i.e., file is in a shared drive),
+        // then make an API call to get the name of the shared drive and append
+        // the name to metadata
+        if(metadata.driveId) {
+            // Cache miss
+            if(!(metadata.driveId in sharedDriveCache)) {
+                let response = await googleDrive.drives.get({driveId: metadata.driveId});
+                metadata.driveName = response.data.name;
+                // Cache the driveId and its associated driveName
+                sharedDriveCache[metadata.driveId] = metadata.driveName;
+                console.log("Cache miss");
+            }
+            // Cache hit
+            else {
+                metadata.driveName = sharedDriveCache[metadata.driveId];
+                console.log("Cache hit");
+            }
+            metadata.inMyDrive = false;
+            metadata.sharedWithMe = false;
+        }
+        // Note: The assumption is that every file should have exactly one owner
+        // A file is in "My Drive" or "Shared with me" if and only if:
+        // 1) owners is non-null, and
+        // 2) owners.length > 0
+        else if(metadata.owners && metadata.owners.length > 0) {
+            // A file is in "My Drive" if and only if owners[0].me is true
+            // Note: Equivalently, we could check if ownedByMe is true
+            // but this requires getting an extra field, which is redundant
+            if(metadata.owners[0].me) {
+                metadata.inMyDrive = true;
+                metadata.sharedWithMe = false;
+            }
+            // A file is in "Shared with me" if and only if owners[0].me is false
+            // Note: Equivalently, we could check if ownedByMe is false
+            // but this requires getting an extra field, which is redundant
+            else {
+                metadata.inMyDrive = false;
+                metadata.sharedWithMe = true;
+            }
+        }
+        fileDataList.push(metadata);
+    }
+    console.log("Pushed file metadata for entire page");
+    return sharedDriveCache;
 }
 
 async function getSharedItemsRoot(accessToken) {
@@ -133,32 +194,37 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                 auth: oAuth2Client
             });
 
-            // Call Google Drive API method to get all file permission data and metadata
+            // Cache the driveId and driveName for shared drives to minimize API calls
+            let sharedDriveCache = {};
+
+            // Call Google Drive API methods to get all file permission data and metadata
             let NextPageToken = "";
             do {
                 const params = {
+                    corpora: "allDrives",
+                    includeItemsFromAllDrives: true,
+                    supportsAllDrives: true,
+                    pageSize: 1000,
                     pageToken: NextPageToken || ""
                 };
-                const response1 = await googleDrive.files.list(params);
-                if(!response1) return res.status(500).json({success: false, message: "Error"});
-                const files = response1.data.files;
+                let response = await googleDrive.files.list(params);
+                if(!response || response.status != 200) return res.status(500).json({success: false, message: "Error"});
+                const files = response.data.files;
                 // Get file metadata and permissions
-                files.map((file) => {
-                    googleDrive.files.get({fileId: file.id, fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, sharingUser, owners, lastModifyingUser, permissions"}, (err, response2) => {
-                        if(err) {
-                            console.log(err);
-                            return res.status(500).json({success: false, message: "Error"});
-                        }
-                        let metadata = response2.data;
-                        fileDataList.push(metadata);
-                    });
-                });
-                NextPageToken = response1.data.nextPageToken;
+                let fileResponses = await getGoogleDriveFileResponses(googleDrive, files);
+                sharedDriveCache = await pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDriveCache);
+                NextPageToken = response.data.nextPageToken;
             } while(NextPageToken);
         }
 
         // Create new file sharing snapshot to store in user profile
         fileDataList.map((data) => console.log(data));
+        // If fileDataList is empty, then there are no files accessible
+        // by either Google Drive API or Microsoft Graph API
+        // In this case, return without creating a snapshot
+        if(fileDataList.length == 0) {
+            return res.status(409).json({success: false, message: "No files found in drive"});
+        }
         console.log("Creating file-sharing snapshot");
         const defaultName = "fs_snapshot";
         const snapshotNumber = userProfile.fileSharingSnapshots.length + 1;
@@ -175,7 +241,10 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         };
         userProfile.fileSharingSnapshots.push(snapshot);
         // Save to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         fileDataList = [];
         return sendUserProfile(res, userProfile);
     });
@@ -252,7 +321,10 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
     
         userProfile.groupMembershipSnapshots.push(snapshot);
         // Save to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
@@ -272,7 +344,10 @@ router.put('/editfilesharingsnapshot/:id', async (req, res) => {
         userProfile.fileSharingSnapshots[req.params.id].name = req.body.name;
         userProfile.fileSharingSnapshots[req.params.id].updatedAt = currentDate;
         // Save changes to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
@@ -288,7 +363,10 @@ router.delete('/removefilesharingsnapshot/:id', async (req, res) => {
         console.log("Deleting file-sharing snapshot");
         userProfile.fileSharingSnapshots.splice(req.params.id, 1);
         // Save changes to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
@@ -308,7 +386,10 @@ router.put('/editgroupmembershipsnapshot/:id', async (req, res) => {
         userProfile.groupMembershipSnapshots[req.params.id].name = req.body.name;
         userProfile.groupMembershipSnapshots[req.params.id].updatedAt = currentDate;
         // Save changes to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
@@ -324,7 +405,10 @@ router.delete('/removegroupmembershipsnapshot/:id', async (req, res) => {
         console.log("Deleting group-membership snapshot");
         userProfile.groupMembershipSnapshots.splice(req.params.id, 1);
         // Save changes to database
-        userProfile.save();
+        await userProfile.save().catch((err) => {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
+        });
         return sendUserProfile(res, userProfile);
     });
 });
