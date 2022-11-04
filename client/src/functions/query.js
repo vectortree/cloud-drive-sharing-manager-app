@@ -138,8 +138,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
         switch (sq.operator) {
             case "drive":
                 arr = snapshot.filter(file => {
-                    let drive = file.parentReference.path.split("/")[1];
-                    return drive.toLowerCase() === sq.argument.toLowerCase();
+                    return file.driveName.toLowerCase() === sq.argument.toLowerCase();
                 });
                 if (sq.negative)
                     return complement(new Set(snapshot), new Set(arr));

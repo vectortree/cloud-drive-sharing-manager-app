@@ -22,17 +22,61 @@ async function sendUserProfile(res, userProfile) {
 let fileDataList = [];
 
 async function getDriveItems(accessToken, path) {
-    const driveItems = await graph.getDriveItemsPath(accessToken, path);
+    const driveItems = await graph.getDriveItemChildren(accessToken, path);
     await Promise.all(driveItems.value.map(async (driveItem) => {
         let metadata = driveItem;
 
         // Gets the permissions for a particular driveItem and adds it to the metadata
         await graph.getDriveItemPermissions(accessToken, metadata.id).then(async (permissions) => {
             metadata['permissions'] = permissions;
+            metadata['driveName'] = "OneDrive";
             fileDataList.push(metadata);
             if (metadata.folder && metadata.folder.childCount > 0) {
                 let p = metadata.parentReference.path + '/' + metadata.name + ':';
                 await getDriveItems(accessToken, p);
+            }
+        });
+    }));
+}
+
+async function getSharedItemsRoot(accessToken) {
+    const sharedItems = await graph.getAllSharedItems(accessToken);
+    await Promise.all(sharedItems.value.map(async (sharedItem) => {
+        let itemId = sharedItem.id;
+        let driveId = sharedItem.remoteItem.parentReference.driveId;
+
+        // Gets the complete metadata for a shared item
+        await graph.getSharedItem(accessToken, itemId, driveId).then(async (sharedItem) => {
+            let metadata = sharedItem;
+
+            await graph.getSharedItemPermissions(accessToken, itemId, driveId).then(async (permissions) => {
+                metadata['permissions'] = permissions;
+                metadata['driveName'] = "SharedWithMe";
+                fileDataList.push(metadata);
+                if (metadata.folder && metadata.folder.childCount > 0) {
+                    await getSharedItemChildren(accessToken, itemId, driveId);
+                }
+            });
+        });
+    }));
+}
+
+async function getSharedItemChildren(accessToken, itemId, driveId) {
+    const sharedItems = await graph.getSharedItemChildren(accessToken, itemId, driveId);
+
+    await Promise.all(sharedItems.value.map(async (sharedItem) => {
+        let metadata = sharedItem;
+
+        let itemId = sharedItem.id;
+        let driveId = sharedItem.parentReference.driveId;
+
+        // Gets the permissions for a particular shared item and adds it to the metadata
+        await graph.getSharedItemPermissions(accessToken, itemId, driveId).then(async (permissions) => {
+            metadata['permissions'] = permissions;
+            metadata['driveName'] = "SharedWithMe";
+            fileDataList.push(metadata);
+            if (metadata.folder && metadata.folder.childCount > 0) {
+                await getSharedItemChildren(accessToken, metadata.id, metadata.remoteItem.parentReference.driveId);
             }
         });
     }));
@@ -62,6 +106,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
 
             // Call Microsoft Graph API method recursively to get all file permission data and metadata
             await getDriveItems(accessToken, '/drive/root');
+            await getSharedItemsRoot(accessToken);
             
         }
         else if(userProfile.user.driveType === "google") {
