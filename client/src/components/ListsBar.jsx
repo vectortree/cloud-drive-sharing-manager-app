@@ -9,6 +9,7 @@ import DataTable from "./AddRequirement";
 import api, {removeAccessControlRequirement} from '../api/api';
 import ColorRadioButtons from "./CreateSnapshot";
 import AddRequirement from "./AddRequirement";
+import {userData} from "../App";
 
 // This is for the content on the User Profile page.
 // It manages all of the Table of requirement, snapshot and recent query
@@ -78,7 +79,6 @@ export default function ColumnMenuGrid( props) {
     const deleteRequirement = React.useCallback(
       (id) => () => {
           props.ACR_DeleteHandler(id);
-          console.log("success");
           removeAccessControlRequirement(id);
       },
       [],

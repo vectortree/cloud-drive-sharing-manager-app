@@ -1,16 +1,21 @@
 import { atom } from "recoil";
+let AccessControl = {
+    allowedReaders:[],
+    allowedWriters:[],
+    createdAt:"",
+    deniedReaders:[],
+    deniedWriters:[],
+    id: 0,
+    name:"",
+    searchQuery: "",
+    updatedAt:"",
+    _id: ""
+}
 
-export const isRunningRecoil = atom({
-    key: "isRunningRecoil",
-    default: false, // default value (aka initial value)
-});
+let AccessControlList = AccessControl[30];
 
-export const totalMilesRecoil = atom({
-    key: "totalMilesRecoil",
-    default: 0, // default value (aka initial value)
-});
+export const AccessControlData = atom({
+    key: 'AccessControlData', // unique ID (with respect to other atoms/selectors)
+    default: [], // default value (aka initial value)
 
-export const userRecoil = atom({
-    key: "userRecoil",
-    default: undefined, // default value (aka initial value)
 });
