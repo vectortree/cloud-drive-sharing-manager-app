@@ -31,7 +31,6 @@ export default function SearchQueryModal(props) {
         }else{
             const query = "{" +QueryType + ":" + QueryName + "} ";
             console.log(query)
-            // setQueryString(query);
             setQueryString([...queryString, query])
             handleSuccessAlertOpen();
         }
@@ -59,30 +58,17 @@ export default function SearchQueryModal(props) {
     setChips([...chips, inputValue])
     }
 };
-
+    const submit = () =>{
+        console.log(queryString);
+        api.addSearchQuery(queryString);
+        props.handleClose();
+    }
     return (
         <div>
             <div>
                 <div style={{display:"inline-flex"}}>
                 <div style={{fontWeight: 500}}>
                 Current query : <b style={{color:"blue"}}>{queryString}</b>
-                    {/* <TextField
-                fullWidth
-                variant="outlined"
-                label="Query"
-                // value={inputValue}
-                onChange={inputChange}
-                multiline
-                InputProps={{
-                startAdornment: queryString.map((item) => (
-                    <Chip
-                    key={item}
-                    label={item}
-                    />
-                )),
-                }}
-            />
-                    <br/> */}
                 </div>
             </div>
             <div>    
@@ -153,7 +139,7 @@ export default function SearchQueryModal(props) {
                     </Button>
             </div>
             <br></br>
-            <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}}>
+            <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={submit}>
                 Submit
             </Button>
         </div>

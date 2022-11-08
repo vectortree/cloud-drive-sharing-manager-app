@@ -16,6 +16,7 @@ async function sendUserProfile(res, userProfile) {
 router.post('/addsearchquery', async (req, res) => {
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
+    
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});

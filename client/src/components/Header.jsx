@@ -29,7 +29,7 @@ import { serializeSearchQuery, deserializeSearchQuery, filterSnapshotBySearchQue
 
 // This is for the Header which is the very top of our website
 
-const searchQueryIcon = <AlignVerticalCenterIcon style = {{marginRight : "8px", marginBottom : "7px"}}></AlignVerticalCenterIcon>
+
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -227,7 +227,9 @@ export default function PrimarySearchAppBar(props) {
                                 width: "50ch",
                             }}
                         />
-                        <Button color = "black" onClick = {searchQueryModalOPen} > {searchQueryIcon}</Button>
+                        <Button color = "black" onClick = {searchQueryModalOPen} >
+                            <AlignVerticalCenterIcon style = {{marginRight : "8px", marginBottom : "7px"}}></AlignVerticalCenterIcon>
+                        </Button>
                         <div></div>
                     </Search>
                     <Box sx={{ flexGrow: 1 }} />
@@ -260,7 +262,7 @@ export default function PrimarySearchAppBar(props) {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
-            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Search Query"} ><SearchQueryModal onClick={handleCloseModal}/></BasicModal>
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Search Query"} ><SearchQueryModal handleClose={handleCloseModal}/></BasicModal>
         </Box>
     );
 }

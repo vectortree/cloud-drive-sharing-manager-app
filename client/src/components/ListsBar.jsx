@@ -75,8 +75,6 @@ export default function ColumnMenuGrid( props) {
         props.dataSet[i].id = i;
     }
 
-    const addButton = <BasicButtons name="Add" />
-    const editButton = <BasicButtons name="Edit"/>
     const deleteRequirement = React.useCallback(
       (id) => () => {
           props.ACR_DeleteHandler(id);
