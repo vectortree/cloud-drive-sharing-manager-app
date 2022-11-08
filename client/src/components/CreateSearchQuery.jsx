@@ -59,8 +59,8 @@ export default function SearchQueryModal(props) {
     }
 };
     const submit = () =>{
-        console.log(queryString);
-        api.addSearchQuery(queryString);
+        const query = { searchQuery : queryString}
+        api.addSearchQuery(query);
         props.handleClose();
     }
     return (
