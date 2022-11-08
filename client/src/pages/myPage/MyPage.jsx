@@ -11,9 +11,12 @@ const MyPage = (props)=> {
     const ACR_Controller = (data) =>{
         setAccessControlRequirements(data);
     }
+    const ACR_DeleteController = (id) =>{
+        setAccessControlRequirements((prevRows) => prevRows.filter((row) => row.id !== id));
+    }
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {accessControlRequirements} ACR_Handler={ACR_Controller}/>,
+        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {accessControlRequirements} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
         <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {props.userData.fileSharingSnapshots}/>,
         <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {props.userData.groupMembershipSnapshots}/>,
         <ColumnMenuGrid name="User's Recent Query" dataSet = {props.userData.searchQueryHistory}/>

@@ -79,10 +79,9 @@ export default function ColumnMenuGrid( props) {
     const editButton = <BasicButtons name="Edit"/>
     const deleteRequirement = React.useCallback(
       (id) => () => {
-          console.log(id);
+          props.ACR_DeleteHandler(id);
+          console.log("success");
           removeAccessControlRequirement(id);
-          window.location.reload(false);
-
       },
       [],
   );
