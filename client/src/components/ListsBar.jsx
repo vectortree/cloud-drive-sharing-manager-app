@@ -44,7 +44,7 @@ export default function ColumnMenuGrid( props) {
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
-    const accessDataTable = <AddRequirement opdataSet={props.dataSet} onClick={handleCloseModal}/>
+    const accessDataTable = <AddRequirement opdataSet={props.dataSet} onClick={handleCloseModal} ACR_Handler={props.ACR_Handler}/>
     const columns = [
         { field: 'id', headerName: 'Index', width: 90 ,editable: true },
         {
@@ -81,16 +81,12 @@ export default function ColumnMenuGrid( props) {
       (id) => () => {
           console.log(id);
           removeAccessControlRequirement(id);
-          setTimeout(() => {
-            setRequirementState((prevRows) => prevRows.filter((row) => row.id !== id));
-          });
+          window.location.reload(false);
+
       },
       [],
   );
-  const [RequirementState, setRequirementState] = React.useState(
-    [
-    ]
-  );
+
     return (
 
         <div>

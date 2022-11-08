@@ -5,7 +5,7 @@ import AccessControlComponent from "../../components/AccessControlComponent";
 
 const AccessControlPage = (props) =>{
     const sharingInfo= [
-        <AccessControlComponent size={700} userData={props.userData}/>
+        <AccessControlComponent size={700} userData={props.userData} userController={props.userController}/>
     ];
     return (
         <Grid>

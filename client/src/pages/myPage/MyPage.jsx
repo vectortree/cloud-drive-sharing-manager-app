@@ -7,10 +7,13 @@ import Profile from "../../components/Profile";
 
 
 const MyPage = (props)=> {
-
+    const [accessControlRequirements, setAccessControlRequirements] = React.useState(props.userData.accessControlRequirements);
+    const ACR_Controller = (data) =>{
+        setAccessControlRequirements(data);
+    }
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {props.userData.accessControlRequirements}/>,
+        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {accessControlRequirements} ACR_Handler={ACR_Controller}/>,
         <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {props.userData.fileSharingSnapshots}/>,
         <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {props.userData.groupMembershipSnapshots}/>,
         <ColumnMenuGrid name="User's Recent Query" dataSet = {props.userData.searchQueryHistory}/>

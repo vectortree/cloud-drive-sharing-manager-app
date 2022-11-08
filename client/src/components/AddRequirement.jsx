@@ -186,24 +186,53 @@ export default function AddRequirement(props) {
             let allowedWriter =[];
             let DenyReadAccess =[];
             let DenyWriteAccess =[];
+            let flag = 0;
             for( let i = 0; i < DataState.length; i++){
                 if(DataState[i].ReadAccess == true){
                     allowedReaderArray.push(DataState[i].Email);
+                    flag = 1;
                 }
                 if(DataState[i].WriteAccess == true){
                     allowedWriter.push(DataState[i].Email);
+                    flag = 1;
                 }
                 if(DataState[i].DenyReadAccess == true){
                     DenyReadAccess.push(DataState[i].Email);
+                    flag = 1;
                 }
                 if(DataState[i].DenyWriteAccess == true){
                     DenyWriteAccess.push(DataState[i].Email);
+                    flag = 1;
                 }
             }
-                const searchQuery = QueryType + ":" + QueryName;
-            const accessControlData = {name: requirementName, searchQuery: searchQuery, allowedReaders:allowedReaderArray, allowedWriters: allowedWriter, deniedReaders: DenyReadAccess, deniedWriters: DenyWriteAccess};
+            if (flag == 0){
+                handleErrorAlertOpen();
+                return;
+            }
+            const query = QueryType + ":" + QueryName;
+            // "
+            // {"name":"qwe",
+            //  "searchQuery":"Groups:qwe",
+            //  "allowedReaders":["asdd"],
+            //  "allowedWriters":["asdd"],
+            //  "deniedReaders":["asdd"],
+            //  "deniedWriters":[]d
+            //  }"
+            const accessControlData = {
+                name: requirementName,
+                searchQuery: query,
+                allowedReaders:allowedReaderArray,
+                allowedWriters: allowedWriter,
+                deniedReaders: DenyReadAccess,
+                deniedWriters: DenyWriteAccess
+            };
             console.log(accessControlData);
             createAccessControlRequirement(accessControlData);
+            props.ACR_Handler((prevRows) => {
+                // const newData = prevRows.find((row) => row.id === newRow.id);
+                return [...prevRows, accessControlData];
+            });
+
             props.onClick();
         }
     }
@@ -376,7 +405,7 @@ export default function AddRequirement(props) {
             </Snackbar>
             <Snackbar open={openError} autoHideDuration={2000} onClose={handleErrorAlertClose}>
                 <Alert onClose={handleErrorAlertClose} severity="error" sx={{ width: '100%' }}>
-                    Please filled all the requirements
+                    Please filled all the requirements,and you must check at least one Access Permission.
                 </Alert>
             </Snackbar>
         </div>
