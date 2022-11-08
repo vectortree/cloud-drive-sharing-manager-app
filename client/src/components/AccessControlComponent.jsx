@@ -21,11 +21,14 @@ const columns = [
 
 
 export default function AccessControlComponent(props) {
-
+    for(let i = 0; i < props.ACR_data.length; i++)
+    {
+        props.ACR_data[i].id = i;
+    }
     return (
         <div style={{ height: props.size, width: '100%' }}>
             <DataGrid
-                rows={props.userData.accessControlRequirements}
+                rows={props.ACR_data}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}

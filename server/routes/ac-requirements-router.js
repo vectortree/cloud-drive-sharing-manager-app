@@ -123,7 +123,7 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
-        const { 
+        const {
             name,
             searchQuery,
             allowedReaders,

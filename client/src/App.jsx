@@ -22,40 +22,37 @@ const Layout = () =>{
 function App() {
 
   const {userProfile} = useContext(AuthContext);
+
   let userData ={};
   if(userProfile){
-    console.log(userProfile);
-      console.log(userProfile.fileSharingSnapshots);
-      console.log(userProfile.accessControlRequirements);
-      console.log(userProfile.groupMembershipSnapshots);
       if(userProfile.user.driveType == "microsoft"){
-           userData.name = userProfile.user.data.displayName;
-           userData.email = userProfile.user.data.mail;
-           userData.picture = userProfile.user.data.picture;
+          userData.name = userProfile.user.displayName;
+          userData.email = userProfile.user.data.mail;
+          userData.picture = userProfile.user.data.picture;
           let beforeHd = userProfile.user.data.mail;
           let hd = beforeHd.split('@');
           console.log(hd[1]);
-           userData.domain = hd[1]; //stonybrook.edu
-           userData.driveType = userProfile.user.driveType; 
-
-           userData.accessControlRequirements = userProfile.accessControlRequirements;
-           userData.fileSharingSnapshots = userProfile.fileSharingSnapshots;
-           userData.groupMembershipSnapshots = userProfile.groupMembershipSnapshots;
-           userData.searchQueryHistory = userProfile.searchQueryHistory;
-
-
+          userData.domain = hd[1]; //stonybrook.edu
+          userData.driveType = userProfile.user.driveType;
+          userData.accessControlRequirements = userProfile.accessControlRequirements;
+          userData.fileSharingSnapshots = userProfile.fileSharingSnapshots;
+          userData.groupMembershipSnapshots = userProfile.groupMembershipSnapshots;
+          userData.searchQueryHistory = userProfile.searchQueryHistory;
        }else if(userProfile.user.driveType == "google"){
-           userData.name = userProfile.user.data.name;
-           userData.email = userProfile.user.data.email;
-           userData.picture = userProfile.user.data.picture;
-           userData.domain = userProfile.user.data.hd; //stonybrook.edu
-           userData.driveType = userProfile.user.driveType; 
-
-           userData.accessControlRequirements = userProfile.accessControlRequirements;
-           userData.fileSharingSnapshots = userProfile.fileSharingSnapshots;
-           userData.groupMembershipSnapshots = userProfile.groupMembershipSnapshots;
-           userData.searchQueryHistory = userProfile.searchQueryHistory;
-       }
+          const {name, email, picture, hd} = userProfile.user.data;
+          const {accessControlRequirements,fileSharingSnapshots,groupMembershipSnapshots,searchQueryHistory} = userProfile;
+          userData ={
+              name:name,
+              email:email,
+              picture:picture,
+              domain : hd,
+              driveType : userProfile.user.driveType,
+              accessControlRequirements:accessControlRequirements,
+              fileSharingSnapshots:fileSharingSnapshots,
+              groupMembershipSnapshots:groupMembershipSnapshots,
+              searchQueryHistory:searchQueryHistory
+          }
+      }
   }
   //temporary
 
