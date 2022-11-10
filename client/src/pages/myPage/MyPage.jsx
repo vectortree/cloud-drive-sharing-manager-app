@@ -11,12 +11,10 @@ import {userData} from "../../App";
 
 const MyPage = (props)=>{
     const [ACR, setACR]=useRecoilState(AccessControlData);
-    // const setACT2= useSetRecoilState();
-    setACR(JSON.stringify(userData.accessControlRequirements));
-    const ACR_object = JSON.parse(ACR);
+    //setACR(userData.accessControlRequirements);
+    //console.log(ACR);
 
-
-    const [accessControlRequirements, setAccessControlRequirements] = React.useState(ACR_object);
+    const [accessControlRequirements, setAccessControlRequirements] = React.useState();
     const ACR_Controller = (data) =>{
         setAccessControlRequirements(data);
         setACR(JSON.stringify(data));
@@ -31,8 +29,8 @@ const MyPage = (props)=>{
     }
     const sharingInfo= [
         <Profile userData = {userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {accessControlRequirements} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
-        // <ColumnMenuGrid name={ACR} dataSet = {accessControlRequirements} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
+        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {userData.accessControlRequirements} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
+        //<ColumnMenuGrid name={ACR} dataSet = {ACR} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
         <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {userData.fileSharingSnapshots}/>,
         <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {userData.groupMembershipSnapshots}/>,
         <ColumnMenuGrid name="User's Recent Query" dataSet = {userData.searchQueryHistory}/>

@@ -9,7 +9,7 @@ import {AccessControlData} from "../../recoil";
 
 const AccessControlPage = (props) =>{
     const [ACR, setACR]=useRecoilState(AccessControlData);
-    console.log(ACR);
+
     const ACR_object = JSON.parse(ACR);
     const sharingInfo= [
         <AccessControlComponent size={700} ACR_data={ACR_object} />
