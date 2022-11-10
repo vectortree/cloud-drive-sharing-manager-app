@@ -63,7 +63,7 @@ function App() {
                       <Route path={"/"} element={<Layout/>}>
                           <Route index element={<MyPage />} />
                           <Route path="home" element={<Home userData = {userData}/>}/>
-                          <Route path="accessControl" element={<AccessControlPage />}/>
+                          <Route path="accessControl" element={<AccessControlPage userData = {userData}/>}/>
                           <Route path="redundantSharing" element={<Anaylysis text= "Redundant Sharing" userData = {userData}/>}/>
                           <Route path="deviantSharing" element={<Anaylysis text= "Deviant Sharing" userData = {userData}/>}/>
                           <Route path="fileFolderSharing" element={<Anaylysis text= "File-folder Sharing Differences" userData = {userData}/>}/>
