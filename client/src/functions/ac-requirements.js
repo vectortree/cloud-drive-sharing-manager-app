@@ -32,23 +32,30 @@ function checkRequirements(currentSnapshot, requirements, driveType) {
                     // Check each permission against current requirement
                     const readerRoles = ["commenter, reader"];
                     const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
-                    if(permission.type === "user" || permission.type === "group") {
+                    if(permission.type === "user" || (permission.type === "group" && !requirement.group)) {
+                        // If permission type is "group" and group is off,
+                        // then treat email address as an individual user.
                         // The following must be satisfied:
                         // 1) If the permission role is in
                         //    {"commenter", "reader"} and AR is nonempty,
-                        //    then the email address or its domain must be in AR.
+                        //    then the email address or its domain (or its group, if on)
+                        //    must be in AR.
                         // 2) If the permission role is in
                         //    {"writer", "fileOrganizer", "organizer", "owner"} and AW is nonempty,
-                        //    then the email address or its domain must be in AW.
+                        //    then the email address or its domain (or its group, if on)
+                        //    must be in AW.
                         // 3) If the permission role is in
                         //    {"commenter", "reader"} and DR is nonempty,
-                        //    then the email address or its domain must NOT be in DR.
+                        //    then the email address and its domain (and its group, if on)
+                        //    must NOT be in DR.
                         // 4) If the permission role is in
                         //    {"writer", "fileOrganizer", "organizer", "owner"} and DW is nonempty,
-                        //    then the email address or its domain must NOT be in DW.
+                        //    then the email address and its domain (and its group, if on)
+                        //    must NOT be in DW.
                         // 5) If the permission role is in
                         //    {"writer", "fileOrganizer", "organizer", "owner"} and DR is nonempty,
-                        //    then the email address or its domain must NOT be in DR.
+                        //    then the email address and its domain (and its group, if on)
+                        //    must NOT be in DR.
                         let address = permission.emailAddress;
                         let domain = permission.emailAddress.substring(permission.emailAddress.lastIndexOf("@") + 1);
                         if(requirement.allowedReaders.length > 0 && readerRoles.includes(permission.role)) {
@@ -96,6 +103,24 @@ function checkRequirements(currentSnapshot, requirements, driveType) {
                                 });
                             }
                         }
+                    }
+                    else if(permission.type === "group" && requirement.group) {
+                        // The following must be satisfied:
+                        // 1) If the permission role is in
+                        //    {"commenter", "reader"} and AR is nonempty,
+                        //    then the email address of the group or all member addresses of the group must be in AR.
+                        // 2) If the permission role is in
+                        //    {"writer", "fileOrganizer", "organizer", "owner"} and AW is nonempty,
+                        //    then the email address of the group or all member addresses of the group must be in AW.
+                        // 3) If the permission role is in
+                        //    {"commenter", "reader"} and DR is nonempty,
+                        //    then the email address of the group and any member addresses of the group must NOT be in DR.
+                        // 4) If the permission role is in
+                        //    {"writer", "fileOrganizer", "organizer", "owner"} and DW is nonempty,
+                        //    then the email address of the group and any member addresses of the group must NOT be in DW.
+                        // 5) If the permission role is in
+                        //    {"writer", "fileOrganizer", "organizer", "owner"} and DR is nonempty,
+                        //    then the email address of the group and any member addresses of the group must NOT be in DR.
                     }
                     else if(permission.type === "domain") {
                         // The following must be satisfied:
