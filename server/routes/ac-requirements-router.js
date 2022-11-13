@@ -25,13 +25,14 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         const { 
             name,
             searchQuery,
+            group,
             allowedReaders,
             allowedWriters,
             deniedReaders,
             deniedWriters } = req.body;
         
-        // Check that the provided search query is non-null
-        if(!searchQuery) return res.status(401).json({success: false, message: "Invalid data format"});
+        // Check that the provided search query and group flag is non-null
+        if(!searchQuery || !group) return res.status(401).json({success: false, message: "Invalid data format"});
 
         // Access control sets must not be null
         // Any empty access control set should be an empty list
@@ -74,6 +75,7 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         let accessControlRequirement = {
             name: requirementName,
             searchQuery: searchQuery,
+            group: group,
             allowedReaders: allowedReaders,
             allowedWriters: allowedWriters,
             deniedReaders: deniedReaders,
@@ -126,13 +128,14 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         const {
             name,
             searchQuery,
+            group,
             allowedReaders,
             allowedWriters,
             deniedReaders,
             deniedWriters } = req.body;
 
-        // Check that the provided search query is non-null
-        if(!searchQuery) return res.status(401).json({success: false, message: "Invalid data format"});
+        // Check that the provided search query and group flag is non-null
+        if(!searchQuery || !group) return res.status(401).json({success: false, message: "Invalid data format"});
 
         // Access control sets must not be null
         // Any empty access control set should be an empty list
@@ -178,6 +181,7 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         let accessControlRequirement = {
             name: requirementName,
             searchQuery: searchQuery,
+            group: group,
             allowedReaders: allowedReaders,
             allowedWriters: allowedWriters,
             deniedReaders: deniedReaders,

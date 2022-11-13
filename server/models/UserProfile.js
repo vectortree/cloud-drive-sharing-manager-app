@@ -28,6 +28,7 @@ const UserProfileSchema = new Schema({
             name: String,
             groupName: String,
             groupAddress: String,
+            timestamp: Date,
             createdAt: Date,
             updatedAt: Date,
             members: [String]
@@ -39,6 +40,7 @@ const UserProfileSchema = new Schema({
         type: [{
             name: String,
             searchQuery: Object,
+            group: Boolean,
             allowedReaders: [String],
             allowedWriters: [String],
             deniedReaders: [String],
