@@ -235,8 +235,8 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                 for(let i = 0; i < fileDataList.length; i++) {
                     // File is a child of some parent file in the previous level
                     if(fileDataList[i].parents && fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] in folderIdsToPaths)) {
-                        fileDataList[i].topLevel = false;
                         fileDataList[i].path = folderIdsToPaths[fileDataList[i].parents[0]];
+                        fileDataList[i].topLevel = false;
                         if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
                             newFolderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
                             size++;
