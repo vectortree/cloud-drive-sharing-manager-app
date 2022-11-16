@@ -215,15 +215,55 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                 sharedDriveCache = await pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDriveCache);
                 NextPageToken = response.data.nextPageToken;
             } while(NextPageToken);
+
+            // Add a path field for all files
+            let folderIdsToPaths = {};
+            let size = 0;
+            let rootResponse = await googleDrive.files.get({fileId: 'root', fields: 'id'});
+            if(!rootResponse || rootResponse.status != 200) return res.status(500).json({success: false, message: "Error"});
+            const myDriveId = rootResponse.data.id;
+            for(let i = 0; i < fileDataList.length; i++) {
+                // Top-level file
+                if(!fileDataList[i].parents || (fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] === myDriveId || (fileDataList[i].parents[0] in sharedDriveCache)))) {
+                    if(fileDataList[i].inMyDrive) {
+                        fileDataList[i].path = '/MyDrive';
+                    }
+                    else if(fileDataList[i].sharedWithMe) {
+                        fileDataList[i].path = '/SharedWithMe';
+                    }
+                    else if(fileDataList[i].driveId) {
+                        fileDataList[i].path = '/' + fileDataList[i].driveName;
+                    }
+                    if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
+                        folderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
+                        size++;
+                    }
+                }
+            }
+            while(size > 0) {
+                let newFolderIdsToPaths = {};
+                size = 0;
+                for(let i = 0; i < fileDataList.length; i++) {
+                    // File is a child of some parent file in the previous level
+                    if(fileDataList[i].parents && fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] in folderIdsToPaths)) {
+                        fileDataList[i].path = folderIdsToPaths[fileDataList[i].parents[0]];
+                        if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
+                            newFolderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
+                            size++;
+                        }
+                    }
+                }
+                folderIdsToPaths = newFolderIdsToPaths;
+            }
         }
 
         // Create new file sharing snapshot to store in user profile
-        fileDataList.map((data) => console.log(data));
+        fileDataList.map((file) => console.log(file));
         // If fileDataList is empty, then there are no files accessible
         // by either Google Drive API or Microsoft Graph API
         // In this case, return without creating a snapshot
         if(fileDataList.length == 0) {
-            return res.status(409).json({success: false, message: "No files found in drive"});
+            return res.status(400).json({success: false, message: "No files found in drive"});
         }
         console.log("Creating file-sharing snapshot");
         const defaultName = "fs_snapshot";
@@ -265,7 +305,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(userProfile.user.driveType !== "google")
-            return res.status(401).json({success: false, message: "Invalid drive type"});
+            return res.status(400).json({success: false, message: "Invalid drive type"});
 
         const {
             name,
@@ -276,7 +316,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
 
         // Group name, group email address, and HTML file must be specified
         if(!groupName || !groupAddress || !htmlFile)
-            return res.status(401).json({success: false, message: "Invalid data format"});
+            return res.status(400).json({success: false, message: "Invalid data format"});
         
         // TODO: Validate HTML file
         // The system should only be able to scrape the membership of a group if the user has
@@ -290,7 +330,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
 
         const members = $('a[href^="mailto:"]');
 
-        if(!members.length) return res.status(401).json({success: false, message: "Invalid HTML file"});
+        if(!members.length) return res.status(400).json({success: false, message: "Invalid HTML file"});
 
         members.each((index, element) => membersList.push($(element).attr("href").replace("mailto:", "")));
 
@@ -336,10 +376,10 @@ router.put('/editfilesharingsnapshot/:id', async (req, res) => {
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         console.log("Editing name of file-sharing snapshot");
         if(!req.body.name || req.body.name.trim() === "")
-            return res.status(401).json({success: false, message: "Invalid data format"});
+            return res.status(400).json({success: false, message: "Invalid data format"});
         // Check that provided index is valid
         if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
-            return res.status(401).json({success: false, message: "Index out of bounds"});
+            return res.status(400).json({success: false, message: "Index out of bounds"});
         const currentDate = new Date();
         userProfile.fileSharingSnapshots[req.params.id].name = req.body.name;
         userProfile.fileSharingSnapshots[req.params.id].updatedAt = currentDate;
@@ -359,7 +399,7 @@ router.delete('/removefilesharingsnapshot/:id', async (req, res) => {
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         // Check that provided index is valid
         if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
-            return res.status(401).json({success: false, message: "Index out of bounds"});
+            return res.status(400).json({success: false, message: "Index out of bounds"});
         console.log("Deleting file-sharing snapshot");
         userProfile.fileSharingSnapshots.splice(req.params.id, 1);
         // Save changes to database
@@ -378,10 +418,10 @@ router.put('/editgroupmembershipsnapshot/:id', async (req, res) => {
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         console.log("Editing name of group-membership snapshot");
         if(!req.body.name || req.body.name.trim() === "")
-            return res.status(401).json({success: false, message: "Invalid data format"});
+            return res.status(400).json({success: false, message: "Invalid data format"});
         // Check that provided index is valid
         if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
-            return res.status(401).json({success: false, message: "Index out of bounds"});
+            return res.status(400).json({success: false, message: "Index out of bounds"});
         const currentDate = new Date();
         userProfile.groupMembershipSnapshots[req.params.id].name = req.body.name;
         userProfile.groupMembershipSnapshots[req.params.id].updatedAt = currentDate;
@@ -401,7 +441,7 @@ router.delete('/removegroupmembershipsnapshot/:id', async (req, res) => {
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         // Check that provided index is valid
         if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
-            return res.status(401).json({success: false, message: "Index out of bounds"});
+            return res.status(400).json({success: false, message: "Index out of bounds"});
         console.log("Deleting group-membership snapshot");
         userProfile.groupMembershipSnapshots.splice(req.params.id, 1);
         // Save changes to database
