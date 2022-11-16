@@ -43,7 +43,7 @@ async function getGoogleDriveFileResponses(googleDrive, files) {
         let parameters = {
             fileId: file.id,
             supportsAllDrives: true,
-            fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, sharingUser, owners, lastModifyingUser, permissions, driveId"
+            fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, sharingUser, owners, lastModifyingUser, permissions, driveId, shared, writersCanShare"
         };
         return googleDrive.files.get(parameters);
     });
@@ -71,8 +71,6 @@ async function pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDri
                 metadata.driveName = sharedDriveCache[metadata.driveId];
                 console.log("Cache hit");
             }
-            metadata.inMyDrive = false;
-            metadata.sharedWithMe = false;
         }
         // Note: The assumption is that every file should have exactly one owner
         // A file is in "My Drive" or "Shared with me" if and only if:
@@ -83,15 +81,13 @@ async function pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDri
             // Note: Equivalently, we could check if ownedByMe is true
             // but this requires getting an extra field, which is redundant
             if(metadata.owners[0].me) {
-                metadata.inMyDrive = true;
-                metadata.sharedWithMe = false;
+                metadata.driveName = "MyDrive";
             }
             // A file is in "Shared with me" if and only if owners[0].me is false
             // Note: Equivalently, we could check if ownedByMe is false
             // but this requires getting an extra field, which is redundant
             else {
-                metadata.inMyDrive = false;
-                metadata.sharedWithMe = true;
+                metadata.driveName = "SharedWithMe";
             }
         }
         fileDataList.push(metadata);
@@ -225,15 +221,8 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
             for(let i = 0; i < fileDataList.length; i++) {
                 // Top-level file
                 if(!fileDataList[i].parents || (fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] === myDriveId || (fileDataList[i].parents[0] in sharedDriveCache)))) {
-                    if(fileDataList[i].inMyDrive) {
-                        fileDataList[i].path = '/MyDrive';
-                    }
-                    else if(fileDataList[i].sharedWithMe) {
-                        fileDataList[i].path = '/SharedWithMe';
-                    }
-                    else if(fileDataList[i].driveId) {
-                        fileDataList[i].path = '/' + fileDataList[i].driveName;
-                    }
+                    fileDataList[i].path = '/' + fileDataList[i].driveName;
+                    fileDataList[i].topLevel = true;
                     if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
                         folderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
                         size++;
@@ -246,6 +235,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                 for(let i = 0; i < fileDataList.length; i++) {
                     // File is a child of some parent file in the previous level
                     if(fileDataList[i].parents && fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] in folderIdsToPaths)) {
+                        fileDataList[i].topLevel = false;
                         fileDataList[i].path = folderIdsToPaths[fileDataList[i].parents[0]];
                         if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
                             newFolderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;

@@ -220,7 +220,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
             case "sharable":
                 arr = snapshot.filter(file => {
                     for (const permission of file.permissions.value) {
-                        if (permission.link.type === "edit" && permission.grantedToV2.user.email === sq.argument)
+                        if (permission.link.type === "edit" && permission.grantedToV2.user.email.toLowerCase() === sq.argument.toLowerCase())
                             return true;
                     };
                     return false;
@@ -312,9 +312,212 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
         }
     } 
     
-    // TODO: Filter snapshots for Google Drive
+    // Filter snapshots for Google Drive
     else if (sq.operator && driveType === "google") { // checks if the search query is a single operator for Google Drive
-        return new Set();
+        const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
+        switch (sq.operator) {
+            case "drive":
+                arr = snapshot.filter(file => {
+                    return file.driveName.toLowerCase() === sq.argument.toLowerCase();
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "owner":
+                arr = snapshot.filter(file => file.owners && file.owners.length > 0 && file.owners[0].emailAddress.toLowerCase() === sq.argument.toLowerCase());
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "creator":
+                // Note: Google Drive API doesn't provide the creator of a file
+                // For now, we treat the "owner" and "creator" operators as equivalent for Google Drive
+                arr = snapshot.filter(file => file.owners && file.owners.length > 0 && file.owners[0].emailAddress.toLowerCase() === sq.argument.toLowerCase());
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "from":
+                arr = snapshot.filter(file => file.sharingUser && file.sharingUser.emailAddress.toLowerCase() === sq.argument.toLowerCase());
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "to":
+                // Ignore group permissions (for individual user) and inherited permissions
+                // Formula for determining direct permissions of a file F:
+                // directPerms(F) = F.perms \ parent(F).perms
+                arr = snapshot.filter(file => {
+                    if (file.shared && file.permissions) {
+                        if (!file.topLevel) {
+                            let parent = snapshot.find(f => f.id === file.parents[0]);
+                            let parentPermissionsIds = new Set(parent.permissions.map(p => p.id));
+                            let directPermissions = file.permissions.filter(p => !parentPermissionsIds.has(p.id));
+                            for (const permission of directPermissions) {
+                                if ((permission.type === 'user' || permission.type === 'group') && permission.role !== "owner")
+                                    if (permission.emailAddress.toLowerCase() === sq.argument.toLowerCase()) return true;
+                            }
+                        }
+                        else {
+                            for (const permission of file.permissions) {
+                                if ((permission.type === 'user' || permission.type === 'group') && permission.role !== "owner")
+                                    if (permission.emailAddress.toLowerCase() === sq.argument.toLowerCase()) return true;
+                            }
+                        }
+                    }
+                    return false;
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+            
+            case "readable":
+                arr = snapshot.filter(file => {
+                    if (file.permissions) {
+                        for (const permission of file.permissions) {
+                            if ((permission.type === 'user' || permission.type === 'group') && permission.emailAddress.toLowerCase() === sq.argument.toLowerCase()) return true;
+                        }
+                    }
+                    return false;
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "writable":
+                arr = snapshot.filter(file => {
+                    if (file.permissions) {
+                        for (const permission of file.permissions) {
+                            if (writerRoles.includes(permission.role)) {
+                                if ((permission.type === 'user' || permission.type === 'group') && permission.emailAddress.toLowerCase() === sq.argument.toLowerCase()) return true;
+                            }
+                        }
+                    }
+                    return false;
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "sharable":
+                // TODO
+
+                // According to the Google Drive API:
+                // 1. To share a file in My Drive, the user must have the role of "writer" or higher.
+                //    1a. If the writersCanShare boolean value is set to False for the file, the user must have the "owner" role.
+                //    1b. If the user with the role of "writer" has temporary access governed by an expiration date and time, they can't share the file.
+                // 2. To share a folder in My Drive, the user must have the role of "writer" or higher.
+                //    2a. If the writersCanShare boolean value is set to False for the file, the user must have the "owner" role.
+                // 3. To share a file in a shared drive, the user must have the role of "writer" or higher.
+                // 4. To share a folder in a shared drive, the user must have the role of "organizer."
+                arr = snapshot.filter(file => {
+                    for (const permission of file.permissions) {
+                        if ((permission.type === 'user' || permission.type === 'group')) {
+                            if (file.driveName === "MyDrive") {
+
+                            }
+                            else if (file.driveName === "SharedWithMe") {
+                                
+                            }
+                            else {
+
+                            }
+                        }
+                    }
+                    return false;
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "name":
+                regex = new RegExp(sq.argument);
+                arr = snapshot.filter(file => {
+                    return regex.test(file.name);
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+        
+            case "inFolder":
+                regex = new RegExp(sq.argument);
+                arr = snapshot.filter(file => {
+                    let folders = file.path.split("/");
+                    let parent = folders[folders.length - 1];
+                    return regex.test(parent);
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "folder":
+                regex = new RegExp(sq.argument);
+                console.log(regex);
+                arr = snapshot.filter(file => {
+                    let folders = file.path.split("/");
+                    for (const folder of folders) {
+                        if (regex.test(folder)) {
+                            console.log(folder);
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "path":
+                arr = snapshot.filter(file => {
+                    return file.path.includes(sq.argument);
+                })
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+
+            case "sharing":
+                if (sq.argument === "none")
+                    arr = snapshot.filter(file => !file.shared);
+                else if (sq.argument === "anyone")
+                    arr = snapshot.filter(file => {
+                        if (file.shared && file.permissions) {
+                            for (const permission of file.permissions) {
+                                // If permission type is "anyone", then permission role cannot be "owner"
+                                // since an owner must have an email address
+                                if (permission.type === "anyone") return true;
+                            }
+                        }
+                        return false;
+                    });
+                else if (sq.argument === "individual")
+                    arr = snapshot.filter(file => {
+                        if (file.shared && file.permissions) {
+                            for (const permission of file.permissions) {
+                                if ((permission.type === "user" || permission.type === "group") && permission.role !== "owner")
+                                    return true;
+                            }
+                        }
+                        return false;
+                    });
+                else if (sq.argument === "domain")
+                    arr = snapshot.filter(file => {
+                        if (file.shared && file.permissions) {
+                            for (const permission of file.permissions) {
+                                // If permission type is "domain", then permission role cannot be "owner"
+                                // since an owner must have an email address
+                                if (permission.type === "domain") return true;
+                            }
+                        }
+                        return false;
+                    });
+                if (sq.negative)
+                    return complement(new Set(snapshot), new Set(arr));
+                return new Set(arr);
+            
+            default:
+                return new Set();
+        }
     }
 
     let sets = [];
