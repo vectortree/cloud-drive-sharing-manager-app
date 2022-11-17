@@ -30,10 +30,12 @@ router.post('/addsearchquery', async (req, res) => {
             userProfile.searchQueryHistory.shift();
         userProfile.searchQueryHistory.push(searchQuery);
         // Save to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });
@@ -48,10 +50,12 @@ router.delete('/clearsearchqueries', async (req, res) => {
         console.log("Clearing all search queries from history");
         userProfile.searchQueryHistory = [];
         // Save changes to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });
@@ -70,10 +74,12 @@ router.delete('/removesearchquery', async (req, res) => {
         // Delete search query from history
         userProfile.searchQueryHistory.splice(req.params.id, 1);
         // Save changes to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });

@@ -1,3 +1,5 @@
+import { filterSnapshotBySearchQuery } from './query';
+
 /*
     This function checks whether a snapshot satisfies all,
     or a selected subset, of the access control requirements
@@ -8,7 +10,7 @@
     Note: The caller must first get an array of the closest group-membership
     snapshots before calling this function.
     Input:
-        1) currentSnapshot (File-sharing snapshot)
+        1) currentSnapshot (File-sharing snapshot object)
         2) closestGMSnapshots (Array of closest group-membership snapshots to currentSnapshot)
         2) requirements (Array of access control requirements)
         3) driveType ("google" or "microsoft")
@@ -25,10 +27,8 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, dr
         const readerRoles = ["commenter, reader"];
         const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
         requirements.forEach((requirement) => {
-            // TODO: Call function that returns a subset of files, given a snapshot
-            // and a search query. For now, we will use all files in the current snapshot.
-            // let files = filterSnapshotBySearchQuery(currentSnapshot, requirement.searchQuery, driveType);
-            let files = currentSnapshot.data;
+            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, driveType));
+            //let files = currentSnapshot.data;
             files.forEach((file) => {
                 let violation = {
                     requirement: requirement,

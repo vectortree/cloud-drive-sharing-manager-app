@@ -373,6 +373,9 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
             
             case "readable":
+                // TODO: Consider group permissions
+                // If a file has a read permission for a group that the user is a member of,
+                // then it should be included.
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
@@ -386,6 +389,9 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
 
             case "writable":
+                // TODO: Consider group permissions
+                // If a file has a write permission for a group that the user is a member of,
+                // then it should be included.
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
@@ -401,7 +407,9 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
 
             case "sharable":
-                // TODO
+                // TODO: Consider group permissions
+                // If a file can be shared by some group that the user is a member of,
+                // then it should be included.
 
                 // According to the Google Drive API:
                 // 1. To share a file in My Drive, the user must have the role of "writer" or higher.
@@ -412,16 +420,31 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 // 3. To share a file in a shared drive, the user must have the role of "writer" or higher.
                 // 4. To share a folder in a shared drive, the user must have the role of "organizer."
                 arr = snapshot.filter(file => {
-                    for (const permission of file.permissions) {
-                        if ((permission.type === 'user' || permission.type === 'group')) {
-                            if (file.driveName === "MyDrive") {
-
-                            }
-                            else if (file.driveName === "SharedWithMe") {
-                                
-                            }
-                            else {
-
+                    if (file.permissions) {
+                        for (const permission of file.permissions) {
+                            if (permission.type === 'user' || permission.type === 'group') {
+                                if (file.driveName === 'MyDrive' || file.driveName === 'SharedWithMe') {
+                                    if (writerRoles.includes(permission.role)) {
+                                        if (permission.emailAddress.toLowerCase() === sq.argument.toLowerCase()) {
+                                            if (permission.expirationTime && permission.role === 'writer')
+                                                return false;
+                                            if (!file.writersCanShare && permission.role === 'owner')
+                                                return true;
+                                            if (file.writersCanShare)
+                                                return true;
+                                        }
+                                    }
+                                }
+                                else {
+                                    if (writerRoles.includes(permission.role) && file.mimeType !== 'application/vnd.google-apps.folder') {
+                                        if (permission.emailAddress.toLowerCase() === sq.argument.toLowerCase())
+                                            return true;
+                                    }
+                                    if (file.mimeType === 'application/vnd.google-apps.folder' && permission.role === 'organizer') {
+                                        if (permission.emailAddress.toLowerCase() === sq.argument.toLowerCase())
+                                            return true;
+                                    }
+                                }
                             }
                         }
                     }
@@ -441,6 +464,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
         
             case "inFolder":
+                // Note: Splitting results in an empty string
+                // as the first element of the array
                 regex = new RegExp(sq.argument);
                 arr = snapshot.filter(file => {
                     let folders = file.path.split("/");
@@ -452,6 +477,8 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
 
             case "folder":
+                // Note: Splitting results in an empty string
+                // as the first element of the array
                 regex = new RegExp(sq.argument);
                 console.log(regex);
                 arr = snapshot.filter(file => {

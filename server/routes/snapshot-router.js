@@ -144,107 +144,149 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
-        if(userProfile.user.driveType === "microsoft") {
-            // Make sure to refresh tokens before attempting to access Microsoft Graph API
-            if(userProfile.user.tokens.refresh_token) {
-                refresh.requestNewAccessToken(
-                    'microsoft',
-                    userProfile.user.tokens.refresh_token,
-                    function (err, accessToken, refreshToken) {
-                        // Store new tokens in database
-                        userProfile.user.tokens.access_token = accessToken;
-                        userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
-                    },
-                );
+        try {
+            if(userProfile.user.driveType === "microsoft") {
+                // Make sure to refresh tokens before attempting to access Microsoft Graph API
+                if(userProfile.user.tokens.refresh_token) {
+                    refresh.requestNewAccessToken(
+                        'microsoft',
+                        userProfile.user.tokens.refresh_token,
+                        function (err, accessToken, refreshToken) {
+                            // Store new tokens in database
+                            userProfile.user.tokens.access_token = accessToken;
+                            userProfile.user.tokens.refresh_token = refreshToken;
+                            userProfile.save();
+                        },
+                    );
+                }
+
+                const accessToken = userProfile.user.tokens.access_token;
+
+                // Call Microsoft Graph API method recursively to get all file permission data and metadata
+                await getDriveItems(accessToken, '/drive/root');
+                await getSharedItemsRoot(accessToken);
+                
             }
+            else if(userProfile.user.driveType === "google") {
+                // Make sure to refresh access token before attempting to access Google Drive API
+                if(userProfile.user.tokens.refresh_token) {
+                    refresh.requestNewAccessToken(
+                        'google',
+                        userProfile.user.tokens.refresh_token,
+                        function (err, accessToken, refreshToken) {
+                            // Store new tokens in database
+                            userProfile.user.tokens.access_token = accessToken;
+                            userProfile.user.tokens.refresh_token = refreshToken;
+                            userProfile.save();
+                        },
+                    );
+                }
+                const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
+                    process.env.GOOGLE_CLIENT_SECRET, process.env.CLIENT_URL);
+                
+                oAuth2Client.setCredentials(userProfile.user.tokens);
+                // Create Google Drive object to call API
+                const googleDrive = google.drive({
+                    version: 'v3',
+                    auth: oAuth2Client
+                });
 
-            const accessToken = userProfile.user.tokens.access_token;
+                // Cache the driveId and driveName for shared drives to minimize API calls
+                let sharedDriveCache = {};
 
-            // Call Microsoft Graph API method recursively to get all file permission data and metadata
-            await getDriveItems(accessToken, '/drive/root');
-            await getSharedItemsRoot(accessToken);
-            
-        }
-        else if(userProfile.user.driveType === "google") {
-            // Make sure to refresh access token before attempting to access Google Drive API
-            if(userProfile.user.tokens.refresh_token) {
-                refresh.requestNewAccessToken(
-                    'google',
-                    userProfile.user.tokens.refresh_token,
-                    function (err, accessToken, refreshToken) {
-                        // Store new tokens in database
-                        userProfile.user.tokens.access_token = accessToken;
-                        userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
-                    },
-                );
-            }
-            const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
-                process.env.GOOGLE_CLIENT_SECRET, process.env.CLIENT_URL);
-            
-            oAuth2Client.setCredentials(userProfile.user.tokens);
-            // Create Google Drive object to call API
-            const googleDrive = google.drive({
-                version: 'v3',
-                auth: oAuth2Client
-            });
+                // Call Google Drive API methods to get all file permission data and metadata
+                let NextPageToken = "";
+                do {
+                    const params = {
+                        corpora: "allDrives",
+                        includeItemsFromAllDrives: true,
+                        supportsAllDrives: true,
+                        pageSize: 1000,
+                        pageToken: NextPageToken || ""
+                    };
+                    let response = await googleDrive.files.list(params);
+                    const files = response.data.files;
+                    // Get file metadata and permissions
+                    let fileResponses = await getGoogleDriveFileResponses(googleDrive, files);
+                    sharedDriveCache = await pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDriveCache);
+                    NextPageToken = response.data.nextPageToken;
+                } while(NextPageToken);
 
-            // Cache the driveId and driveName for shared drives to minimize API calls
-            let sharedDriveCache = {};
-
-            // Call Google Drive API methods to get all file permission data and metadata
-            let NextPageToken = "";
-            do {
-                const params = {
-                    corpora: "allDrives",
-                    includeItemsFromAllDrives: true,
-                    supportsAllDrives: true,
-                    pageSize: 1000,
-                    pageToken: NextPageToken || ""
-                };
-                let response = await googleDrive.files.list(params);
-                if(!response || response.status != 200) return res.status(500).json({success: false, message: "Error"});
-                const files = response.data.files;
-                // Get file metadata and permissions
-                let fileResponses = await getGoogleDriveFileResponses(googleDrive, files);
-                sharedDriveCache = await pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDriveCache);
-                NextPageToken = response.data.nextPageToken;
-            } while(NextPageToken);
-
-            // Add a path field for all files
-            let folderIdsToPaths = {};
-            let size = 0;
-            let rootResponse = await googleDrive.files.get({fileId: 'root', fields: 'id'});
-            if(!rootResponse || rootResponse.status != 200) return res.status(500).json({success: false, message: "Error"});
-            const myDriveId = rootResponse.data.id;
-            for(let i = 0; i < fileDataList.length; i++) {
-                // Top-level file
-                if(!fileDataList[i].parents || (fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] === myDriveId || (fileDataList[i].parents[0] in sharedDriveCache)))) {
-                    fileDataList[i].path = '/' + fileDataList[i].driveName;
-                    fileDataList[i].topLevel = true;
-                    if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
-                        folderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
-                        size++;
+                // Get permissions for all files
+                for(let i = 0; i < fileDataList.length; i++) {
+                    // File in shared drive
+                    if(fileDataList[i].driveId) {
+                        let permissionsList = [];
+                        NextPageToken = "";
+                        do {
+                            let p = {
+                                fileId: fileDataList[i].id,
+                                supportsAllDrives: true,
+                                pageSize: 100
+                            };
+                            if(NextPageToken) {
+                                p = {
+                                    fileId: fileDataList[i].id,
+                                    supportsAllDrives: true,
+                                    pageSize: 100,
+                                    pageToken: NextPageToken
+                                };
+                            }
+                            let permissionsResponse = await googleDrive.permissions.list(p);
+                            permissionsList = permissionsList.concat(permissionsResponse.data.permissions);
+                            NextPageToken = permissionsResponse.data.nextPageToken;
+                        } while(NextPageToken);
+                        // Map each permission to its associated metadata (by making an API call per permission)
+                        fileDataList[i].permissions = await Promise.all(permissionsList.map(async (permission) => {
+                            let resp = await googleDrive.permissions.get({
+                                fileId: fileDataList[i].id,
+                                permissionId: permission.id,
+                                supportsAllDrives: true,
+                                fields: "*"
+                            });
+                            //console.log(permission);
+                            //console.log(resp.data);
+                            return resp.data;
+                        }));
                     }
                 }
-            }
-            while(size > 0) {
-                let newFolderIdsToPaths = {};
-                size = 0;
+
+                // Add a path field for all files
+                let folderIdsToPaths = {};
+                let size = 0;
+                let rootResponse = await googleDrive.files.get({fileId: 'root', fields: 'id'});
+                const myDriveId = rootResponse.data.id;
                 for(let i = 0; i < fileDataList.length; i++) {
-                    // File is a child of some parent file in the previous level
-                    if(fileDataList[i].parents && fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] in folderIdsToPaths)) {
-                        fileDataList[i].path = folderIdsToPaths[fileDataList[i].parents[0]];
-                        fileDataList[i].topLevel = false;
+                    // Top-level file
+                    if(!fileDataList[i].parents || (fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] === myDriveId || (fileDataList[i].parents[0] in sharedDriveCache)))) {
+                        fileDataList[i].path = '/' + fileDataList[i].driveName;
+                        fileDataList[i].topLevel = true;
                         if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
-                            newFolderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
+                            folderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
                             size++;
                         }
                     }
                 }
-                folderIdsToPaths = newFolderIdsToPaths;
+                while(size > 0) {
+                    let newFolderIdsToPaths = {};
+                    size = 0;
+                    for(let i = 0; i < fileDataList.length; i++) {
+                        // File is a child of some parent file in the previous level
+                        if(fileDataList[i].parents && fileDataList[i].parents.length > 0 && (fileDataList[i].parents[0] in folderIdsToPaths)) {
+                            fileDataList[i].path = folderIdsToPaths[fileDataList[i].parents[0]];
+                            fileDataList[i].topLevel = false;
+                            if(fileDataList[i].mimeType === 'application/vnd.google-apps.folder') {
+                                newFolderIdsToPaths[fileDataList[i].id] = fileDataList[i].path + '/' + fileDataList[i].name;
+                                size++;
+                            }
+                        }
+                    }
+                    folderIdsToPaths = newFolderIdsToPaths;
+                }
             }
+        } catch(err) {
+            console.log(err);
+            return res.status(500).json({success: false, message: "Error"});
         }
 
         // Create new file sharing snapshot to store in user profile
@@ -271,10 +313,12 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         };
         userProfile.fileSharingSnapshots.push(snapshot);
         // Save to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         fileDataList = [];
         return sendUserProfile(res, userProfile);
     });
@@ -351,10 +395,12 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
     
         userProfile.groupMembershipSnapshots.push(snapshot);
         // Save to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });
@@ -374,10 +420,12 @@ router.put('/editfilesharingsnapshot/:id', async (req, res) => {
         userProfile.fileSharingSnapshots[req.params.id].name = req.body.name;
         userProfile.fileSharingSnapshots[req.params.id].updatedAt = currentDate;
         // Save changes to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });
@@ -393,10 +441,12 @@ router.delete('/removefilesharingsnapshot/:id', async (req, res) => {
         console.log("Deleting file-sharing snapshot");
         userProfile.fileSharingSnapshots.splice(req.params.id, 1);
         // Save changes to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });
@@ -416,10 +466,12 @@ router.put('/editgroupmembershipsnapshot/:id', async (req, res) => {
         userProfile.groupMembershipSnapshots[req.params.id].name = req.body.name;
         userProfile.groupMembershipSnapshots[req.params.id].updatedAt = currentDate;
         // Save changes to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });
@@ -435,10 +487,12 @@ router.delete('/removegroupmembershipsnapshot/:id', async (req, res) => {
         console.log("Deleting group-membership snapshot");
         userProfile.groupMembershipSnapshots.splice(req.params.id, 1);
         // Save changes to database
-        await userProfile.save().catch((err) => {
+        try {
+            await userProfile.save();
+        } catch(err) {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
-        });
+        }
         return sendUserProfile(res, userProfile);
     });
 });
