@@ -25,6 +25,7 @@ export default function ColorRadioButtons(props) {
                 console.log("Created snapshot");
             }
         });
+
         if(props.onClick) props.onClick()
     }
 

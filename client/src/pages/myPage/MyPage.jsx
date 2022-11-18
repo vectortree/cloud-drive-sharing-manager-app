@@ -5,40 +5,46 @@ import ColumnMenuGrid from "../../components/ListsBar"
 import Profile from "../../components/Profile";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {AccessControlData} from "../../recoil";
-import {userData} from "../../App";
+import {AuthContext} from "../../auth/auth";
+import {useEffect, useContext, useState, useRef} from "react"
 
 
 
 const MyPage = (props)=>{
     const [ACR, setACR]=useRecoilState(AccessControlData);
-    //setACR(userData.accessControlRequirements);
-    //console.log(ACR);
 
-    const [accessControlRequirements, setAccessControlRequirements] = React.useState();
     const ACR_Controller = (data) =>{
-        setAccessControlRequirements(data);
-        setACR(JSON.stringify(data));
+        console.log("ACR Cont");
+        setACR(prevRows => {
+            let variable = [...prevRows,data]
+            return variable
+        })
         console.log(ACR);
     }
     const ACR_DeleteController = (id) =>{
-        setAccessControlRequirements((prevRows) => prevRows.filter((row) => row.id !== id));
-        console.log(accessControlRequirements);
-        setACR(JSON.stringify(accessControlRequirements));
-        // setACT2(JSON.stringify(accessControlRequirements));
+        console.log("ACR Delete");
+        console.log(props.userData.accessControlRequirements);
+        setACR(props.userData.accessControlRequirements);
         console.log(ACR);
+        setACR(prevRows => {
+                let variable = [...prevRows];
+                const ACR_Data = variable.filter((row) => row.id !== id)
+                return ACR_Data
+            }
+        )
     }
     const sharingInfo= [
-        <Profile userData = {userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {userData.accessControlRequirements} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
+        <Profile userData = {props.userData}/>,
+        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {props.userData.accessControlRequirements} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
         //<ColumnMenuGrid name={ACR} dataSet = {ACR} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
-        <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {userData.fileSharingSnapshots}/>,
-        <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {userData.groupMembershipSnapshots}/>,
-        <ColumnMenuGrid name="User's Recent Query" dataSet = {userData.searchQueryHistory}/>
+        <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {props.userData.fileSharingSnapshots}/>,
+        <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {props.userData.groupMembershipSnapshots}/>,
+        <ColumnMenuGrid name="User's Recent Query" dataSet = {props.userData.searchQueryHistory}/>
     ];
 
     return (
         <Grid>
-            <MiniDrawer  components={sharingInfo} type = "myPage" userData = {userData}/>
+            <MiniDrawer  components={sharingInfo} type = "myPage" userData = {props.userData}/>
         </Grid>
     );
 }

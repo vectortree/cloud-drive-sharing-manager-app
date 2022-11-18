@@ -209,18 +209,13 @@ export default function AddRequirement(props) {
                 handleErrorAlertOpen();
                 return;
             }
+
             const query = QueryType + ":" + QueryName;
-            // "
-            // {"name":"qwe",
-            //  "searchQuery":"Groups:qwe",
-            //  "allowedReaders":["asdd"],
-            //  "allowedWriters":["asdd"],
-            //  "deniedReaders":["asdd"],
-            //  "deniedWriters":[]d
-            //  }"
+            const group = QueryType == "Groups";
             const accessControlData = {
                 name: requirementName,
                 searchQuery: query,
+                group: group,
                 allowedReaders:allowedReaderArray,
                 allowedWriters: allowedWriter,
                 deniedReaders: DenyReadAccess,
@@ -228,10 +223,7 @@ export default function AddRequirement(props) {
             };
             console.log(accessControlData);
             createAccessControlRequirement(accessControlData);
-            props.ACR_Handler((prevRows) => {
-                // const newData = prevRows.find((row) => row.id === newRow.id);
-                return [...prevRows, accessControlData];
-            });
+            props.ACR_Handler(accessControlData);
 
             props.onClick();
         }

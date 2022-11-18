@@ -60,6 +60,7 @@ export default function SearchQueryModal(props) {
 };
     const submit = () =>{
         const query = { searchQuery : queryString}
+        console.log(query);
         api.addSearchQuery(query);
         props.handleClose();
     }
