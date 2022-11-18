@@ -62,7 +62,7 @@ export default function ColumnMenuGrid( props) {
                         variant="outlined"
                         size = 'small'
                         sx={{ color : "black" }}
-                        onClick={deleteRequirement(params.id)}
+                        onClick={()=>deleteRequirement(params.id)}
                     >
                         X
                     </Button>
@@ -71,13 +71,10 @@ export default function ColumnMenuGrid( props) {
     ];
     console.log(props.dataSet);
 
-    const deleteRequirement = React.useCallback(
-      (id) => () => {
+    const deleteRequirement = (id) => {
           props.ACR_DeleteHandler(id);
           removeAccessControlRequirement(id);
-      },
-      [],
-  );
+      };
 
     return (
 

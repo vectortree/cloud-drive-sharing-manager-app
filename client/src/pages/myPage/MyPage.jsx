@@ -30,7 +30,7 @@ const MyPage = (props)=>{
         console.log(props.userData.accessControlRequirements);
         setACR(prevRows => {
                 let variable = [...prevRows];
-                const ACR_Data = variable.filter((row) => row.id !== id)
+                let ACR_Data = variable.filter((row) => row.id !== id)
                 props.userData.accessControlRequirements = ACR_Data;
                 return ACR_Data
             }
