@@ -12,34 +12,36 @@ import {useEffect, useContext, useState, useRef} from "react"
 
 const MyPage = (props)=>{
     const [ACR, setACR]=useRecoilState(AccessControlData);
-
+    useEffect(() => {
+        setACR(props.userData.accessControlRequirements);
+    },[]);
+    console.log(ACR);
+    console.log(props.userData.accessControlRequirements);
+    console.log(props.userData);
     const ACR_Controller = (data) =>{
-        console.log("ACR Cont");
         setACR(prevRows => {
             let variable = [...prevRows,data]
+            props.userData.accessControlRequirements = variable;
             return variable
         })
-        console.log(ACR);
     }
     const ACR_DeleteController = (id) =>{
         console.log("ACR Delete");
         console.log(props.userData.accessControlRequirements);
-        setACR(props.userData.accessControlRequirements);
-        console.log(ACR);
         setACR(prevRows => {
                 let variable = [...prevRows];
                 const ACR_Data = variable.filter((row) => row.id !== id)
+                props.userData.accessControlRequirements = ACR_Data;
                 return ACR_Data
             }
         )
     }
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {props.userData.accessControlRequirements} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
-        //<ColumnMenuGrid name={ACR} dataSet = {ACR} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
+        <ColumnMenuGrid name="Recent Access Control Requirement" dataSet = {ACR} ACR_Handler={ACR_Controller} ACR_DeleteHandler={ACR_DeleteController}/>,
         <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {props.userData.fileSharingSnapshots}/>,
         <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {props.userData.groupMembershipSnapshots}/>,
-        <ColumnMenuGrid name="User's Recent Query" dataSet = {props.userData.searchQueryHistory}/>
+        <ColumnMenuGrid name="User's Recent Query" dataSet = {[]}/>
     ];
 
     return (

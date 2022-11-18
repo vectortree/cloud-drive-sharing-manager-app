@@ -69,12 +69,7 @@ export default function ColumnMenuGrid( props) {
                 </strong>
             ),}
     ];
-
-
-    for(let i = 0; i < props.dataSet.length; i++)
-    {
-        props.dataSet[i].id = i;
-    }
+    console.log(props.dataSet);
 
     const deleteRequirement = React.useCallback(
       (id) => () => {

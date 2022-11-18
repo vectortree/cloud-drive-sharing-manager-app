@@ -1,14 +1,14 @@
 import axios from "axios";
 import {Grid} from "@mui/material";
 import {BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom"
-import {useEffect, useContext, useState, useRef} from "react"
+import {useEffect, useContext, useState, useRef, memo} from "react"
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login"
 import MyPage from "./pages/myPage/MyPage"
 import { AuthContext } from './auth/auth';
 import {AccessControlData} from "./recoil";
 import './App.css';
-import {useRecoilState, userState, useSetRecoilState} from "recoil";
+import {useRecoilState, useResetRecoilState, userState, useSetRecoilState} from "recoil";
 import {createAccessControlRequirement, createFileSharingSnapshot, createGroupMembershipSnapshot} from "./api/api";
 import AccessControlPage from "./pages/accessControlPage/AccessControlPage";
 import Anaylysis from "./pages/AnalysisPages/AnalysisPage";
@@ -23,7 +23,7 @@ const Layout = () =>{
 }
 function App() {
     const {userProfile} = useContext(AuthContext);
-    const userData = dataFiltering(userProfile);
+    let userData = dataFiltering(userProfile)
       return (
           <BrowserRouter>
               <Routes>

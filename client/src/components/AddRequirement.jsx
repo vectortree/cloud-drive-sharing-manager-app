@@ -176,7 +176,7 @@ export default function AddRequirement(props) {
             });
         }
     const submit = () =>{
-
+        console.log(DataState);
         if(requirementName ==='' || DataState.length === 0 || QueryType === '' || QueryName === '')
         {
             setOpenError(true);
@@ -209,10 +209,12 @@ export default function AddRequirement(props) {
                 handleErrorAlertOpen();
                 return;
             }
-
+            console.log(DataState);
             const query = QueryType + ":" + QueryName;
             const group = QueryType == "Groups";
+            const id = props.opdataSet.length;
             const accessControlData = {
+                id : id,
                 name: requirementName,
                 searchQuery: query,
                 group: group,
@@ -221,7 +223,6 @@ export default function AddRequirement(props) {
                 deniedReaders: DenyReadAccess,
                 deniedWriters: DenyWriteAccess
             };
-            console.log(accessControlData);
             createAccessControlRequirement(accessControlData);
             props.ACR_Handler(accessControlData);
 

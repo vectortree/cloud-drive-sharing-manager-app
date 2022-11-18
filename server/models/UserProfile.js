@@ -38,6 +38,7 @@ const UserProfileSchema = new Schema({
     // List of access control requirements
     accessControlRequirements: {
         type: [{
+            id: {type:Number, index:true, unique: true},
             name: String,
             searchQuery: Object,
             group: Boolean,
