@@ -19,6 +19,7 @@ async function sendUserProfile(res, userProfile) {
 router.post('/createaccesscontrolrequirement', async (req, res) => {
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
+    console.log(req.body);
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
@@ -106,12 +107,15 @@ router.delete('/removeaccesscontrolrequirement/:id', async (req, res) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         // Check that provided index is valid
-        if(req.params.id < 0 || req.params.id >= userProfile.accessControlRequirements.length) {
+        //if(req.params.id < 0 || req.params.id >= userProfile.accessControlRequirements.length) {
+        if(req.params.id < 0) {
             return res.status(400).json({success: false, message: "Index out of bounds"});
         }
-        console.log("Deleting access control requirement");
+        console.log("Deleting access control requirement"+ req.params.id);
         // Delete access control requirement in user profile
-        userProfile.accessControlRequirements.splice(req.params.id, 1);
+        let ACR_Data = userProfile.accessControlRequirements.filter((row) => row.id !== parseInt(req.params.id))
+        console.log(ACR_Data);
+        userProfile.accessControlRequirements = ACR_Data;
         // Save changes to database
         try {
             await userProfile.save();

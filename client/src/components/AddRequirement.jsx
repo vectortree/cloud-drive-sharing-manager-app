@@ -212,7 +212,25 @@ export default function AddRequirement(props) {
             console.log(DataState);
             const query = QueryType + ":" + QueryName;
             const group = QueryType == "Groups";
-            const id = props.opdataSet.length;
+            let id;
+            let idFlag = 0;
+            console.log(props.opdataSet);
+            for(id=0; id <= props.opdataSet.length; id++){
+                for(let i = 0; i < props.opdataSet.length; i++){
+                    console.log(id);
+                    console.log(props.opdataSet[i]);
+                    console.log(id == props.opdataSet[i].id);
+                    if(id == props.opdataSet[i].id){
+                        idFlag = 1;
+                        break;
+                    }
+                }
+                if(idFlag == 0){
+                    break;
+                }else{
+                    idFlag = 0;
+                }
+            }
             const accessControlData = {
                 id : id,
                 name: requirementName,

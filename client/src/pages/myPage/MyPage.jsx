@@ -19,22 +19,18 @@ const MyPage = (props)=>{
     console.log(props.userData.accessControlRequirements);
     console.log(props.userData);
     const ACR_Controller = (data) =>{
-        setACR(prevRows => {
-            let variable = [...prevRows,data]
-            props.userData.accessControlRequirements = variable;
-            return variable
-        })
+        props.ACR_Handler([...ACR,data]);
+        setACR(
+            [...ACR,data]
+        )
     }
     const ACR_DeleteController = (id) =>{
         console.log("ACR Delete");
         console.log(props.userData.accessControlRequirements);
-        setACR(prevRows => {
-                let variable = [...prevRows];
-                let ACR_Data = variable.filter((row) => row.id !== id)
-                props.userData.accessControlRequirements = ACR_Data;
-                return ACR_Data
-            }
-        )
+        let variable = [...ACR];
+        let ACR_Data = variable.filter((row) => row.id !== id)
+        props.ACR_Handler(ACR_Data);
+        setACR(ACR_Data)
     }
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
