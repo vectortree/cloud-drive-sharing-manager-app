@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import {useRecoilState} from "recoil";
+import {AccessControlData} from "../recoil";
 
 //Dummy Data
 const columns = [
@@ -21,10 +23,8 @@ const columns = [
 
 
 export default function AccessControlComponent(props) {
-    for(let i = 0; i < props.ACR_data.length; i++)
-    {
-        props.ACR_data[i].id = i;
-    }
+    const [ACR, setACR]=useRecoilState(AccessControlData);
+    console.log(props.ACR_data);
     return (
         <div style={{ height: props.size, width: '100%' }}>
             <DataGrid

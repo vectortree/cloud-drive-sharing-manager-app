@@ -34,7 +34,8 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
             deniedWriters } = req.body;
         
         // Check that the provided search query and group flag is non-null
-        if(!searchQuery || !group) return res.status(400).json({success: false, message: "Invalid data format"});
+        //if(!searchQuery || !group) return res.status(400).json({success: false, message: "Invalid data format"});
+        if(!searchQuery) return res.status(400).json({success: false, message: "Invalid data format"});
 
         // Access control sets must not be null
         // Any empty access control set should be an empty list

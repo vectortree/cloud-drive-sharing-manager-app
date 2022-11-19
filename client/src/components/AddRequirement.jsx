@@ -186,6 +186,7 @@ export default function AddRequirement(props) {
             let allowedWriter =[];
             let DenyReadAccess =[];
             let DenyWriteAccess =[];
+            console.log(DataState);
             let flag = 0;
             for( let i = 0; i < DataState.length; i++){
                 if(DataState[i].ReadAccess == true){
@@ -241,6 +242,7 @@ export default function AddRequirement(props) {
                 deniedReaders: DenyReadAccess,
                 deniedWriters: DenyWriteAccess
             };
+            console.log(accessControlData);
             createAccessControlRequirement(accessControlData);
             props.ACR_Handler(accessControlData);
 
@@ -293,7 +295,7 @@ export default function AddRequirement(props) {
         {field: 'ReadAccess', headerName: 'AR', width: 80,type:"boolean",sortable: true,editable: true,},
         {field: 'WriteAccess', headerName: 'AW', width: 80 ,type:"boolean",editable: true,sortable: true,},
         {field: 'DenyReadAccess', headerName: 'DR', width: 80,type:"boolean",sortable: true,editable: true,},
-        {field: 'DenyWrightAccess', headerName: 'DW', width: 80 ,type:"boolean",editable: true,sortable: true,},
+        {field: 'DenyWriteAccess', headerName: 'DW', width: 80 ,type:"boolean",editable: true,sortable: true,},
         {field: 'actions', type: 'actions', width: 80, headerName: <AddCircleOutlineIcon onClick={handleAddPerson}/>,
             getActions: (params) => [
                 <GridActionsCellItem

@@ -79,7 +79,7 @@ export default function PrimarySearchAppBar(props) {
     const navigate = useNavigate()
 
     const [openModal, setOpenModal] = React.useState(false);
-    const searchQueryModalOPen = () => setOpenModal(true);
+    const searchQueryModalOpen = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
     const navigateHome = () => {
@@ -184,7 +184,7 @@ export default function PrimarySearchAppBar(props) {
                 >
                     <BadgeAvatars userData={props.userData}/>
                 </IconButton>
-                <p>Profile</p>
+                Profile
             </MenuItem>
         </Menu>
     );
@@ -227,10 +227,9 @@ export default function PrimarySearchAppBar(props) {
                                 width: "50ch",
                             }}
                         />
-                        <Button color = "black" onClick = {searchQueryModalOPen} >
+                        <Button color = "black" onClick = {searchQueryModalOpen} >
                             <AlignVerticalCenterIcon style = {{marginRight : "8px", marginBottom : "7px"}}></AlignVerticalCenterIcon>
                         </Button>
-                        <div></div>
                     </Search>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

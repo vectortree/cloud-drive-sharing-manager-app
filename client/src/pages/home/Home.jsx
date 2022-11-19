@@ -4,45 +4,56 @@ import MiniDrawer from "../../components/SideBar"
 import Profile from "../../components/Profile";
 import ColumnMenuGrid from "../../components/ListsBar";
 import MultiActionAreaCard from "../../components/Folder";
-const folderInfo ={
-    name: "HW1",
-    fileSize:"180MB",
-    description:"This is HW1 Folder",
-    accessPermission:"read and write",
-    sharing:["sije.park@stonybrook.edu"],
-    owner:"sije.park@stonybrook.edu"
-}
-const folderInfo1 ={
+
+const file1 ={
     name: "HW2",
+    type: "file",
     fileSize:"180MB",
     description:"This is HW2 Folder",
     accessPermission:"read and write",
     sharing:["sije.park@stonybrook.edu"],
     owner:"sije.park@stonybrook.edu"
 }
-const folderInfo2 ={
+const file2 ={
     name: "HW3",
+    type: "file",
     fileSize:"180MB",
-    description:"This is HW3 Folder",
+    description:"This is HW3 File",
     accessPermission:"read and write",
     sharing:["sije.park@stonybrook.edu"],
     owner:"sije.park@stonybrook.edu"
 }
-const folderInfo3 ={
+const file3 ={
     name: "HW4",
+    type: "file",
     fileSize:"180MB",
     description:"This is HW4 Folder",
     accessPermission:"read and write",
     sharing:["sije.park@stonybrook.edu"],
     owner:"sije.park@stonybrook.edu"
 }
-
+const folder2 ={
+    name: "CSE390",
+    fileSize:"180MB",
+    type:"folder",
+    description:"This is HW1 Folder",
+    accessPermission:"read and write",
+    sharing:["sije.park@stonybrook.edu"],
+    owner:"sije.park@stonybrook.edu",
+    decendent:[],
+}
+const folder1 ={
+    name: "HW1",
+    fileSize:"180MB",
+    type:"folder",
+    description:"This is HW1 Folder",
+    accessPermission:"read and write",
+    sharing:["sije.park@stonybrook.edu"],
+    owner:"sije.park@stonybrook.edu",
+    decendent:[file1,file2,file3,folder2],
+}
 const sharingInfo= [
-    <MultiActionAreaCard folderList={folderInfo}/>,
-    <MultiActionAreaCard folderList={folderInfo1}/>,
-    <MultiActionAreaCard folderList={folderInfo2}/>,
-    <MultiActionAreaCard folderList={folderInfo3}/>,
-
+    <MultiActionAreaCard folderList={folder1}/>,
 ];
 const Home = (props) =>{
     console.log("this is home page");

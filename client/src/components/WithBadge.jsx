@@ -35,8 +35,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function BadgeAvatars(props) {
-    console.log("this is badgeAvatars");
-    console.log(props.userData);
+
 
     return (
         <Stack direction="row" spacing={2}>
