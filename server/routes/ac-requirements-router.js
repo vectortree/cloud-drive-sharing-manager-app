@@ -33,7 +33,7 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
             deniedReaders,
             deniedWriters } = req.body;
         
-        // Check that the provided search query and group flag is non-null
+        // Check that the provided search query non-null
         //if(!searchQuery || !group) return res.status(400).json({success: false, message: "Invalid data format"});
         if(!searchQuery) return res.status(400).json({success: false, message: "Invalid data format"});
 
@@ -75,9 +75,8 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         if(name && name.trim() !== "") requirementName = name;
         // Create an access control requirement object
         let currentDate = new Date();
-        console.log("here");
         let accessControlRequirement = {
-            id : id,
+            id: id,
             name: requirementName,
             searchQuery: searchQuery,
             group: group,
@@ -109,14 +108,14 @@ router.delete('/removeaccesscontrolrequirement/:id', async (req, res) => {
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         // Check that provided index is valid
         //if(req.params.id < 0 || req.params.id >= userProfile.accessControlRequirements.length) {
-        if(req.params.id < 0) {
-            return res.status(400).json({success: false, message: "Index out of bounds"});
-        }
-        console.log("Deleting access control requirement"+ req.params.id);
+            //return res.status(400).json({success: false, message: "Index out of bounds"});
+        //}
+        let index = userProfile.accessControlRequirements
+                    .findIndex(requirement => requirement.id == parseInt(req.params.id));
+        if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
+        console.log("Deleting access control requirement " + req.params.id);
         // Delete access control requirement in user profile
-        let ACR_Data = userProfile.accessControlRequirements.filter((row) => row.id !== parseInt(req.params.id))
-        console.log(ACR_Data);
-        userProfile.accessControlRequirements = ACR_Data;
+        userProfile.accessControlRequirements.splice(index, 1);
         // Save changes to database
         try {
             await userProfile.save();
@@ -146,8 +145,8 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
             deniedReaders,
             deniedWriters } = req.body;
 
-        // Check that the provided search query and group flag is non-null
-        if(!searchQuery || !group) return res.status(400).json({success: false, message: "Invalid data format"});
+        // Check that the provided search query is non-null
+        if(!searchQuery) return res.status(400).json({success: false, message: "Invalid data format"});
 
         // Access control sets must not be null
         // Any empty access control set should be an empty list
@@ -174,16 +173,19 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         }
         
         // Check that provided index is valid
-        if(req.params.id < 0 || req.params.id >= userProfile.accessControlRequirements.length) {
-            return res.status(400).json({success: false, message: "Index out of bounds"});
-        }
+        //if(req.params.id < 0 || req.params.id >= userProfile.accessControlRequirements.length) {
+            //return res.status(400).json({success: false, message: "Index out of bounds"});
+        //}
         // Note: An access control set must be a list (of Strings)
 
         // Note: The front-end will validate the search query before making a request to this endpoint
         // so that a valid search query is always sent to the server
 
         // Set requirementName to the old name
-        let requirementName = userProfile.accessControlRequirements[req.params.id].name;
+        let index = userProfile.accessControlRequirements
+                            .findIndex(requirement => requirement.id == parseInt(req.params.id));
+        if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
+        let requirementName = userProfile.accessControlRequirements[index].name;
         // If name is non-null and name is not the empty string, then set requirementName to the new name
         if(name && name.trim() !== "") requirementName = name;
         // Create an access control requirement object
@@ -198,11 +200,11 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
             allowedWriters: allowedWriters,
             deniedReaders: deniedReaders,
             deniedWriters: deniedWriters,
-            createdAt: userProfile.accessControlRequirements[req.params.id].createdAt,
+            createdAt: userProfile.accessControlRequirements[index].createdAt,
             updatedAt: currentDate
         };
         // Replace access control requirement in user profile
-        userProfile.accessControlRequirements[req.params.id] = accessControlRequirement;
+        userProfile.accessControlRequirements[index] = accessControlRequirement;
         // Save to database
         try {
             await userProfile.save();
