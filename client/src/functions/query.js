@@ -1,3 +1,6 @@
+
+
+
 const operators = ["drive", "owner", "creator", "from", "to", "readable", "writable", "sharable", "name", "inFolder", "folder", "path", "sharing"];
 
 /* 
@@ -130,9 +133,10 @@ function deserializeSearchQuery(sq) {
 }
 
 // Returns a set of files within a snapshot that satisfy the given search query
-function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
+function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
     let set = new Set();
     let arr = [];
+    let userArg = "";
     let regex = new RegExp();
     if (sq.operator && driveType === "microsoft") { // checks if the search query is a single operator for OneDrive
         switch (sq.operator) {
@@ -145,9 +149,13 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
 
             case "owner":
+                if (sq.argument.toLowerCase() === "me")
+                    userArg = email.toLowerCase();
+                else
+                    userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
                     for (const permission of file.permissions.value) {
-                        if (permission.roles.includes("owner") && permission.grantedToV2.user.email.toLowerCase() === sq.argument.toLowerCase())
+                        if (permission.roles.includes("owner") && permission.grantedToV2.user.email.toLowerCase() === userArg)
                             return true;
                     };
                     return false;
@@ -157,27 +165,39 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
 
             case "creator":
+                if (sq.argument.toLowerCase() === "me")
+                    userArg = email.toLowerCase();
+                else
+                    userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
-                    return file.createdBy.user.email.toLowerCase() === sq.argument.toLowerCase();
+                    return file.createdBy.user.email.toLowerCase() === userArg;
                 });
                 if (sq.negative)
                     return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "from":
+                if (sq.argument.toLowerCase() === "me")
+                    userArg = email.toLowerCase();
+                else
+                    userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
-                    return file.shared?.sharedBy?.user.email.toLowerCase() === sq.argument.toLowerCase();
+                    return file.shared?.sharedBy?.user.email.toLowerCase() === userArg;
                 });
                 if (sq.negative)
                     return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);
 
             case "to":
+                if (sq.argument.toLowerCase() === "me")
+                    userArg = email.toLowerCase();
+                else
+                    userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
                     for (const permission of file.permissions.value) {
                         if (!permission.inheritedFrom && permission.grantedToIdentitiesV2) {
                             for (const user of permission.grantedToIdentitiesV2) {
-                                if (user.user.email.toLowerCase() === sq.argument.toLowerCase()) return true;
+                                if (user.user.email.toLowerCase() === userArg) return true;
                             }
                         }
                     };
@@ -188,11 +208,15 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
             
             case "readable":
+                if (sq.argument.toLowerCase() === "me")
+                    userArg = email.toLowerCase();
+                else
+                    userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
                     for (const permission of file.permissions.value) {
                         if (permission.roles.includes("read")) {
                             for (const user of permission.grantedToIdentitiesV2) {
-                                if (user.user.email.toLowerCase() === sq.argument.toLowerCase()) return true;
+                                if (user.user.email.toLowerCase() === userArg) return true;
                             }
                         }
                     };
@@ -203,11 +227,15 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
 
             case "writable":
+                if (sq.argument.toLowerCase() === "me")
+                    userArg = email.toLowerCase();
+                else
+                    userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
                     for (const permission of file.permissions.value) {
                         if (permission.roles.includes("write")) {
                             for (const user of permission.grantedToIdentitiesV2) {
-                                if (user.user.email.toLowerCase() === sq.argument.toLowerCase()) return true;
+                                if (user.user.email.toLowerCase() === userArg) return true;
                             }
                         }
                     };
@@ -218,9 +246,13 @@ function filterSnapshotBySearchQuery(snapshot, sq, driveType) {
                 return new Set(arr);
 
             case "sharable":
+                if (sq.argument.toLowerCase() === "me")
+                    userArg = email.toLowerCase();
+                else
+                    userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
                     for (const permission of file.permissions.value) {
-                        if (permission.link.type === "edit" && permission.grantedToV2.user.email.toLowerCase() === sq.argument.toLowerCase())
+                        if (permission.link.type === "edit" && permission.grantedToV2.user.email.toLowerCase() === userArg)
                             return true;
                     };
                     return false;

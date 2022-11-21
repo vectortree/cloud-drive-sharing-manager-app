@@ -130,7 +130,14 @@ export default function PrimarySearchAppBar(props) {
         const parsedSQ = serializeSearchQuery(searchQuery.trim());
         console.log(parsedSQ);
         if (!parsedSQ.error) {
-            const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, userProfile.user.driveType);
+            let email;
+            if (userProfile.user.driveType === "microsoft")
+                email = userProfile.user.data.mail;
+            else
+                email = userProfile.user.data.email;
+            let domain = email.substring(email.lastIndexOf("@") + 1);
+
+            const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType);
             console.log(filteredFiles);
         }
     }
