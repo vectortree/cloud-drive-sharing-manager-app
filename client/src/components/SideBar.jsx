@@ -38,11 +38,14 @@ import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import AddToDriveIcon from '@mui/icons-material/AddToDrive';
 import GoogleIcon from '@mui/icons-material/Google';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import HomeHeader from "./HomeHeader";
+import MultiActionAreaCard from "./Folder";
+import SideBarFileInfo from "./SideBarFileInfo";
+
 
 //This is for the left side bar
 
 const drawerWidth = 240;
-const photoIcon = <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
 
 
 const openedMixin = (theme) => ({
@@ -111,15 +114,30 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
-export default function MiniDrawer(props) {
+export default function MiniDrawer({children, ...props}) {
     const navigate = useNavigate()
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-
     const [openModal, setOpenModal] = React.useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
+    let twoD_Array = new Array(0);
+    for (var i = 0; i < props.components.length/4; i++) {
+        twoD_Array.push([]);
+    }
+    console.log(twoD_Array);
+    if(props.type === "home"){
+        for(let i =0; i < props.components.length; i+=4){
+            for(let j = 0; j < 4; j++){
+                if(props.components[i+j] === undefined){
+                    break;
+                }else{
+                    twoD_Array[i/4][j] = props.components[i+j];
+                }
+            }
+        }
+    }
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -368,27 +386,22 @@ export default function MiniDrawer(props) {
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
-                {/*Need to get data and fix it*/}
-
                 {/*Here to Start flexible components*/}
                 {props.type === "home"?
                     <>
-                    <Typography>Google Drive &emsp;&emsp;CSE416 {'>'} HomeWorkSubmission
-                        <MultipleSelectPlaceholder userData={props.userData}/>
-                        <IconButton style={{float:"right", padding:"5px", marginLeft:"30px", marginRight:"30px"}}>
-                            <RestoreIcon/>
-                        </IconButton>
-                        <Button onClick={handleOpenModal} style={{float:"right"}}>{photoIcon}</Button>
-                        <BasicModal open={openModal} handleClose={handleCloseModal} title={"Create Snapshot"} ><ColorRadioButtons onClick={handleCloseModal}/></BasicModal>
-                    </Typography>
-                    <hr/>
-                    <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{display:"inline-flex"}}>
-                        {
-                            props.components.map((element)=>(
-                                element
-                            ))
+                        <HomeHeader userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
+                    <div style={{display:"grid"}}>
+                        <SideBarFileInfo/>
+                        {twoD_Array.map( (file,idx) =>{
+                            console.log(file);
+                            return (
+                                <Box component="main" sx={{flexGrow: 1, p: 3}} style={{margin:"0px",padding:"0px",display: "inline-flex"}}>
+                                    <MultiActionAreaCard dataList={file}/>
+                                </Box>
+                                )
+                        })
                         }
-                    </Box>
+                    </div>
                     </>
                     :
                     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

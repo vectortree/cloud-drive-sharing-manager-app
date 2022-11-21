@@ -4,6 +4,7 @@ import MiniDrawer from "../../components/SideBar"
 import Profile from "../../components/Profile";
 import ColumnMenuGrid from "../../components/ListsBar";
 import MultiActionAreaCard from "../../components/Folder";
+import SideBarFileInfo from "../../components/SideBarFileInfo";
 
 const file1 ={
     name: "HW2",
@@ -52,14 +53,12 @@ const folder1 ={
     owner:"sije.park@stonybrook.edu",
     decendent:[file1,file2,file3,folder2],
 }
-const sharingInfo= [
-    <MultiActionAreaCard folderList={folder1}/>,
-];
+const dataList = [file1,file2,file3,folder1,folder2]
+
 const Home = (props) =>{
-    console.log("this is home page");
     return (
         <Grid>
-            <MiniDrawer components={sharingInfo} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={dataList} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }

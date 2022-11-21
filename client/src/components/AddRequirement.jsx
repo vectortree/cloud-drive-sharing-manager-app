@@ -215,12 +215,8 @@ export default function AddRequirement(props) {
             const group = QueryType == "Groups";
             let id;
             let idFlag = 0;
-            console.log(props.opdataSet);
             for(id=0; id <= props.opdataSet.length; id++){
                 for(let i = 0; i < props.opdataSet.length; i++){
-                    console.log(id);
-                    console.log(props.opdataSet[i]);
-                    console.log(id == props.opdataSet[i].id);
                     if(id == props.opdataSet[i].id){
                         idFlag = 1;
                         break;
