@@ -11,7 +11,7 @@ import {FileSelectedData} from "../recoil";
 export default function SideBarFileInfo() {
     const [file, setFile] = useRecoilState(FileSelectedData);
     return (
-        <Card sx={{ width: 2/6, height:1}} style={{position:"fixed",right:"0px"}}>
+        <Card sx={{ width: 1/4, height:1}} style={{position:"fixed",right:"0px"}}>
             <CardMedia
                 component="img"
                 alt="green iguana"
