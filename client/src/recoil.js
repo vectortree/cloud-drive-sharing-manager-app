@@ -8,3 +8,15 @@ export const FileSelectedData = atom({
     key:'FileSelectedData',
     default:[],
 })
+export const FileSharingSnapShotData = atom({
+    key:'FileSharingSnapShotData',
+    default:[],
+})
+export const GroupMembershipSnapshotsData = atom({
+    key:'GroupMembershipSnapshotsData',
+    default:[],
+})
+export const searchQueryHistoryData = atom({
+    key:'searchQueryHistoryData',
+    default:[],
+})

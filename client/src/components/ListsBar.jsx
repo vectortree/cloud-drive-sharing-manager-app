@@ -6,7 +6,11 @@ import {useEffect, useContext, useState} from "react"
 import BasicModal from "./Modal";
 import Button from '@mui/material/Button';
 import DataTable from "./AddRequirement";
-import api, {removeAccessControlRequirement} from '../api/api';
+import api, {
+    removeAccessControlRequirement,
+    removeFileSharingSnapshot,
+    removeGroupMembershipSnapshot, removeSearchQuery
+} from '../api/api';
 import ColorRadioButtons from "./CreateSnapshot";
 import AddRequirement from "./AddRequirement";
 import {userData} from "../App";
@@ -72,8 +76,18 @@ export default function ColumnMenuGrid( props) {
     console.log(props.dataSet);
 
     const deleteRequirement = (id) => {
-          props.ACR_DeleteHandler(id);
-          removeAccessControlRequirement(id);
+          props.Data_DeleteHandler(id);
+          if(props.type = "ACR"){
+              removeAccessControlRequirement(id);
+          }else if( props.type = "FSS"){
+              removeFileSharingSnapshot(id);
+          }else if( props.type = "GSS"){
+              removeGroupMembershipSnapshot(id);
+          }else if (props.type = "SearchQuery"){
+              removeSearchQuery(id);
+          }else{
+              console.error("Error: No matched Name");
+          }
       };
 
     return (

@@ -8,10 +8,12 @@ import { useContext } from 'react';
 import { AuthContext } from '../auth/auth';
 import api from '../api/api';
 import {id_generator} from "../functions/id_generator";
+import {FileSharingSnapShotData} from "../recoil";
+import {useRecoilState} from "recoil";
 
 export default function ColorRadioButtons(props) {
     const [selectedValue, setSelectedValue] = React.useState('a');
-
+    const [FileSharingSnapShot, setFileSharingSnapShotData] = useRecoilState(FileSharingSnapShotData);
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     };

@@ -15,7 +15,6 @@ const UserProfileSchema = new Schema({
     // List of file-sharing snapshots
     fileSharingSnapshots: {
         type: [{
-            id: {type: Number, index: true, unique: true},
             name: String,
             createdAt: Date,
             updatedAt: Date,
@@ -26,7 +25,6 @@ const UserProfileSchema = new Schema({
     // List of group-membership snapshots
     groupMembershipSnapshots: {
         type: [{
-            id: {type: Number, index: true, unique: true},
             name: String,
             groupName: String,
             groupAddress: String,
@@ -40,7 +38,7 @@ const UserProfileSchema = new Schema({
     // List of access control requirements
     accessControlRequirements: {
         type: [{
-            id: {type: Number, index: true, unique: true},
+            id: Number,
             name: String,
             searchQuery: Object,
             group: Boolean,

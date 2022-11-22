@@ -306,7 +306,6 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         if(req.body.name && req.body.name.trim() !== "") snapshotName = req.body.name;
         const currentDate = new Date();
         const snapshot = {
-            id: req.body.id,
             name: snapshotName,
             createdAt: currentDate,
             updatedAt: currentDate,
@@ -385,7 +384,6 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
         if(timestamp) stamp = timestamp;
 
         const snapshot = {
-            id: 0,
             name: snapshotName,
             groupName: groupName,
             groupAddress: groupAddress,
