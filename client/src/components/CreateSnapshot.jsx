@@ -20,9 +20,8 @@ export default function ColorRadioButtons(props) {
 
     const handleCreateFileSnapshot = () => {
         let id =id_generator(props.dataSet.fileSharingSnapshots);
-        let obj = {id:id}
+        let obj = {id:id};
         api.createFileSharingSnapshot(obj);
-
         if(props.onClick) props.onClick()
     }
 

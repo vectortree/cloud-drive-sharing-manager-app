@@ -56,7 +56,7 @@ const UserProfileSchema = new Schema({
     // List of search queries (serialized as objects)
     searchQueryHistory: {
         type: [{
-            queryId: Number,
+            id: Number,
             searchQuery: Object
         }],
         required: false

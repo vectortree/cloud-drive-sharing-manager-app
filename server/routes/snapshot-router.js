@@ -140,6 +140,7 @@ async function getSharedItemChildren(accessToken, itemId, driveId) {
 }
 
 router.post('/createfilesharingsnapshot', async (req, res) => {
+    console.log("called");
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
@@ -205,6 +206,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                         pageSize: 500,
                         pageToken: NextPageToken || ""
                     };
+
                     let response = await googleDrive.files.list(params);
                     const files = response.data.files;
                     // Get file metadata and permissions
@@ -291,7 +293,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         }
 
         // Create new file sharing snapshot to store in user profile
-        fileDataList.map((file) => console.log(file));
+        // fileDataList.map((file) => console.log(file));
         // If fileDataList is empty, then there are no files accessible
         // by either Google Drive API or Microsoft Graph API
         // In this case, return without creating a snapshot
