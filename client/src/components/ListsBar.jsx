@@ -77,13 +77,13 @@ export default function ColumnMenuGrid( props) {
 
     const deleteRequirement = (id) => {
           props.Data_DeleteHandler(id);
-          if(props.type = "ACR"){
+          if(props.type == "ACR"){
               removeAccessControlRequirement(id);
-          }else if( props.type = "FSS"){
+          }else if( props.type == "FSS"){
               removeFileSharingSnapshot(id);
-          }else if( props.type = "GSS"){
+          }else if( props.type == "GSS"){
               removeGroupMembershipSnapshot(id);
-          }else if (props.type = "SearchQuery"){
+          }else if (props.type == "SearchQuery"){
               removeSearchQuery(id);
           }else{
               console.error("Error: No matched Name");

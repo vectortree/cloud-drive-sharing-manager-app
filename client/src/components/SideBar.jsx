@@ -126,7 +126,6 @@ export default function MiniDrawer({children, ...props}) {
     for (var i = 0; i < props.components.length/4; i++) {
         twoD_Array.push([]);
     }
-    console.log(twoD_Array);
     if(props.type === "home"){
         for(let i =0; i < props.components.length; i+=4){
             for(let j = 0; j < 4; j++){
@@ -393,7 +392,6 @@ export default function MiniDrawer({children, ...props}) {
                     <div style={{display:"grid"}}>
                         <SideBarFileInfo/>
                         {twoD_Array.map( (file,idx) =>{
-                            console.log(file);
                             return (
                                 <Box component="main" sx={{flexGrow: 1, p: 3}} style={{margin:"0px",padding:"0px",display: "inline-flex"}}>
                                     <MultiActionAreaCard dataList={file}/>
