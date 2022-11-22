@@ -140,11 +140,12 @@ async function getSharedItemChildren(accessToken, itemId, driveId) {
 }
 
 router.post('/createfilesharingsnapshot', async (req, res) => {
+    console.log("called");
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
-        const { snapshotId } = req.body;
+        const { id } = req.body;
         try {
             if(userProfile.user.driveType === "microsoft") {
                 // Make sure to refresh tokens before attempting to access Microsoft Graph API
@@ -205,6 +206,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                         pageSize: 1000,
                         pageToken: NextPageToken || ""
                     };
+
                     let response = await googleDrive.files.list(params);
                     const files = response.data.files;
                     // Get file metadata and permissions
@@ -291,7 +293,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         }
 
         // Create new file sharing snapshot to store in user profile
-        fileDataList.map((file) => console.log(file));
+        // fileDataList.map((file) => console.log(file));
         // If fileDataList is empty, then there are no files accessible
         // by either Google Drive API or Microsoft Graph API
         // In this case, return without creating a snapshot
@@ -307,7 +309,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         if(req.body.name && req.body.name.trim() !== "") snapshotName = req.body.name;
         const currentDate = new Date();
         const snapshot = {
-            snapshotId: parseInt(snapshotId),
+            id: id,
             name: snapshotName,
             createdAt: currentDate,
             updatedAt: currentDate,
@@ -344,7 +346,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
             return res.status(400).json({success: false, message: "Invalid drive type"});
 
         const {
-            snapshotId,
+            id,
             name,
             groupName,
             groupAddress,
@@ -387,7 +389,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
         if(timestamp) stamp = timestamp;
 
         const snapshot = {
-            snapshotId: parseInt(snapshotId),
+            id: req.body.id,
             name: snapshotName,
             groupName: groupName,
             groupAddress: groupAddress,
@@ -421,7 +423,7 @@ router.put('/editfilesharingsnapshot/:id', async (req, res) => {
         //if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
             //return res.status(400).json({success: false, message: "Index out of bounds"});
         let index = userProfile.fileSharingSnapshots
-                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+                    .findIndex(s => s.id == parseInt(req.params.id));
         if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         const currentDate = new Date();
         userProfile.fileSharingSnapshots[index].name = req.body.name;
@@ -446,7 +448,7 @@ router.delete('/removefilesharingsnapshot/:id', async (req, res) => {
         //if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
             //return res.status(400).json({success: false, message: "Index out of bounds"});
         let index = userProfile.fileSharingSnapshots
-                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+                    .findIndex(s => s.id == parseInt(req.params.id));
         if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         console.log("Deleting file-sharing snapshot");
         userProfile.fileSharingSnapshots.splice(index, 1);
@@ -473,7 +475,7 @@ router.put('/editgroupmembershipsnapshot/:id', async (req, res) => {
         //if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
             //return res.status(400).json({success: false, message: "Index out of bounds"});
         let index = userProfile.groupMembershipSnapshots
-                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+                    .findIndex(s => s.id == parseInt(req.params.id));
         if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         const currentDate = new Date();
         userProfile.groupMembershipSnapshots[index].name = req.body.name;
@@ -498,7 +500,7 @@ router.delete('/removegroupmembershipsnapshot/:id', async (req, res) => {
         //if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
             //return res.status(400).json({success: false, message: "Index out of bounds"});
         let index = userProfile.groupMembershipSnapshots
-                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+                    .findIndex(s => s.id == parseInt(req.params.id));
         if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         console.log("Deleting group-membership snapshot");
         userProfile.groupMembershipSnapshots.splice(index, 1);
