@@ -42,9 +42,7 @@ const MyPage = (props)=>{
     }
     const ACR_Controller = (data) =>{
         props.ACR_Handler([...ACR,data]);
-        setACR(
-            [...ACR,data]
-        )
+        setACR([...ACR,data])
     }
     const ACR_DeleteController = (id) =>{
         let variable = [...ACR];

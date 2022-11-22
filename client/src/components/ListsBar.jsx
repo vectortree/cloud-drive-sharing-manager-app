@@ -49,7 +49,7 @@ export default function ColumnMenuGrid( props) {
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
-    const accessDataTable = <AddRequirement opdataSet={props.dataSet} onClick={handleCloseModal} ACR_Handler={props.ACR_Handler}/>
+    const accessDataTable = <AddRequirement opdataSet={props.dataSet} onClick={handleCloseModal} ACR_Handler={props.Data_Handler}/>
     const columns = [
         { field: 'id', headerName: 'Index', width: 90 ,editable: true },
         {
