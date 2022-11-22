@@ -216,7 +216,7 @@ export default function AddRequirement(props) {
             const group = QueryType == "Groups";
             let id =id_generator(props.opdataSet);
             const accessControlData = {
-                requirementId : id,
+                id : id,
                 name: requirementName,
                 searchQuery: query,
                 group: group,
