@@ -21,13 +21,13 @@ import { filterSnapshotBySearchQuery } from './query';
           The data field is an array of objects of the form:
           {permission, violationType, message}.
 */
-function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, driveType) {
+function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, driveType, email, domain) {
     let violations = [];
     if(driveType === "google") {
         const readerRoles = ["commenter, reader"];
         const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
         requirements.forEach((requirement) => {
-            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, driveType));
+            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, email, domain, driveType));
             //let files = currentSnapshot.data;
             files.forEach((file) => {
                 let violation = {
