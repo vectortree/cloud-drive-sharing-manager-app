@@ -194,14 +194,33 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
                 else
                     userArg = sq.argument.toLowerCase() + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
-                    for (const permission of file.permissions.value) {
-                        if (!permission.inheritedFrom && permission.grantedToIdentitiesV2) {
-                            for (const user of permission.grantedToIdentitiesV2) {
-                                if (user.user.email.toLowerCase() === userArg) return true;
+
+                    if (file.shared) {
+                        let directPermissions = file.permissions.value;
+                        let parent = snapshot.find(f => f.id === file.parentReference.id);
+                        if (parent) {
+                            let parentPermissionIds = new Set(parent.permissions.value.map(p => p.id));
+                            directPermissions = file.permissions.value.filter(p => !parentPermissionIds.has(p.id));
+                        }
+                        for (const permission of directPermissions) {
+                            if (permission.grantedToIdentitiesV2) {
+                                for (const user of permission.grantedToIdentitiesV2) {
+                                    if (user.user.email.toLowerCase() === userArg) return true;
+                                }
                             }
                         }
-                    };
+                    }
                     return false;
+
+                    // Previous implementation using inheritedFrom field:
+                    // for (const permission of file.permissions.value) {
+                    //     if (!permission.inheritedFrom && permission.grantedToIdentitiesV2) {
+                    //         for (const user of permission.grantedToIdentitiesV2) {
+                    //             if (user.user.email.toLowerCase() === userArg) return true;
+                    //         }
+                    //     }
+                    // };
+                    // return false;
                 });
                 if (sq.negative)
                     return complement(new Set(snapshot), new Set(arr));
