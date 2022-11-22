@@ -20,7 +20,7 @@ router.post('/addsearchquery', async (req, res) => {
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
-        const { queryId, searchQuery } = req.body;
+        const { id, searchQuery } = req.body;
 
         if(!searchQuery) return res.status(400).json({success: false, message: "Invalid data format"});
 
@@ -29,7 +29,7 @@ router.post('/addsearchquery', async (req, res) => {
         if(userProfile.searchQueryHistory.length == sizeLimit)
             userProfile.searchQueryHistory.shift();
         userProfile.searchQueryHistory.push({
-            queryId: parseInt(queryId),
+            id: parseInt(id),
             searchQuery: searchQuery
         });
         // Save to database
@@ -75,7 +75,7 @@ router.delete('/removesearchquery', async (req, res) => {
             //return res.status(400).json({success: false, message: "Index out of bounds"});
         //}
         let index = userProfile.searchQueryHistory
-                    .findIndex(q => q.queryId == parseInt(req.params.id));
+                    .findIndex(q => q.id == parseInt(req.params.id));
         if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         // Delete search query from history
         userProfile.searchQueryHistory.splice(index, 1);
