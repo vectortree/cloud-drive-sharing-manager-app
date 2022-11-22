@@ -15,6 +15,7 @@ const UserProfileSchema = new Schema({
     // List of file-sharing snapshots
     fileSharingSnapshots: {
         type: [{
+            snapshotId: Number,
             name: String,
             createdAt: Date,
             updatedAt: Date,
@@ -25,6 +26,7 @@ const UserProfileSchema = new Schema({
     // List of group-membership snapshots
     groupMembershipSnapshots: {
         type: [{
+            snapshotId: Number,
             name: String,
             groupName: String,
             groupAddress: String,
@@ -38,7 +40,7 @@ const UserProfileSchema = new Schema({
     // List of access control requirements
     accessControlRequirements: {
         type: [{
-            id: Number,
+            requirementId: Number,
             name: String,
             searchQuery: Object,
             group: Boolean,
@@ -53,7 +55,10 @@ const UserProfileSchema = new Schema({
     },
     // List of search queries (serialized as objects)
     searchQueryHistory: {
-        type: [Object],
+        type: [{
+            queryId: Number,
+            searchQuery: Object
+        }],
         required: false
     }
 });

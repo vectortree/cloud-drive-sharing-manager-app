@@ -24,7 +24,7 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         const {
-            id,
+            requirementId,
             name,
             searchQuery,
             group,
@@ -76,7 +76,7 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
         // Create an access control requirement object
         let currentDate = new Date();
         let accessControlRequirement = {
-            id: id,
+            requirementId: parseInt(requirementId),
             name: requirementName,
             searchQuery: searchQuery,
             group: group,
@@ -111,7 +111,7 @@ router.delete('/removeaccesscontrolrequirement/:id', async (req, res) => {
             //return res.status(400).json({success: false, message: "Index out of bounds"});
         //}
         let index = userProfile.accessControlRequirements
-                    .findIndex(requirement => requirement.id == parseInt(req.params.id));
+                    .findIndex(requirement => requirement.requirementId == parseInt(req.params.id));
         if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         console.log("Deleting access control requirement " + req.params.id);
         // Delete access control requirement in user profile
@@ -183,7 +183,7 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
 
         // Set requirementName to the old name
         let index = userProfile.accessControlRequirements
-                            .findIndex(requirement => requirement.id == parseInt(req.params.id));
+                    .findIndex(requirement => requirement.id == parseInt(req.params.id));
         if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         let requirementName = userProfile.accessControlRequirements[index].name;
         // If name is non-null and name is not the empty string, then set requirementName to the new name
@@ -193,6 +193,7 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
         console.log("Editing access control requirement");
         let currentDate = new Date();
         let accessControlRequirement = {
+            requirementId: userProfile.accessControlRequirements[index].requirementId,
             name: requirementName,
             searchQuery: searchQuery,
             group: group,

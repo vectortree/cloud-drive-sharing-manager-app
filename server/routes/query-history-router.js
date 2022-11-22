@@ -20,15 +20,18 @@ router.post('/addsearchquery', async (req, res) => {
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
-        const { searchQuery } = req.body;
+        const { queryId, searchQuery } = req.body;
 
         if(!searchQuery) return res.status(400).json({success: false, message: "Invalid data format"});
 
         console.log("Adding query to search query history");
         let sizeLimit = 50;
-        if(userProfile.searchQueryHistory.length === sizeLimit)
+        if(userProfile.searchQueryHistory.length == sizeLimit)
             userProfile.searchQueryHistory.shift();
-        userProfile.searchQueryHistory.push(searchQuery);
+        userProfile.searchQueryHistory.push({
+            queryId: parseInt(queryId),
+            searchQuery: searchQuery
+        });
         // Save to database
         try {
             await userProfile.save();
@@ -68,11 +71,14 @@ router.delete('/removesearchquery', async (req, res) => {
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
 
         // Check that provided index is valid
-        if(req.params.id < 0 || req.params.id >= userProfile.searchQueryHistory.length) {
-            return res.status(400).json({success: false, message: "Index out of bounds"});
-        }
+        //if(req.params.id < 0 || req.params.id >= userProfile.searchQueryHistory.length) {
+            //return res.status(400).json({success: false, message: "Index out of bounds"});
+        //}
+        let index = userProfile.searchQueryHistory
+                    .findIndex(q => q.queryId == parseInt(req.params.id));
+        if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         // Delete search query from history
-        userProfile.searchQueryHistory.splice(req.params.id, 1);
+        userProfile.searchQueryHistory.splice(index, 1);
         // Save changes to database
         try {
             await userProfile.save();

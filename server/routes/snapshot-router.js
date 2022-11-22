@@ -144,6 +144,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        const { snapshotId } = req.body;
         try {
             if(userProfile.user.driveType === "microsoft") {
                 // Make sure to refresh tokens before attempting to access Microsoft Graph API
@@ -306,6 +307,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
         if(req.body.name && req.body.name.trim() !== "") snapshotName = req.body.name;
         const currentDate = new Date();
         const snapshot = {
+            snapshotId: parseInt(snapshotId),
             name: snapshotName,
             createdAt: currentDate,
             updatedAt: currentDate,
@@ -342,6 +344,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
             return res.status(400).json({success: false, message: "Invalid drive type"});
 
         const {
+            snapshotId,
             name,
             groupName,
             groupAddress,
@@ -384,6 +387,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
         if(timestamp) stamp = timestamp;
 
         const snapshot = {
+            snapshotId: parseInt(snapshotId),
             name: snapshotName,
             groupName: groupName,
             groupAddress: groupAddress,
@@ -414,11 +418,14 @@ router.put('/editfilesharingsnapshot/:id', async (req, res) => {
         if(!req.body.name || req.body.name.trim() === "")
             return res.status(400).json({success: false, message: "Invalid data format"});
         // Check that provided index is valid
-        if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
-            return res.status(400).json({success: false, message: "Index out of bounds"});
+        //if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
+            //return res.status(400).json({success: false, message: "Index out of bounds"});
+        let index = userProfile.fileSharingSnapshots
+                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+        if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         const currentDate = new Date();
-        userProfile.fileSharingSnapshots[req.params.id].name = req.body.name;
-        userProfile.fileSharingSnapshots[req.params.id].updatedAt = currentDate;
+        userProfile.fileSharingSnapshots[index].name = req.body.name;
+        userProfile.fileSharingSnapshots[index].updatedAt = currentDate;
         // Save changes to database
         try {
             await userProfile.save();
@@ -436,10 +443,13 @@ router.delete('/removefilesharingsnapshot/:id', async (req, res) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         // Check that provided index is valid
-        if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
-            return res.status(400).json({success: false, message: "Index out of bounds"});
+        //if(req.params.id < 0 || req.params.id >= userProfile.fileSharingSnapshots.length)
+            //return res.status(400).json({success: false, message: "Index out of bounds"});
+        let index = userProfile.fileSharingSnapshots
+                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+        if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         console.log("Deleting file-sharing snapshot");
-        userProfile.fileSharingSnapshots.splice(req.params.id, 1);
+        userProfile.fileSharingSnapshots.splice(index, 1);
         // Save changes to database
         try {
             await userProfile.save();
@@ -460,11 +470,14 @@ router.put('/editgroupmembershipsnapshot/:id', async (req, res) => {
         if(!req.body.name || req.body.name.trim() === "")
             return res.status(400).json({success: false, message: "Invalid data format"});
         // Check that provided index is valid
-        if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
-            return res.status(400).json({success: false, message: "Index out of bounds"});
+        //if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
+            //return res.status(400).json({success: false, message: "Index out of bounds"});
+        let index = userProfile.groupMembershipSnapshots
+                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+        if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         const currentDate = new Date();
-        userProfile.groupMembershipSnapshots[req.params.id].name = req.body.name;
-        userProfile.groupMembershipSnapshots[req.params.id].updatedAt = currentDate;
+        userProfile.groupMembershipSnapshots[index].name = req.body.name;
+        userProfile.groupMembershipSnapshots[index].updatedAt = currentDate;
         // Save changes to database
         try {
             await userProfile.save();
@@ -482,10 +495,13 @@ router.delete('/removegroupmembershipsnapshot/:id', async (req, res) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         // Check that provided index is valid
-        if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
-            return res.status(400).json({success: false, message: "Index out of bounds"});
+        //if(req.params.id < 0 || req.params.id >= userProfile.groupMembershipSnapshots.length)
+            //return res.status(400).json({success: false, message: "Index out of bounds"});
+        let index = userProfile.groupMembershipSnapshots
+                    .findIndex(s => s.snapshotId == parseInt(req.params.id));
+        if(index == -1) return res.status(400).json({success: false, message: "Invalid ID"});
         console.log("Deleting group-membership snapshot");
-        userProfile.groupMembershipSnapshots.splice(req.params.id, 1);
+        userProfile.groupMembershipSnapshots.splice(index, 1);
         // Save changes to database
         try {
             await userProfile.save();
