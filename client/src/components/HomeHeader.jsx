@@ -20,8 +20,8 @@ export default function HomeHeader(props) {
                 <Button onClick={props.handleOpenModal} style={{float: "right"}}>
                     <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
                 </Button>
-                <BasicModal open={props.openModal} handleClose={props.handleCloseModal} title={"Create Snapshot"}><ColorRadioButtons
-                    onClick={props.handleCloseModal}/></BasicModal>
+                <BasicModal open={props.openModal} handleClose={props.handleCloseModal} title={"Create Snapshot"} ><ColorRadioButtons
+                    onClick={props.handleCloseModal} dataSet={props.userData}/></BasicModal>
             </Typography>
             <hr/>
         </>

@@ -13,6 +13,7 @@ import Select from '@mui/material/Select';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PropTypes from 'prop-types';
 import {createAccessControlRequirement} from "../api/api";
+import {id_generator} from "../functions/id_generator";
 
 function EditToolbar(props) {
     const { selectedCellParams, cellMode, cellModesModel, setCellModesModel } = props;
@@ -213,21 +214,7 @@ export default function AddRequirement(props) {
             console.log(DataState);
             const query = QueryType + ":" + QueryName;
             const group = QueryType == "Groups";
-            let id;
-            let idFlag = 0;
-            for(id=0; id <= props.opdataSet.length; id++){
-                for(let i = 0; i < props.opdataSet.length; i++){
-                    if(id == props.opdataSet[i].id){
-                        idFlag = 1;
-                        break;
-                    }
-                }
-                if(idFlag == 0){
-                    break;
-                }else{
-                    idFlag = 0;
-                }
-            }
+            let id =id_generator(props.opdataSet);
             const accessControlData = {
                 id : id,
                 name: requirementName,
