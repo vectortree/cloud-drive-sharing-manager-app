@@ -560,6 +560,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 // as the first element of the array
                 regex = new RegExp(sq.argument);
                 arr = snapshot.filter(file => {
+                    if(!file.path) return false;
                     let folders = file.path.split("/").filter(s => s.trim() !== "");
                     let parent = folders[folders.length - 1];
                     return regex.test(parent);
@@ -574,6 +575,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 regex = new RegExp(sq.argument);
                 console.log(regex);
                 arr = snapshot.filter(file => {
+                    if(!file.path) return false;
                     let folders = file.path.split("/").filter(s => s.trim() !== "");
                     for (const folder of folders) {
                         if (regex.test(folder)) {
@@ -589,6 +591,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
 
             case "path":
                 arr = snapshot.filter(file => {
+                    if(!file.path) return false;
                     return file.path.includes(sq.argument);
                 });
                 if (sq.negative)
@@ -641,7 +644,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
 
     let sets = [];
     for (const child of sq.children) {
-        set = filterSnapshotBySearchQuery(snapshot, child, driveType);
+        set = filterSnapshotBySearchQuery(snapshot, child, email, domain, driveType, closestGMSnapshots, groups);
         sets.push(set)
     }
 
