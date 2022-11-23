@@ -2,9 +2,8 @@
     This function returns an array of the closest group-membership snapshots
     with respect to the current file-sharing snapshot.
     If the user has uploaded multiple group-membership snapshots for an
-    email address A, then when querying or analyzing a file-sharing snapshot FS
-    taken at time T, this function selects the group-membership snapshot for A whose
-    timestamp T’ is closest to the timestamp T of FS.
+    email address A, the function selects the group-membership snapshot for A whose
+    timestamp T’ is closest to the timestamp T of the current file-sharing snapshot.
 
     Input:
         1) groupMembershipSnapshots (Array of all group-membership snapshots in user profile)
