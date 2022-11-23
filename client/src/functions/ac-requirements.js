@@ -10,10 +10,12 @@ import { filterSnapshotBySearchQuery } from './query';
     Note: The caller must first get an array of the closest group-membership
     snapshots before calling this function.
     Input:
-        1) currentSnapshot (File-sharing snapshot object)
+        1) currentSnapshot (Current file-sharing snapshot object)
         2) closestGMSnapshots (Array of closest group-membership snapshots to currentSnapshot)
         2) requirements (Array of access control requirements)
-        3) driveType ("google" or "microsoft")
+        3) email (Email address of current user)
+        4) domain (Domain of current user)
+        5) driveType ("google" or "microsoft")
     Output:
         violations (Array of violation objects)
                     
@@ -21,7 +23,7 @@ import { filterSnapshotBySearchQuery } from './query';
           The data field is an array of objects of the form:
           {permission, violationType, message}.
 */
-function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, driveType, email, domain) {
+function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, email, domain, driveType) {
     let violations = [];
     if(driveType === "google") {
         const readerRoles = ["commenter, reader"];
