@@ -1,4 +1,5 @@
 import { filterSnapshotBySearchQuery } from './query';
+import { getGMSnapshot, getGroupAddresses } from './gm-snapshots';
 
 /*
     This function checks whether a snapshot satisfies all,
@@ -491,34 +492,6 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
     }
     console.log(violations);
     return violations;
-}
-
-/*
-    Note: This is a helper function. For internal use only.
-
-    This function returns the group-membership snapshot with the provided group address.
-*/
-function getGMSnapshot(closestGMSnapshots, groupAddress) {
-    closestGMSnapshots.forEach((groupMembershipSnapshot) => {
-        if(groupMembershipSnapshot.groupAddress === groupAddress)
-            return groupMembershipSnapshot;
-    });
-    return null;
-}
-
-/*
-    Note: This is a helper function. For internal use only.
-
-    This function returns a list of addresses of groups that the provided user is a member of.
-*/
-function getGroupAddresses(closestGMSnapshots, userAddress) {
-    let groupAddresses = [];
-    closestGMSnapshots.forEach((groupMembershipSnapshot) => {
-        if(groupMembershipSnapshot.members.includes(userAddress)) {
-            groupAddresses.push(groupMembershipSnapshot.groupAddress);
-        }
-    });
-    return groupAddresses;
 }
 
 /*

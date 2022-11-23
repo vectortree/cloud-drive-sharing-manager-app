@@ -1,4 +1,4 @@
-
+import { getGMSnapshot, getGroupAddresses } from './gm-snapshots';
 
 
 const operators = ["drive", "owner", "creator", "from", "to", "readable", "writable", "sharable", "name", "inFolder", "folder", "path", "sharing"];
@@ -133,7 +133,7 @@ function deserializeSearchQuery(sq) {
 }
 
 // Returns a set of files within a snapshot that satisfy the given search query
-function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
+function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, closestGMSnapshots) {
     let set = new Set();
     let arr = [];
     let userArg = "";
@@ -409,15 +409,22 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
 
             case "to":
                 // Ignore group permissions (for individual user) and inherited permissions
-                // Formula for determining direct permissions of a file F:
+                // Formula for determining direct permissions of a file F in My Drive or Shared with me:
                 // directPerms(F) = F.perms \ parent(F).perms
+                // For files in shared drives, use permissionDetails[0].inherited flag
                 if (sq.argument.toLowerCase() === "me")
                     userArg = email;
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
                     if (file.shared && file.permissions) {
-                        if (!file.topLevel) {
+                        if(file.driveId) {
+                            for (const permission of file.ermissions) {
+                                if ((permission.type === 'user' || permission.type === 'group') && !permission.permissionDetails[0].inherited)
+                                    if (permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
+                            }
+                        }
+                        else if (!file.topLevel) {
                             let parent = snapshot.find(f => f.id === file.parents[0]);
                             let parentPermissionsIds = new Set(parent.permissions.map(p => p.id));
                             let directPermissions = file.permissions.filter(p => !parentPermissionsIds.has(p.id));
@@ -440,16 +447,17 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
                 return new Set(arr);
             
             case "readable":
-                // TODO: Consider group permissions
                 // If a file has a read permission for a group that the user is a member of,
                 // then it should be included.
                 if (sq.argument.toLowerCase() === "me")
                     userArg = email;
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
+                let groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
+                            if (permission.type === 'group' && groupAddresses.includes(permission.emailAddress.toLowerCase())) return true;
                             if ((permission.type === 'user' || permission.type === 'group') && permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
                         }
                     }
@@ -460,17 +468,18 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
                 return new Set(arr);
 
             case "writable":
-                // TODO: Consider group permissions
                 // If a file has a write permission for a group that the user is a member of,
                 // then it should be included.
                 if (sq.argument.toLowerCase() === "me")
                     userArg = email;
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
+                let groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
                             if (writerRoles.includes(permission.role)) {
+                                if (permission.type === 'group' && groupAddresses.includes(permission.emailAddress.toLowerCase())) return true;
                                 if ((permission.type === 'user' || permission.type === 'group') && permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
                             }
                         }
@@ -498,13 +507,14 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
                     userArg = email;
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
+                let groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
                             if (permission.type === 'user' || permission.type === 'group') {
                                 if (file.driveName === 'MyDrive' || file.driveName === 'SharedWithMe') {
                                     if (writerRoles.includes(permission.role)) {
-                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase()) {
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || groupAddresses.includes(permission.emailAddress.toLowerCase())) {
                                             if (permission.expirationTime && permission.role === 'writer')
                                                 return false;
                                             if (!file.writersCanShare && permission.role === 'owner')
@@ -516,11 +526,11 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
                                 }
                                 else {
                                     if (writerRoles.includes(permission.role) && file.mimeType !== 'application/vnd.google-apps.folder') {
-                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase())
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || groupAddresses.includes(permission.emailAddress.toLowerCase()))
                                             return true;
                                     }
                                     if (file.mimeType === 'application/vnd.google-apps.folder' && permission.role === 'organizer') {
-                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase())
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || groupAddresses.includes(permission.emailAddress.toLowerCase()))
                                             return true;
                                     }
                                 }
@@ -547,7 +557,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
                 // as the first element of the array
                 regex = new RegExp(sq.argument);
                 arr = snapshot.filter(file => {
-                    let folders = file.path.split("/");
+                    let folders = file.path.split("/").filter(s => s.trim() !== "");
                     let parent = folders[folders.length - 1];
                     return regex.test(parent);
                 });
@@ -561,7 +571,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
                 regex = new RegExp(sq.argument);
                 console.log(regex);
                 arr = snapshot.filter(file => {
-                    let folders = file.path.split("/");
+                    let folders = file.path.split("/").filter(s => s.trim() !== "");
                     for (const folder of folders) {
                         if (regex.test(folder)) {
                             console.log(folder);
@@ -577,7 +587,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType) {
             case "path":
                 arr = snapshot.filter(file => {
                     return file.path.includes(sq.argument);
-                })
+                });
                 if (sq.negative)
                     return complement(new Set(snapshot), new Set(arr));
                 return new Set(arr);

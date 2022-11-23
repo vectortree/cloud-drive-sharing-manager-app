@@ -21,3 +21,29 @@ function getClosestGMSnapshots(groupMembershipSnapshots, currentSnapshot) {
     );
     return closestGMSnapshots;
 }
+
+/*
+    This function returns the group-membership snapshot with the provided group address.
+*/
+function getGMSnapshot(closestGMSnapshots, groupAddress) {
+    closestGMSnapshots.forEach((groupMembershipSnapshot) => {
+        if(groupMembershipSnapshot.groupAddress === groupAddress)
+            return groupMembershipSnapshot;
+    });
+    return null;
+}
+
+/*
+    This function returns a list of addresses of groups that the provided user is a member of.
+*/
+function getGroupAddresses(closestGMSnapshots, userAddress) {
+    let groupAddresses = [];
+    closestGMSnapshots.forEach((groupMembershipSnapshot) => {
+        if(groupMembershipSnapshot.members.includes(userAddress)) {
+            groupAddresses.push(groupMembershipSnapshot.groupAddress);
+        }
+    });
+    return groupAddresses;
+}
+
+export { getClosestGMSnapshots, getGMSnapshot, getGroupAddresses };
