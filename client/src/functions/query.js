@@ -366,6 +366,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
     // Filter snapshots for Google Drive
     else if (sq.operator && driveType === "google") { // checks if the search query is a single operator for Google Drive
         const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
+        let groupAddresses = [];
         switch (sq.operator) {
             case "drive":
                 arr = snapshot.filter(file => {
@@ -454,7 +455,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     userArg = email;
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
-                let groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
+                groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
@@ -476,7 +477,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     userArg = email;
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
-                let groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
+                groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
@@ -509,7 +510,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     userArg = email;
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
-                let groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
+                groupAddresses = getGroupAddresses(closestGMSnapshots, userArg);
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
