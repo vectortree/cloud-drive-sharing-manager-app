@@ -133,7 +133,7 @@ function deserializeSearchQuery(sq) {
 }
 
 // Returns a set of files within a snapshot that satisfy the given search query
-function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, closestGMSnapshots) {
+function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, closestGMSnapshots, groups) {
     let set = new Set();
     let arr = [];
     let userArg = "";
@@ -419,7 +419,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 arr = snapshot.filter(file => {
                     if (file.shared && file.permissions) {
                         if(file.driveId) {
-                            for (const permission of file.ermissions) {
+                            for (const permission of file.permissions) {
                                 if ((permission.type === 'user' || permission.type === 'group') && !permission.permissionDetails[0].inherited)
                                     if (permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
                             }
@@ -447,6 +447,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 return new Set(arr);
             
             case "readable":
+                // Consider group permissions only if groups:on.
                 // If a file has a read permission for a group that the user is a member of,
                 // then it should be included.
                 if (sq.argument.toLowerCase() === "me")
@@ -457,7 +458,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 arr = snapshot.filter(file => {
                     if (file.permissions) {
                         for (const permission of file.permissions) {
-                            if (permission.type === 'group' && groupAddresses.includes(permission.emailAddress.toLowerCase())) return true;
+                            if (permission.type === 'group' && groups && groupAddresses.includes(permission.emailAddress.toLowerCase())) return true;
                             if ((permission.type === 'user' || permission.type === 'group') && permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
                         }
                     }
@@ -468,6 +469,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 return new Set(arr);
 
             case "writable":
+                // Consider group permissions only if groups:on.
                 // If a file has a write permission for a group that the user is a member of,
                 // then it should be included.
                 if (sq.argument.toLowerCase() === "me")
@@ -479,7 +481,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     if (file.permissions) {
                         for (const permission of file.permissions) {
                             if (writerRoles.includes(permission.role)) {
-                                if (permission.type === 'group' && groupAddresses.includes(permission.emailAddress.toLowerCase())) return true;
+                                if (permission.type === 'group' && groups && groupAddresses.includes(permission.emailAddress.toLowerCase())) return true;
                                 if ((permission.type === 'user' || permission.type === 'group') && permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
                             }
                         }
@@ -491,7 +493,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 return new Set(arr);
 
             case "sharable":
-                // TODO: Consider group permissions
+                // Consider group permissions only if groups:on.
                 // If a file can be shared by some group that the user is a member of,
                 // then it should be included.
 
@@ -514,7 +516,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                             if (permission.type === 'user' || permission.type === 'group') {
                                 if (file.driveName === 'MyDrive' || file.driveName === 'SharedWithMe') {
                                     if (writerRoles.includes(permission.role)) {
-                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || groupAddresses.includes(permission.emailAddress.toLowerCase())) {
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || (groups && groupAddresses.includes(permission.emailAddress.toLowerCase()))) {
                                             if (permission.expirationTime && permission.role === 'writer')
                                                 return false;
                                             if (!file.writersCanShare && permission.role === 'owner')
@@ -526,11 +528,11 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                                 }
                                 else {
                                     if (writerRoles.includes(permission.role) && file.mimeType !== 'application/vnd.google-apps.folder') {
-                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || groupAddresses.includes(permission.emailAddress.toLowerCase()))
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || (groups && groupAddresses.includes(permission.emailAddress.toLowerCase())))
                                             return true;
                                     }
                                     if (file.mimeType === 'application/vnd.google-apps.folder' && permission.role === 'organizer') {
-                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || groupAddresses.includes(permission.emailAddress.toLowerCase()))
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase() || (groups && groupAddresses.includes(permission.emailAddress.toLowerCase())))
                                             return true;
                                     }
                                 }
