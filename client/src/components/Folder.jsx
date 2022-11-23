@@ -13,6 +13,7 @@ export default function MultiActionAreaCard(props) {
     const changeColor = (key,file) =>{
         setFile(file);
     }
+    console.log(props.dataList)
     return (
             props.dataList.map((data,idx) => {
                 return (
@@ -20,6 +21,13 @@ export default function MultiActionAreaCard(props) {
                               style={{margin:"0px", marginRight: "10px", borderColor: data.name == file.name ? "blue" : ""}}
                               onClick={() => changeColor(idx,data)}>
                             <CardActionArea>
+                                {data.folder == null ? <CardMedia
+                                    component="img"
+                                    height="180"
+                                    width="100"
+                                    image="/img/pngegg.png"
+                                    alt="docsIcon"
+                                /> :
                                 <CardMedia
                                     component="img"
                                     height="180"
@@ -27,6 +35,7 @@ export default function MultiActionAreaCard(props) {
                                     image="/img/folder.png"
                                     alt="folderIcon"
                                 />
+                                }
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
                                         {data.name}

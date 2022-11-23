@@ -5,6 +5,14 @@ import Profile from "../../components/Profile";
 import ColumnMenuGrid from "../../components/ListsBar";
 import MultiActionAreaCard from "../../components/Folder";
 import SideBarFileInfo from "../../components/SideBarFileInfo";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {
+    AccessControlData,
+    FileSharingSnapShotData,
+    GroupMembershipSnapshotsData,
+    searchQueryHistoryData
+} from "../../recoil";
+
 
 const file1 ={
     name: "HW2",
@@ -56,9 +64,14 @@ const folder1 ={
 const dataList = [file1,file2,file3,folder1,folder2]
 
 const Home = (props) =>{
+    const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
+    console.log(FileSharing)
+    let  current_snapshot = FileSharing.length-1
+    console.log(FileSharing[current_snapshot])
+
     return (
         <Grid>
-            <MiniDrawer components={dataList} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={FileSharing[current_snapshot].data} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }
