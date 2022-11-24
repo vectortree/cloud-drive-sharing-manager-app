@@ -1,3 +1,4 @@
+node_modules
 node_modules/@azure/msal-browser/LICENSE
 node_modules/@azure/msal-browser/package.json
 node_modules/@azure/msal-browser/README.md
@@ -3848,3 +3849,4 @@ client/package-lock.json
 client/package-lock.json
 client/package-lock1.json
 server/package-lock1.json
+client/src/components/CreateSnapshot.jsx

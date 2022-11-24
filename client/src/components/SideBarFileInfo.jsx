@@ -10,6 +10,7 @@ import {FileSelectedData} from "../recoil";
 
 export default function SideBarFileInfo() {
     const [file, setFile] = useRecoilState(FileSelectedData);
+
     return (
         <Card sx={{ width: 1/4, height:1}} style={{position:"fixed",right:"0px"}}>
             <CardMedia
@@ -26,7 +27,7 @@ export default function SideBarFileInfo() {
                 <Typography variant="body2" color="text.secondary">
                     {file.description}<br/>
                     File Type : {file.type}<br/>
-                    File Size : {file.fileSize}<br/>
+                    File Size : {file.size}<br/>
                     AccessPermission :{file.accessPermission}<br/>
                     sharing: {file.sharing}<br/>
                     owner:{file.owner}<br/>
