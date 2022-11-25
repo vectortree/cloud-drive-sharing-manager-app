@@ -391,7 +391,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
             id: parseInt(id),
             name: snapshotName,
             groupName: groupName,
-            groupAddress: groupAddress,
+            groupAddress: groupAddress.toLowerCase(),
             timestamp: stamp,
             createdAt: currentDate,
             updatedAt: currentDate,

@@ -128,9 +128,11 @@ export default function PrimarySearchAppBar(props) {
     }
 
     const handleSubmitSearchQuery = () => {
-        const parsedSQ = serializeSearchQuery(searchQuery.trim());
+        const parsedSQ = serializeSearchQuery(searchQuery.trim(), true);
         console.log(parsedSQ);
         if (!parsedSQ.error) {
+            const unparsedSQ = deserializeSearchQuery(parsedSQ);
+            console.log(unparsedSQ);
             let email;
             if (userProfile.user.driveType === "microsoft")
                 email = userProfile.user.data.mail;
@@ -140,6 +142,7 @@ export default function PrimarySearchAppBar(props) {
             let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, userProfile.fileSharingSnapshots[0]);
             let groups = true;
             const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
+            api.addSearchQuery({id: 1, searchQuery: parsedSQ});
             console.log(filteredFiles);
         }
     }
