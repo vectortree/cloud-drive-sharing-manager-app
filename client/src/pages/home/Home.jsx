@@ -1,10 +1,7 @@
 import {Grid} from "@mui/material"
 import React from "react";
+import {useEffect} from "react";
 import MiniDrawer from "../../components/SideBar"
-import Profile from "../../components/Profile";
-import ColumnMenuGrid from "../../components/ListsBar";
-import MultiActionAreaCard from "../../components/Folder";
-import SideBarFileInfo from "../../components/SideBarFileInfo";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {
     AccessControlData,
@@ -64,7 +61,16 @@ const folder1 ={
 const dataList = [file1,file2,file3,folder1,folder2]
 
 const Home = (props) =>{
+    const [ACR, setACR]=useRecoilState(AccessControlData);
     const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
+    const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
+    const [SearchQuery,setSearchQuery] = useRecoilState(searchQueryHistoryData);
+    useEffect(() => {
+        setACR(props.userData.accessControlRequirements);
+        setFileSharing(props.userData.fileSharingSnapshots);
+        setGroupSharing(props.userData.groupMembershipSnapshots);
+        setSearchQuery(props.userData.searchQuery);
+    },[]);
     console.log(FileSharing)
     //let  current_snapshot = FileSharing.length-1
     //console.log(FileSharing[current_snapshot])

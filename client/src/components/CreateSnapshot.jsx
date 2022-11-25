@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { useContext } from 'react';
 import { AuthContext } from '../auth/auth';
-import api from '../api/api';
+import api, {createFileSharingSnapshot} from '../api/api';
 import {id_generator} from "../functions/id_generator";
 import {FileSharingSnapShotData} from "../recoil";
 import {useRecoilState} from "recoil";
@@ -23,7 +23,8 @@ export default function ColorRadioButtons(props) {
 
     const handleCreateFileSnapshot = () => {
         let id =id_generator(props.dataSet.fileSharingSnapshots);
-        let obj = {id:id};
+        console.log(props.dataSet.fileSharingSnapshots);
+        let obj = {id:id, name:"test"};
         api.createFileSharingSnapshot(obj);
         if(props.onClick) props.onClick()
     }
