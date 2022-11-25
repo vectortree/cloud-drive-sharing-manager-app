@@ -7,8 +7,6 @@ import { AuthContext } from '../auth/auth';
 import api from '../api/api';
 
 export default function BasicButtons(props) {
-    const { userProfile, setUserProfile } = useContext(AuthContext);
-
     const clickModalButton = (e) => {
         console.log(props.name)
         if (props.name == "Add"){
