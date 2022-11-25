@@ -88,8 +88,8 @@ export default function SearchQueryModal(props) {
                         onChange={handleChange}
                     >
                         <MenuItem value={"Drive"}>drive</MenuItem>
-                        <MenuItem value={"Owner"}>Owner</MenuItem>
-                        <MenuItem value={"Creator"}>Creator</MenuItem>
+                        <MenuItem value={"Owner"}>owner</MenuItem>
+                        <MenuItem value={"Creator"}>creator</MenuItem>
                         <MenuItem value={"From"}>from</MenuItem>
                         <MenuItem value={"To"}>to</MenuItem>
                         <MenuItem value={"Readable"}>readable</MenuItem>
