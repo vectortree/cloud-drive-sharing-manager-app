@@ -128,9 +128,11 @@ export default function PrimarySearchAppBar(props) {
     }
 
     const handleSubmitSearchQuery = () => {
-        const parsedSQ = serializeSearchQuery(searchQuery.trim());
+        const parsedSQ = serializeSearchQuery(searchQuery.trim(), true);
         console.log(parsedSQ);
         if (!parsedSQ.error) {
+            const unparsedSQ = deserializeSearchQuery(parsedSQ);
+            console.log(unparsedSQ);
             let email;
             if (userProfile.user.driveType === "microsoft")
                 email = userProfile.user.data.mail;

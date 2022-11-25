@@ -23,13 +23,22 @@ const operators = ["drive", "owner", "creator", "from", "to", "readable", "writa
         ]
       }
 */
-function serializeSearchQuery(s) {
+function serializeSearchQuery(s, topLevel) {
+    if (!s) return { error: "Search query cannot be empty" };
     let sq = {};
     let parenthesesBalance = 0;
     let child;
     let children = [];
     let logicalOperator;
+    let groups = true; // by default, groups are expanded
     let i = 0;
+    // Check if the top level search query begins with a groups directive
+    if (topLevel && s.startsWith("groups:off and ")) {
+        groups = false;
+        i += 15;
+    } else if (topLevel && s.startsWith("groups:on and ")) {
+        i += 14;
+    }
     while (i < s.length) {
         if (s[i] === "(") {
             parenthesesBalance++;
@@ -44,7 +53,7 @@ function serializeSearchQuery(s) {
                 if (i === s.length) return { error: "Parentheses are not balanced." };
             }
 
-            child = serializeSearchQuery(subQuery);
+            child = serializeSearchQuery(subQuery, false);
             if (child.error) return child;
 
             children.push(child);
@@ -61,14 +70,24 @@ function serializeSearchQuery(s) {
                 if (s.slice(i).startsWith(op)) {
                     valid = true;
                     i += op.length;
-                    if (s[i] !== ":" || s[i + 1] !== "\"") return { error: "Query parameters must be in the form <operator>:\"<argument>\"." };
-                    i += 2;
+                    if (s[i] !== ":") return { error: "Query parameters must be in the form <operator>:<argument>." };
+                    i++;
                     let queryArg = "";
-                    while (s[i] !== "\"") {
-                        queryArg += s[i];
+                    if (s[i] === "\"") {
                         i++;
-                        if (i === s.length) return { error: "Missing quotation at the end of your argument." };
+                        while (s[i] !== "\"") {
+                            queryArg += s[i];
+                            i++;
+                            if (i === s.length) return { error: "Missing quotation at the end of your argument." };
+                        }
+                    } else {
+                        while (s[i] !== " " && i < s.length) {
+                            queryArg += s[i];
+                            i++;
+                        }
+                        i--;
                     }
+                    if (!queryArg) return { error: "Missing query argument." };
                     child = { negative: negative, operator: op, argument: queryArg};
                     children.push(child);
                     break;
@@ -100,11 +119,15 @@ function serializeSearchQuery(s) {
     }
 
     if (children.length === 1) {
+        if (topLevel)
+            children[0]["groups"] = groups;
         return children[0];
     }
 
     sq["logicalOp"] = logicalOperator;
     sq["children"] = children;
+    if (topLevel)
+        sq["groups"] = groups;
     return sq;
 }
 
@@ -117,9 +140,14 @@ function deserializeSearchQuery(sq) {
 
     // This section processes an individual operator and its argument and negativity status
     if (!sq["children"]) {
+        if (sq["groups"] === false)
+            s += "groups:off and ";
         if (sq["negative"])
             s += "-";
-        s += sq["operator"] + ":\"" + sq["argument"] + "\"";
+        if (sq["argument"].includes(" "))
+            s += sq["operator"] + ":\"" + sq["argument"] + "\"";
+        else
+        s += sq["operator"] + ":" + sq["argument"];
         return s;
     }
 
@@ -127,9 +155,11 @@ function deserializeSearchQuery(sq) {
         if (index !== 0) {
             s += " " + sq["logicalOp"] + " ";
         }
-        s += deserializeSearchQuery(child);
+        s += deserializeSearchQuery(child, false);
     })
-    return "(" + s + ")";
+    if (sq["groups"] === undefined)
+        return "(" + s + ")";
+    return sq["groups"] ? s : "groups:off and " + s;
 }
 
 // Returns a set of files within a snapshot that satisfy the given search query
