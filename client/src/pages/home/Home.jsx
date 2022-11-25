@@ -66,12 +66,12 @@ const dataList = [file1,file2,file3,folder1,folder2]
 const Home = (props) =>{
     const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
     console.log(FileSharing)
-    let  current_snapshot = FileSharing.length-1
-    console.log(FileSharing[current_snapshot])
+    //let  current_snapshot = FileSharing.length-1
+    //console.log(FileSharing[current_snapshot])
 
     return (
         <Grid>
-            <MiniDrawer components={FileSharing[current_snapshot].data} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={dataList} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }
