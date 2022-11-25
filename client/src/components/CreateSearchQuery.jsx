@@ -19,9 +19,9 @@ export default function SearchQueryModal(props) {
     const [queryString,setQueryString] = React.useState([]);
     const [QueryType, setQueryType] = React.useState('');
     const [QueryName, setQueryName] = React.useState('');
-
     const [openSuccess, setOpenSuccess] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
+    const queryArray = ["Drive","Owner","Creator","From","To","Readable","Writable","Sharable","name","inFolder","folder","path","sharing"];
 
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
 
@@ -88,8 +88,8 @@ export default function SearchQueryModal(props) {
                         onChange={handleChange}
                     >
                         <MenuItem value={"Drive"}>drive</MenuItem>
-                        <MenuItem value={"Owner"}>Owner</MenuItem>
-                        <MenuItem value={"Creator"}>Creator</MenuItem>
+                        <MenuItem value={"Owner"}>owner</MenuItem>
+                        <MenuItem value={"Creator"}>creator</MenuItem>
                         <MenuItem value={"From"}>from</MenuItem>
                         <MenuItem value={"To"}>to</MenuItem>
                         <MenuItem value={"Readable"}>readable</MenuItem>

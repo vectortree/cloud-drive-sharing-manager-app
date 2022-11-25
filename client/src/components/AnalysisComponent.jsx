@@ -15,20 +15,6 @@ export default function AnalysisComponent(props) {
         {field: 'Owner', headerName: 'Owner', width: 250 ,editable: true,sortable: true,},
         {field: 'Status', headerName: 'Status', width: 130 ,type:"boolean",editable: true,sortable: true,},
         {field: 'Permission', headerName: 'Permission', width: 130 ,editable: true,sortable: true,},
-        // {
-        //     field: 'actions',
-        //     type: 'actions',
-        //     width: 80,
-        //     headerName: <AddCircleOutlineIcon onClick={handleAddPerson()}/>,
-        //     getActions: (params) => [
-        //         <GridActionsCellItem
-        //             icon={<DeleteIcon />}
-        //             label="Delete"
-        //             onClick={deleteUser(params.id)}
-        //         />,
-
-        //     ],
-        // },
     ];
 
 

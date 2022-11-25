@@ -290,7 +290,6 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
         }
-
         // Create new file sharing snapshot to store in user profile
         fileDataList.map((file) => console.log(file));
         // If fileDataList is empty, then there are no files accessible
@@ -391,7 +390,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
             id: parseInt(id),
             name: snapshotName,
             groupName: groupName,
-            groupAddress: groupAddress,
+            groupAddress: groupAddress.toLowerCase(),
             timestamp: stamp,
             createdAt: currentDate,
             updatedAt: currentDate,

@@ -80,10 +80,10 @@ router.post('/createaccesscontrolrequirement', async (req, res) => {
             name: requirementName,
             searchQuery: searchQuery,
             group: group,
-            allowedReaders: allowedReaders,
-            allowedWriters: allowedWriters,
-            deniedReaders: deniedReaders,
-            deniedWriters: deniedWriters,
+            allowedReaders: allowedReaders.map((s) => s.toLowerCase()),
+            allowedWriters: allowedWriters.map((s) => s.toLowerCase()),
+            deniedReaders: deniedReaders.map((s) => s.toLowerCase()),
+            deniedWriters: deniedWriters.map((s) => s.toLowerCase()),
             createdAt: currentDate,
             updatedAt: currentDate
         };
@@ -197,10 +197,10 @@ router.put('/editaccesscontrolrequirement/:id', async (req, res) => {
             name: requirementName,
             searchQuery: searchQuery,
             group: group,
-            allowedReaders: allowedReaders,
-            allowedWriters: allowedWriters,
-            deniedReaders: deniedReaders,
-            deniedWriters: deniedWriters,
+            allowedReaders: allowedReaders.map((s) => s.toLowerCase()),
+            allowedWriters: allowedWriters.map((s) => s.toLowerCase()),
+            deniedReaders: deniedReaders.map((s) => s.toLowerCase()),
+            deniedWriters: deniedWriters.map((s) => s.toLowerCase()),
             createdAt: userProfile.accessControlRequirements[index].createdAt,
             updatedAt: currentDate
         };
