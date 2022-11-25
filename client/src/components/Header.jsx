@@ -140,6 +140,7 @@ export default function PrimarySearchAppBar(props) {
             let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, userProfile.fileSharingSnapshots[0]);
             let groups = true;
             const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
+            api.addSearchQuery({id: 1, searchQuery: parsedSQ});
             console.log(filteredFiles);
         }
     }
