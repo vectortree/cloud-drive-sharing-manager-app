@@ -58,18 +58,25 @@ async function pushGoogleDriveFileMetadata(googleDrive, fileResponses, sharedDri
         // then make an API call to get the name of the shared drive and append
         // the name to metadata
         if(metadata.driveId) {
-            // Cache miss
-            if(!(metadata.driveId in sharedDriveCache)) {
-                let response = await googleDrive.drives.get({driveId: metadata.driveId});
-                metadata.driveName = response.data.name;
-                // Cache the driveId and its associated driveName
-                sharedDriveCache[metadata.driveId] = metadata.driveName;
-                console.log("Cache miss");
-            }
-            // Cache hit
-            else {
-                metadata.driveName = sharedDriveCache[metadata.driveId];
-                console.log("Cache hit");
+            try {
+                // Cache miss
+                if(!(metadata.driveId in sharedDriveCache)) {
+                    let response = await googleDrive.drives.get({driveId: metadata.driveId});
+                    metadata.driveName = response.data.name;
+                    // Cache the driveId and its associated driveName
+                    sharedDriveCache[metadata.driveId] = metadata.driveName;
+                    console.log("Cache miss");
+                }
+                // Cache hit
+                else {
+                    metadata.driveName = sharedDriveCache[metadata.driveId];
+                    console.log("Cache hit");
+                }
+            } catch(err) {
+                // If driveId is non-null and the API call is unsuccessful,
+                // then the file is in a shared drive of which the user is
+                // NOT a member of, and thus the file should be in "Shared with me"
+                metadata.driveName = "SharedWithMe";
             }
         }
         // Note: The assumption is that every file should have exactly one owner
