@@ -40,7 +40,7 @@ export default function ColorRadioButtons(props) {
         <div>
             <h3>Snapshot Type</h3>
             <div>
-            <Radio {...controlProps('c')} color="success" checked />
+            <Radio {...controlProps('c')} color="success" />
                 Take file sharing snapshot
             </div>
             <div>
@@ -72,6 +72,8 @@ export default function ColorRadioButtons(props) {
                         defaultValue=""
                     />
                 </div>
+
+                {selectedValue === "e" ? 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                     disableFuture
@@ -83,15 +85,10 @@ export default function ColorRadioButtons(props) {
                     renderInput={(params) => <TextField {...params} />}
                 />
                 </LocalizationProvider>
-                {/* <div>
-                    <TextField
-                        required
-                        id="outlined-required"
-                        label="Group"
-                        defaultValue=""
-                    />
-                </div> */}
+                : ''
+                 }
                 <br></br>
+                {selectedValue === "e" ? 
                 <label htmlFor="upload-html">
                     <input
                         style={{ display: 'none' }}
@@ -99,11 +96,13 @@ export default function ColorRadioButtons(props) {
                         name="upload-html"
                         type="file"
                     />
-
                     <Button color="success" variant="contained" component="span">
                     Upload html
                     </Button>
                 </label>
+                :
+                ''
+                }
             </Box>
             <br></br>
             <br></br>

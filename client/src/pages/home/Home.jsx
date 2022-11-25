@@ -71,7 +71,7 @@ const Home = (props) =>{
 
     return (
         <Grid>
-            <MiniDrawer components={FileSharing[current_snapshot].data} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={dataList} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }
