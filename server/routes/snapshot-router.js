@@ -102,19 +102,24 @@ async function getSharedItemsRoot(accessToken) {
         let itemId = sharedItem.id;
         let driveId = sharedItem.remoteItem.parentReference.driveId;
 
-        // Gets the complete metadata for a shared item
-        await graph.getSharedItem(accessToken, itemId, driveId).then(async (sharedItem) => {
-            let metadata = sharedItem;
+        try {
+            // Gets the complete metadata for a shared item
+            await graph.getSharedItem(accessToken, itemId, driveId).then(async (sharedItem) => {
+                let metadata = sharedItem;
 
-            await graph.getSharedItemPermissions(accessToken, itemId, driveId).then(async (permissions) => {
-                metadata['permissions'] = permissions;
-                metadata['driveName'] = "SharedWithMe";
-                fileDataList.push(metadata);
-                if (metadata.folder && metadata.folder.childCount > 0) {
-                    await getSharedItemChildren(accessToken, itemId, driveId);
-                }
+                await graph.getSharedItemPermissions(accessToken, itemId, driveId).then(async (permissions) => {
+                    metadata['permissions'] = permissions;
+                    metadata['driveName'] = "SharedWithMe";
+                    fileDataList.push(metadata);
+                    if (metadata.folder && metadata.folder.childCount > 0) {
+                        await getSharedItemChildren(accessToken, itemId, driveId);
+                    }
+                });
             });
-        });
+        } catch (e) {
+            console.log("Shared item cannot be accessed", sharedItem);
+        }
+        
     }));
 }
 
@@ -133,7 +138,7 @@ async function getSharedItemChildren(accessToken, itemId, driveId) {
             metadata['driveName'] = "SharedWithMe";
             fileDataList.push(metadata);
             if (metadata.folder && metadata.folder.childCount > 0) {
-                await getSharedItemChildren(accessToken, metadata.id, metadata.remoteItem.parentReference.driveId);
+                await getSharedItemChildren(accessToken, metadata.id, metadata.parentReference.driveId);
             }
         });
     }));
