@@ -127,6 +127,7 @@ export default function MiniDrawer({children, ...props}) {
         twoD_Array.push([]);
     }
     if(props.type === "home"){
+        console.log(props.components);
         for(let i =0; i < props.components.length; i+=4){
             for(let j = 0; j < 4; j++){
                 if(props.components[i+j] === undefined){
@@ -388,7 +389,7 @@ export default function MiniDrawer({children, ...props}) {
                 {/*Here to Start flexible components*/}
                 {props.type === "home"?
                     <>
-                        <HomeHeader userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
+                        <HomeHeader snapShotData = {props.components} userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
                     <div style={{display:"grid"}}>
                         <SideBarFileInfo/>
                         {twoD_Array.map( (file,idx) =>{

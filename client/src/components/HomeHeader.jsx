@@ -13,15 +13,16 @@ export default function HomeHeader(props) {
     return (
         <>
             <Typography>Google Drive &emsp;&emsp;CSE416 {'>'} HomeWorkSubmission
-                <MultipleSelectPlaceholder userData={props.userData}/>
+                <MultipleSelectPlaceholder userData={props.userData} snapshot={props.snapShotData}/>
                 <IconButton style={{float: "right", padding: "5px", marginLeft: "30px", marginRight: "30px"}}>
                     <RestoreIcon/>
                 </IconButton>
                 <Button onClick={props.handleOpenModal} style={{float: "right"}}>
                     <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
                 </Button>
-                <BasicModal open={props.openModal} handleClose={props.handleCloseModal} title={"Create Snapshot"} ><ColorRadioButtons
-                    onClick={props.handleCloseModal} dataSet={props.userData}/></BasicModal>
+                <BasicModal open={props.openModal} handleClose={props.handleCloseModal} title={"Create Snapshot"} >
+                    <ColorRadioButtons onClick={props.handleCloseModal} dataSet={props.userData}/>
+                </BasicModal>
             </Typography>
             <hr/>
         </>

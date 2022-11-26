@@ -27,6 +27,13 @@ import BasicModal from "./Modal";
 import Button from "@mui/material/Button";
 import { serializeSearchQuery, deserializeSearchQuery, filterSnapshotBySearchQuery } from "../functions/query"
 import { getClosestGMSnapshots } from "../functions/gm-snapshots"
+import {useRecoilState, useResetRecoilState} from "recoil";
+import {
+    AccessControlData,
+    FileSharingSnapShotData,
+    GroupMembershipSnapshotsData,
+    searchQueryHistoryData
+} from "../recoil";
 
 // This is for the Header which is the very top of our website
 
@@ -77,6 +84,11 @@ export default function PrimarySearchAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const ResetACR =useResetRecoilState(AccessControlData);
+    const ResetFileSharing = useResetRecoilState(FileSharingSnapShotData);
+    const ResetGMS = useResetRecoilState(GroupMembershipSnapshotsData);
+    const ResetSearchQuery = useResetRecoilState(searchQueryHistoryData);
+
     const navigate = useNavigate()
 
     const [openModal, setOpenModal] = React.useState(false);
@@ -120,7 +132,12 @@ export default function PrimarySearchAppBar(props) {
                     setUserProfile(null);
                 }
             });
+            ResetACR();
+            ResetFileSharing();
+            ResetGMS();
+            ResetSearchQuery();
         }
+
     }
 
     const handleSearchQueryChange = (event) => {
@@ -140,6 +157,7 @@ export default function PrimarySearchAppBar(props) {
                 email = userProfile.user.data.email;
             let domain = email.substring(email.lastIndexOf("@") + 1);
             let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, userProfile.fileSharingSnapshots[0]);
+            console.log(userProfile.fileSharingSnapshots[0]);
             let groups = true;
             const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
             api.addSearchQuery({id: 1, searchQuery: parsedSQ});
