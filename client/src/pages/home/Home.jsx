@@ -7,7 +7,7 @@ import {
     AccessControlData,
     FileSharingSnapShotData,
     GroupMembershipSnapshotsData,
-    searchQueryHistoryData
+    searchQueryHistoryData, selectedSnapshot
 } from "../../recoil";
 
 
@@ -65,20 +65,20 @@ const Home = (props) =>{
     const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
     const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
     const [SearchQuery,setSearchQuery] = useRecoilState(searchQueryHistoryData);
+    const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
     useEffect(() => {
-        const{createdTime,driveName,id,lastModifyingUser} = props.userData.fileSharingSnapshots;
         setACR(props.userData.accessControlRequirements);
         setFileSharing(props.userData.fileSharingSnapshots);
         setGroupSharing(props.userData.groupMembershipSnapshots);
         setSearchQuery(props.userData.searchQuery);
     },[]);
-    console.log(FileSharing)
+    console.log(selSnapshot.data)
     //let  current_snapshot = FileSharing.length-1
     //console.log(FileSharing[current_snapshot])
 
     return (
         <Grid>
-            <MiniDrawer components={FileSharing} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={selSnapshot.data} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }
