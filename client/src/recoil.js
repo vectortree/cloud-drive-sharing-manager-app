@@ -14,7 +14,7 @@ export const FileSharingSnapShotData = atom({
 })
 export const selectedSnapshot = atom({
     key:'selectedSnapshot',
-    default:{},
+    default:{data:{}},
 })
 export const GroupMembershipSnapshotsData = atom({
     key:'GroupMembershipSnapshotsData',
@@ -23,4 +23,8 @@ export const GroupMembershipSnapshotsData = atom({
 export const searchQueryHistoryData = atom({
     key:'searchQueryHistoryData',
     default:[],
+})
+export const selectedCheckSnapshot = atom({
+    key:'selectedCheckSnapshot',
+    default:{data:{}},
 })
