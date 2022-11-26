@@ -140,6 +140,7 @@ export default function PrimarySearchAppBar(props) {
                 email = userProfile.user.data.email;
             let domain = email.substring(email.lastIndexOf("@") + 1);
             let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, userProfile.fileSharingSnapshots[0]);
+            console.log(userProfile.fileSharingSnapshots[0]);
             let groups = true;
             const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
             api.addSearchQuery({id: 1, searchQuery: parsedSQ});

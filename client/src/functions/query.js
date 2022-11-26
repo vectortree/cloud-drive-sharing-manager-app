@@ -448,7 +448,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                 else
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
-                    if (file.shared && file.permissions) {
+                    if (file.permissions) {
                         if(file.driveId) {
                             for (const permission of file.permissions) {
                                 if ((permission.type === 'user' || permission.type === 'group') && !permission.permissionDetails[0].inherited)
@@ -630,10 +630,19 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
 
             case "sharing":
                 if (sq.argument === "none")
-                    arr = snapshot.filter(file => !file.shared);
+                    arr = snapshot.filter(file => {
+                        if (!file.permissions) return false;
+                        else {
+                            for (const permission of file.permissions) {
+                                if (permission.role !== "owner")
+                                    return false;
+                            }
+                            return true;
+                        }
+                    });
                 else if (sq.argument === "anyone")
                     arr = snapshot.filter(file => {
-                        if (file.shared && file.permissions) {
+                        if (file.permissions) {
                             for (const permission of file.permissions) {
                                 // If permission type is "anyone", then permission role cannot be "owner"
                                 // since an owner must have an email address
@@ -644,7 +653,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     });
                 else if (sq.argument === "individual")
                     arr = snapshot.filter(file => {
-                        if (file.shared && file.permissions) {
+                        if (file.permissions) {
                             for (const permission of file.permissions) {
                                 if ((permission.type === "user" || permission.type === "group") && permission.role !== "owner")
                                     return true;
@@ -654,7 +663,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     });
                 else if (sq.argument === "domain")
                     arr = snapshot.filter(file => {
-                        if (file.shared && file.permissions) {
+                        if (file.permissions) {
                             for (const permission of file.permissions) {
                                 // If permission type is "domain", then permission role cannot be "owner"
                                 // since an owner must have an email address

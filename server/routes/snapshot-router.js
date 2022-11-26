@@ -43,7 +43,7 @@ async function getGoogleDriveFileResponses(googleDrive, files) {
         let parameters = {
             fileId: file.id,
             supportsAllDrives: true,
-            fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, sharingUser, owners, lastModifyingUser, permissions, driveId, shared, writersCanShare"
+            fields: "id, name, mimeType, size, webViewLink, createdTime, modifiedTime, parents, sharingUser, owners, lastModifyingUser, permissions, driveId, writersCanShare"
         };
         return googleDrive.files.get(parameters);
     });
