@@ -457,11 +457,21 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                         }
                         else if (!file.topLevel) {
                             let parent = snapshot.find(f => f.id === file.parents[0]);
-                            let parentPermissionsIds = new Set(parent.permissions.map(p => p.id));
-                            let directPermissions = file.permissions.filter(p => !parentPermissionsIds.has(p.id));
-                            for (const permission of directPermissions) {
-                                if ((permission.type === 'user' || permission.type === 'group') && permission.role !== "owner")
-                                    if (permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
+                            // If parent.permissions is null, then it means that all permissions in
+                            // file.permissions are direct permissions
+                            if(!parent.permissions) {
+                                for (const permission of file.permissions) {
+                                    if ((permission.type === 'user' || permission.type === 'group') && permission.role !== "owner")
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
+                                }
+                            }
+                            else {
+                                let parentPermissionsIds = new Set(parent.permissions.map(p => p.id));
+                                let directPermissions = file.permissions.filter(p => !parentPermissionsIds.has(p.id));
+                                for (const permission of directPermissions) {
+                                    if ((permission.type === 'user' || permission.type === 'group') && permission.role !== "owner")
+                                        if (permission.emailAddress.toLowerCase() === userArg.toLowerCase()) return true;
+                                }
                             }
                         }
                         else {
