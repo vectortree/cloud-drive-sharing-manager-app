@@ -24,3 +24,7 @@ export const searchQueryHistoryData = atom({
     key:'searchQueryHistoryData',
     default:[],
 })
+export const selectedCheckSnapshot = atom({
+    key:'selectedCheckSnapshot',
+    default:{data:{}},
+})

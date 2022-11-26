@@ -3,7 +3,13 @@ import { DataGrid } from '@mui/x-data-grid';
 import {useRecoilState} from "recoil";
 import {AccessControlData} from "../recoil";
 import Button from '@mui/material/Button';
-import { checkReq } from "../functions/ac-requirements"
+import { checkRequirements } from "../functions/ac-requirements"
+import { getClosestGMSnapshots } from "../functions/gm-snapshots"
+import {selectedSnapshot} from "../recoil";
+import {FileSharingSnapShotData} from "../recoil";
+import {GroupMembershipSnapshotsData} from "../recoil";
+import {selectedCheckSnapshot} from "../recoil";
+import DropDownForReq from "./DropDownListReq";
 
 //Dummy Data
 const columns = [
@@ -25,14 +31,36 @@ const columns = [
 
 
 export default function AccessControlComponent(props) {
-    const [ACR, setACR]=useRecoilState(AccessControlData);
+    const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
+    const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
+    const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
+    const [checkSnapShot, setCheckSnapShot] = useRecoilState(selectedCheckSnapshot);
+
     console.log(props.ACR_data);
-    console.log(props)
-    // let checkRequirement = checkReq
+    console.log(props.userData)
+    console.log(selSnapshot)
+    console.log(FileSharing)
+    console.log(GroupSharing)
+    console.log(checkSnapShot)
+
+    const allSnapshot = [
+        ...FileSharing,
+        ...GroupSharing
+      ];
+
     // let checkRequirement = checkReq(currentSnapshot, closestGMSnapshots, requirements, email, domain, driveType)
+    
+    const handleCheckReq = () => {
+        let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, checkSnapShot)
+        let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, props.ACR_data, props.userData.email, props.userData.domain, props.userData.driveType )
+        console.log(checkRequirement)
+    }
     return (
         <div style={{ height: props.size, width: '100%' }}>
-            <Button style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
+            <DropDownForReq userDataSnapshot={allSnapshot} sx = {{ float : "right"}}/>
+            &emsp;&emsp;
+            <b style={{color:"gray"}}>{checkSnapShot.name}</b>
+            <Button onClick = {handleCheckReq} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
             <br></br>
             <br></br>
             <DataGrid

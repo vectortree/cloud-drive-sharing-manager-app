@@ -8,7 +8,7 @@ import {AccessControlData} from "../../recoil";
 const AccessControlPage = (props) =>{
 
     const sharingInfo= [
-        <AccessControlComponent size={700} ACR_data={props.userData.accessControlRequirements} />
+        <AccessControlComponent size={700} userData = {props.userData} ACR_data={props.userData.accessControlRequirements} />
     ];
     return (
         <Grid>
