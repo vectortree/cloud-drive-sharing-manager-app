@@ -57,22 +57,25 @@ export default function AccessControlComponent(props) {
         console.log(checkRequirement)
     }
 
-    let ac_req = [{
-        id: props.ACR_data[0].id,
-        name: props.ACR_data[0].name,
-        searchQuery: deserializeSearchQuery(props.ACR_data[0].searchQuery),
-        group: props.ACR_data[0].group,
-        allowedReaders: props.ACR_data[0].allowedReaders,
-        allowedWriters: props.ACR_data[0].allowedWriters,
-        deniedReaders: props.ACR_data[0].deniedReaders,
-        deniedWriters: props.ACR_data[0].deniedWriters,
-        createdAt: props.ACR_data[0].createdAt,
-        updatedAt: props.ACR_data[0].updatedAt
-    }];
+    let ac_req = props.ACR_data.map((req) => {
+        return {
+            id: req.id,
+            name: req.name,
+            searchQuery: deserializeSearchQuery(req.searchQuery),
+            group: req.group,
+            allowedReaders: req.allowedReaders,
+            allowedWriters: req.allowedWriters,
+            deniedReaders: req.deniedReaders,
+            deniedWriters: req.deniedWriters,
+            createdAt: req.createdAt,
+            updatedAt: req.updatedAt
+        }
+    });
+    console.log(ac_req);
     
     return (
         <div style={{ height: props.size, width: '100%' }}>
-            <DropDownForReq userDataSnapshot={allSnapshot} sx = {{ float : "right"}}/>
+            <DropDownForReq userData={props.userData} sx = {{ float : "right"}}/>
             &emsp;&emsp;
             <b style={{color:"gray"}}>{checkSnapShot.name}</b>
             <Button onClick = {handleCheckReq} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>

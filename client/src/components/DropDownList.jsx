@@ -38,7 +38,7 @@ export default function MultipleSelectPlaceholder(props) {
         } = event;
         setSnapShot(
             // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
+            value.slice(value.length - 1)
         );
     };
     const selectSnapshot = (obj,event) =>{
@@ -56,10 +56,10 @@ export default function MultipleSelectPlaceholder(props) {
                     input={<OutlinedInput style={{padding:0}}/>}
                     renderValue={(selected) => {
                         if (selected.length === 0) {
-                            return "Select Your Snapshot";
+                            return [selSnapshot.name];
                         }
 
-                        return selected.join(', ');
+                        return selected;
                     }}
                     MenuProps={MenuProps}
                     inputProps={{ 'aria-label': 'Without label' }}
@@ -67,11 +67,11 @@ export default function MultipleSelectPlaceholder(props) {
                     style={{padding:0}}
                 >
                     <MenuItem disabled value="" style={{padding:0}}>
-                        <em>Select Your Snapshot</em>
+                        <em>Select a file-sharing snapshot</em>
                     </MenuItem>
                     {props.userData.fileSharingSnapshots.map((obj) => (
                         <MenuItem
-                            key={obj.name}
+                            key={obj.id}
                             value={obj.name}
                             style={getStyles(obj.name, snapShot, theme)}
                             onClick={()=>selectSnapshot(obj)}
