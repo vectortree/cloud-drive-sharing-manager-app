@@ -138,6 +138,7 @@ export default function MiniDrawer({children, ...props}) {
             }
         }
     }
+    console.log(twoD_Array);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
