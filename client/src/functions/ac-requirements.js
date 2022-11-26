@@ -30,7 +30,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
         const readerRoles = ["commenter, reader"];
         const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
         requirements.forEach((requirement) => {
-            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, email, domain, driveType));
+            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, email, domain, driveType, closestGMSnapshots, requirement.group));
             //let files = currentSnapshot.data;
             files.forEach((file) => {
                 let violation = {
