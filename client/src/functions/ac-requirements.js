@@ -27,11 +27,12 @@ import { getGMSnapshot, getGroupAddresses } from './gm-snapshots';
 function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, email, domain, driveType) {
     let violations = [];
     if(driveType === "google") {
-        const readerRoles = ["commenter, reader"];
+        const readerRoles = ["commenter", "reader"];
         const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
         requirements.forEach((requirement) => {
             let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, email, domain, driveType, closestGMSnapshots, requirement.group));
             //let files = currentSnapshot.data;
+            //console.log(files);
             files.forEach((file) => {
                 let violation = {
                     requirement: requirement,
@@ -41,7 +42,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                 // Note: Some files don't contain permissions.
                 // According to the Google Drive API:
                 // The permissions array is only available if the requesting
-                // user can share the file. Not populated for items in shared drives.
+                // user can share the file.
 
                 // Note: If no permissions exist for a file, then no violations
                 // will be returned for the file.

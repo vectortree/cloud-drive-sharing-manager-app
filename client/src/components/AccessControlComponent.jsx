@@ -5,6 +5,7 @@ import {AccessControlData} from "../recoil";
 import Button from '@mui/material/Button';
 import { checkRequirements } from "../functions/ac-requirements"
 import { getClosestGMSnapshots } from "../functions/gm-snapshots"
+import { deserializeSearchQuery } from "../functions/query"
 import {selectedSnapshot} from "../recoil";
 import {FileSharingSnapShotData} from "../recoil";
 import {GroupMembershipSnapshotsData} from "../recoil";
@@ -55,6 +56,20 @@ export default function AccessControlComponent(props) {
         let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, props.ACR_data, props.userData.email, props.userData.domain, props.userData.driveType )
         console.log(checkRequirement)
     }
+
+    let ac_req = [{
+        id: props.ACR_data[0].id,
+        name: props.ACR_data[0].name,
+        searchQuery: deserializeSearchQuery(props.ACR_data[0].searchQuery),
+        group: props.ACR_data[0].group,
+        allowedReaders: props.ACR_data[0].allowedReaders,
+        allowedWriters: props.ACR_data[0].allowedWriters,
+        deniedReaders: props.ACR_data[0].deniedReaders,
+        deniedWriters: props.ACR_data[0].deniedWriters,
+        createdAt: props.ACR_data[0].createdAt,
+        updatedAt: props.ACR_data[0].updatedAt
+    }];
+    
     return (
         <div style={{ height: props.size, width: '100%' }}>
             <DropDownForReq userDataSnapshot={allSnapshot} sx = {{ float : "right"}}/>
@@ -64,7 +79,7 @@ export default function AccessControlComponent(props) {
             <br></br>
             <br></br>
             <DataGrid
-                rows={props.ACR_data}
+                rows={ac_req}
                 columns={columns}
                 pageSize={10}
                 rowsPerPageOptions={[5]}

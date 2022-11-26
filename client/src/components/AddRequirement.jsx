@@ -14,6 +14,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PropTypes from 'prop-types';
 import {createAccessControlRequirement} from "../api/api";
 import {id_generator} from "../functions/id_generator";
+import { serializeSearchQuery } from '../functions/query';
 
 function EditToolbar(props) {
     const { selectedCellParams, cellMode, cellModesModel, setCellModesModel } = props;
@@ -125,6 +126,7 @@ export default function AddRequirement(props) {
     const [requirementName,setRequirementName] =React.useState('');
     const [openSuccess, setOpenSuccess] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
+    const [openQueryError, setOpenQueryError] = React.useState('');
     const [DataState, setDataState] = React.useState([]);
     const [queryString,setQueryString] = React.useState('');
     const [selectedCellParams, setSelectedCellParams] = React.useState(null);
@@ -145,13 +147,22 @@ export default function AddRequirement(props) {
         if (reason === 'clickaway') return;
         setOpenError(false);
     }
+    const handleQueryErrorAlertOpen = (err) => {setOpenQueryError(err);};
+    const handleQueryErrorAlertClose = (event,reason) =>{
+        if (reason === 'clickaway') return;
+        setOpenQueryError(false);
+    }
     const addingQuery = (event) => {
-        if(QueryType === "" || QueryName == ""){
+        if(QueryName == ""){
             handleErrorAlertOpen();
         }else{
-            const query = QueryType + ":" + QueryName;
-            setQueryString(query);
-            handleSuccessAlertOpen();
+            const query = QueryName;
+            let sq = serializeSearchQuery(query);
+            if(sq.error) handleQueryErrorAlertOpen(sq.error);
+            else {
+                setQueryString(query);
+                handleSuccessAlertOpen();
+            }
         }
     }
     const handleSavePerson = (newRow) => {
@@ -178,7 +189,7 @@ export default function AddRequirement(props) {
         }
     const submit = () =>{
         console.log(DataState);
-        if(requirementName ==='' || DataState.length === 0 || QueryType === '' || QueryName === '')
+        if(requirementName ==='' || DataState.length === 0 || QueryName === '')
         {
             setOpenError(true);
         }else{
@@ -212,13 +223,13 @@ export default function AddRequirement(props) {
                 return;
             }
             console.log(DataState);
-            const query = QueryType + ":" + QueryName;
-            const group = QueryType == "Groups";
+            const query = QueryName;
+            const group = query["groups"] ? true : false;
             let id =id_generator(props.opdataSet);
             const accessControlData = {
-                id : id,
+                id: id,
                 name: requirementName,
-                searchQuery: query,
+                searchQuery: serializeSearchQuery(query),
                 group: group,
                 allowedReaders:allowedReaderArray,
                 allowedWriters: allowedWriter,
@@ -313,43 +324,29 @@ export default function AddRequirement(props) {
                 </div>
             </Box>
             <div>
-                <h3 style={{margin:"0px"}}>Query Language</h3>
+                <h3 style={{margin:"0px"}}>Search Query</h3>
                 <div style={{display:"inline-flex"}}>
-                <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
-                    <InputLabel id="demo-select-small">QueryType</InputLabel>
-                    <Select
-                        required
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        value={QueryType}
-                        label="QueryType"
-                        onChange={handleChange}
-                    >
-                        <MenuItem value={"Groups"}>Groups</MenuItem>
-                        <MenuItem value={"Owner"}>Owner</MenuItem>
-                        <MenuItem value={"Folder"}>Folder</MenuItem>
-                    </Select>
-                </FormControl>
-                    <TextField
-                        required
-                        id="standard-required"
-                        label="Name"
-                        defaultValue={QueryName}
-                        onChange={handleQueryName}
-                        variant="standard"
-                    />
-                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQuery}>
-                        Add
-                    </Button>
+                <TextField
+                    required
+                    id="standard-required"
+                    style={{marginLeft:"10px"}}
+                    label="Argument"
+                    defaultValue={QueryName}
+                    onChange={handleQueryName}
+                    variant="standard"
+                />
+                <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQuery}>
+                    Enter Query
+                </Button>
                 </div>
                 <br/><br/>
                 <div style={{fontWeight: 500}}>
-                    Expected Query String : <b style={{color:"red"}}>{queryString}</b>
+                    <b style={{color:"blue"}}>{queryString}</b>
                 </div>
                 <br/>
             </div>
             <div >
-                <h3 style={{margin:"0px"}}>Adding Access Control</h3>
+                <h3 style={{margin:"0px"}}>Adding Access Control Requirement</h3>
                 <div style={{ display:"inline-flex", height: 280, width: '90%'}}>
                     <DataGrid
                         rows={DataState}
@@ -396,12 +393,17 @@ export default function AddRequirement(props) {
             )}
             <Snackbar open={openSuccess} autoHideDuration={1000} onClose={handleSuccessAlertClose}>
                 <Alert onClose={handleSuccessAlertClose} severity="success" sx={{ width: '100%' }}>
-                    Successfully Creating a Query
+                    Successfully created a query!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openQueryError} autoHideDuration={2000} onClose={handleQueryErrorAlertClose}>
+                <Alert onClose={handleQueryErrorAlertClose} severity="error" sx={{ width: '100%' }}>
+                {openQueryError}
                 </Alert>
             </Snackbar>
             <Snackbar open={openError} autoHideDuration={2000} onClose={handleErrorAlertClose}>
                 <Alert onClose={handleErrorAlertClose} severity="error" sx={{ width: '100%' }}>
-                    Please filled all the requirements,and you must check at least one Access Permission.
+                    Please fill all the required fields. You must check at least one access control set.
                 </Alert>
             </Snackbar>
         </div>
