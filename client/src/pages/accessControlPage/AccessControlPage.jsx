@@ -5,7 +5,6 @@ import AccessControlComponent from "../../components/AccessControlComponent";
 import {userData} from "../../App";
 import {AccessControlData} from "../../recoil";
 
-
 const AccessControlPage = (props) =>{
 
     const sharingInfo= [

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {useRecoilState} from "recoil";
 import {AccessControlData} from "../recoil";
+import Button from '@mui/material/Button';
+import { checkReq } from "../functions/ac-requirements"
 
 //Dummy Data
 const columns = [
@@ -25,8 +27,14 @@ const columns = [
 export default function AccessControlComponent(props) {
     const [ACR, setACR]=useRecoilState(AccessControlData);
     console.log(props.ACR_data);
+    console.log(props)
+    // let checkRequirement = checkReq
+    // let checkRequirement = checkReq(currentSnapshot, closestGMSnapshots, requirements, email, domain, driveType)
     return (
         <div style={{ height: props.size, width: '100%' }}>
+            <Button style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
+            <br></br>
+            <br></br>
             <DataGrid
                 rows={props.ACR_data}
                 columns={columns}

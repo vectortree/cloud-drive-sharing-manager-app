@@ -168,7 +168,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     }
                                 }
                             }
-                            if(requirement.deniedWriters.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedWriters.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedWriters.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -197,7 +197,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     }
                                 }
                             }
-                            if(requirement.deniedReaders.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedReaders.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedReaders.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -262,7 +262,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     violation.data.push({
                                         permission: permission,
                                         violationType: "read",
-                                        message:  "The following members of " + address + " are not in the set of allowed readers: " + groupMsg;
+                                        message:  "The following members of " + address + " are not in the set of allowed readers: " + groupMsg
                                     });
                                 }
                             }
@@ -278,7 +278,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     violation.data.push({
                                         permission: permission,
                                         violationType: "write",
-                                        message:  "The following members of " + address + " are not in the set of allowed writers: " + groupMsg;
+                                        message:  "The following members of " + address + " are not in the set of allowed writers: " + groupMsg
                                     });
                                 }
                             }
@@ -303,11 +303,11 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     violation.data.push({
                                         permission: permission,
                                         violationType: "read",
-                                        message: "The following members of " + address + " are in the set of denied readers: " + groupMsg;
+                                        message: "The following members of " + address + " are in the set of denied readers: " + groupMsg
                                     });
                                 }
                             }
-                            if(requirement.deniedWriters.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedWriters.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedWriters.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -328,11 +328,11 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     violation.data.push({
                                         permission: permission,
                                         violationType: "write",
-                                        message: "The following members of " + address + " are in the set of denied writers: " + groupMsg;
+                                        message: "The following members of " + address + " are in the set of denied writers: " + groupMsg
                                     });
                                 }
                             }
-                            if(requirement.deniedReaders.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedReaders.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedReaders.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -353,7 +353,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     violation.data.push({
                                         permission: permission,
                                         violationType: "write",
-                                        message: "The following members of " + address + " are in the set of denied readers: " + groupMsg;
+                                        message: "The following members of " + address + " are in the set of denied readers: " + groupMsg
                                     });
                                 }
                             }
@@ -404,7 +404,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     });
                                 });
                             }
-                            if(requirement.deniedWriters.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedWriters.length > 0 && writerRoles.includes(permission.role)) {
                                 let filteredDeniedWriters = requirement.deniedWriters.filter(s => s.substring(s.lastIndexOf("@") + 1) === domain);
                                 filteredDeniedWriters.forEach((deniedWriter) => {
                                     violation.data.push({
@@ -414,7 +414,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     });
                                 });
                             }
-                            if(requirement.deniedReaders.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedReaders.length > 0 && writerRoles.includes(permission.role)) {
                                 let filteredDeniedReaders = requirement.deniedReaders.filter(s => s.substring(s.lastIndexOf("@") + 1) === domain);
                                 filteredDeniedReaders.forEach((deniedReader) => {
                                     violation.data.push({
