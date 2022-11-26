@@ -125,6 +125,9 @@ export default function MiniDrawer({children, ...props}) {
     let twoD_Array = new Array(0);
     for (var i = 0; i < props.components.length/4; i++) {
         twoD_Array.push([]);
+        if(i == 9){
+            break;
+        }
     }
     if(props.type === "home"){
         console.log(props.components);
@@ -136,8 +139,10 @@ export default function MiniDrawer({children, ...props}) {
                     twoD_Array[i/4][j] = props.components[i+j];
                 }
             }
+            if(i == 40) break;
         }
     }
+    console.log(twoD_Array);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
