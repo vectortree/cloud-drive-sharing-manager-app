@@ -49,6 +49,7 @@ export default function ColumnMenuGrid( props) {
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
+
     const accessDataTable = <AddRequirement opdataSet={props.dataSet} onClick={handleCloseModal} ACR_Handler={props.Data_Handler}/>
     const columns = [
         { field: 'id', headerName: 'Index', width: 90 ,editable: true },
@@ -107,7 +108,18 @@ export default function ColumnMenuGrid( props) {
         </div>
         <div style={{display:"inline-flex"}}>
             <br/>
+            {props.type === "ACR" ?
             <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Manage Access Control</Button>
+            :
+            props.type === "FSS" ? 
+            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
+            :
+            props.type === "GSS" ?
+            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button> 
+            :
+            props.type === "SearchQuery" ?
+            <div></div> : <div></div>
+            }
             <BasicModal title={"Add Requirement"} open={openModal} handleClose={handleCloseModal}  >{accessDataTable}</BasicModal>
 
         </div>
