@@ -30,7 +30,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
         const readerRoles = ["commenter, reader"];
         const writerRoles = ["writer", "fileOrganizer", "organizer", "owner"];
         requirements.forEach((requirement) => {
-            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, email, domain, driveType));
+            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, email, domain, driveType, closestGMSnapshots, requirement.group));
             //let files = currentSnapshot.data;
             files.forEach((file) => {
                 let violation = {
@@ -168,7 +168,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     }
                                 }
                             }
-                            if(requirement.deniedWriters.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedWriters.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedWriters.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -197,7 +197,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     }
                                 }
                             }
-                            if(requirement.deniedReaders.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedReaders.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedReaders.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -307,7 +307,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     });
                                 }
                             }
-                            if(requirement.deniedWriters.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedWriters.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedWriters.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -332,7 +332,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     });
                                 }
                             }
-                            if(requirement.deniedReaders.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedReaders.length > 0 && writerRoles.includes(permission.role)) {
                                 if(requirement.deniedReaders.includes(address)) {
                                     violation.data.push({
                                         permission: permission,
@@ -404,7 +404,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     });
                                 });
                             }
-                            if(requirement.deniedWriters.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedWriters.length > 0 && writerRoles.includes(permission.role)) {
                                 let filteredDeniedWriters = requirement.deniedWriters.filter(s => s.substring(s.lastIndexOf("@") + 1) === domain);
                                 filteredDeniedWriters.forEach((deniedWriter) => {
                                     violation.data.push({
@@ -414,7 +414,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                     });
                                 });
                             }
-                            if(requirement.deniedReaders.length > 0 && writersRoles.includes(permission.role)) {
+                            if(requirement.deniedReaders.length > 0 && writerRoles.includes(permission.role)) {
                                 let filteredDeniedReaders = requirement.deniedReaders.filter(s => s.substring(s.lastIndexOf("@") + 1) === domain);
                                 filteredDeniedReaders.forEach((deniedReader) => {
                                     violation.data.push({
