@@ -108,11 +108,13 @@ async function getSharedItemsRoot(accessToken) {
     await Promise.all(sharedItems.value.map(async (sharedItem) => {
         let itemId = sharedItem.id;
         let driveId = sharedItem.remoteItem.parentReference.driveId;
+        let shared = sharedItem.remoteItem.shared;
 
         try {
             // Gets the complete metadata for a shared item
             await graph.getSharedItem(accessToken, itemId, driveId).then(async (sharedItem) => {
                 let metadata = sharedItem;
+                metadata["shared"] = shared;
 
                 await graph.getSharedItemPermissions(accessToken, itemId, driveId).then(async (permissions) => {
                     metadata['permissions'] = permissions;
