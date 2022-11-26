@@ -4,6 +4,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import {useRecoilState} from "recoil";
+import {selectedSnapshot} from "../recoil";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 0;
@@ -28,25 +30,28 @@ function getStyles(name, personName, theme) {
 
 export default function MultipleSelectPlaceholder(props) {
     const theme = useTheme();
-    const [personName, setPersonName] = React.useState([]);
-
+    const [snapShot, setSnapShot] = React.useState([]);
+    const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
+        setSnapShot(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
     };
-
+    const selectSnapshot = (obj,event) =>{
+        console.log(obj);
+        setSelSnapshot(obj);
+    }
     return (
         <>
             <FormControl  size="small"  sx={{ p:0, m: 0, width: 430, mt: 0}} style={{float:"right", padding:"0px"}}>
                 <Select
                     multiple
                     displayEmpty
-                    value={personName}
+                    value={snapShot}
                     onChange={handleChange}
                     input={<OutlinedInput style={{padding:0}}/>}
                     renderValue={(selected) => {
@@ -68,7 +73,8 @@ export default function MultipleSelectPlaceholder(props) {
                         <MenuItem
                             key={obj.name}
                             value={obj.name}
-                            style={getStyles(obj.name, personName, theme)}
+                            style={getStyles(obj.name, snapShot, theme)}
+                            onClick={()=>selectSnapshot(obj)}
                         >
                             {obj.name}
                         </MenuItem>

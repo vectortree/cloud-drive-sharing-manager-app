@@ -66,6 +66,7 @@ const Home = (props) =>{
     const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
     const [SearchQuery,setSearchQuery] = useRecoilState(searchQueryHistoryData);
     useEffect(() => {
+        const{createdTime,driveName,id,lastModifyingUser} = props.userData.fileSharingSnapshots;
         setACR(props.userData.accessControlRequirements);
         setFileSharing(props.userData.fileSharingSnapshots);
         setGroupSharing(props.userData.groupMembershipSnapshots);
@@ -77,7 +78,7 @@ const Home = (props) =>{
 
     return (
         <Grid>
-            <MiniDrawer components={dataList} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={FileSharing} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }
