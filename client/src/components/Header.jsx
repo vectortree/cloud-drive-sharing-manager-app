@@ -218,7 +218,21 @@ export default function PrimarySearchAppBar(props) {
             </MenuItem>
         </Menu>
     );
+    const sendingQuery = (event) =>{
+        if(event.code == "Enter"){
+            if(searchQuery == ""){
+                alert("no SearchQuery")
+            }else{
+                const query = searchQuery;
+                let sq = serializeSearchQuery(query);
+                if(sq.error) alert(sq.error);
+                else {
+                    setSearchQuery(query);
 
+                }
+            }
+        }
+    }
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" style={{boxShadow:"none"}}>
@@ -256,6 +270,7 @@ export default function PrimarySearchAppBar(props) {
                             style={{
                                 width: "50ch",
                             }}
+                            onKeyUp = {(e)=> sendingQuery(e)}
                         />
                         <Button color = "black" onClick = {searchQueryModalOpen} >
                             <AlignVerticalCenterIcon style = {{marginRight : "8px", marginBottom : "7px"}}></AlignVerticalCenterIcon>
