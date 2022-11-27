@@ -75,7 +75,7 @@ export default function AccessControlComponent(props) {
     
     return (
         <div style={{ height: props.size, width: '100%' }}>
-            <DropDownForReq userData={props.userData} sx = {{ float : "right"}}/>
+            <DropDownForReq fileSharingSnapshot={FileSharing} sx = {{ float : "right"}}/>
             &emsp;&emsp;
             <b style={{color:"gray"}}>{checkSnapShot.name}</b>
             <Button onClick = {handleCheckReq} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>

@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {useRecoilState} from "recoil";
-import {selectedCheckSnapshot} from "../recoil";
+import {FileSharingSnapShotData, GroupMembershipSnapshotsData, selectedCheckSnapshot} from "../recoil";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 0;
@@ -31,8 +31,8 @@ function getStyles(name, personName, theme) {
 export default function MultipleSelectPlaceholder(props) {
     const theme = useTheme();
     const [snapShot, setSnapShot] = React.useState([]);
-
     const [checkSnapShot, setCheckSnapShot] = useRecoilState(selectedCheckSnapshot);
+    const [groupMemberShipSnapshot, setGroupMemberShipSnapshot] = useRecoilState(GroupMembershipSnapshotsData);
     const handleChange = (event) => {
         const {
             target: { value },
@@ -42,7 +42,7 @@ export default function MultipleSelectPlaceholder(props) {
             value.slice(value.length - 1)
         );
     };
-    console.log(checkSnapShot)
+
     return (
         <>
             <FormControl  size="small"  sx={{ p:0, m: 0, width: 430, mt: 0}} style={{ padding:"0px"}}>
@@ -66,7 +66,7 @@ export default function MultipleSelectPlaceholder(props) {
                     <MenuItem disabled value="" style={{padding:0}}>
                         <em>Select a file-sharing snapshot</em>
                     </MenuItem>
-                    {props.userData.fileSharingSnapshots.map((obj) => (
+                    {props.fileSharingSnapshot.map((obj) => (
                         <MenuItem
                             key={obj.id}
                             value={obj.name}

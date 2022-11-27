@@ -63,7 +63,7 @@ export default function ColorRadioButtons(props) {
                 timestamp: timestamp,
                 htmlFile:htmlFileData
             }
-            
+
             if( groupName && groupEmail && htmlFileData){
                 console.log(obj);
                 api.createGroupMembershipSnapshot(obj).catch((err) => {
