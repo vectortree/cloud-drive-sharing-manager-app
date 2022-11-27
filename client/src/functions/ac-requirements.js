@@ -376,7 +376,6 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                             // 5) If the permission role is in
                             //    {"writer", "fileOrganizer", "organizer", "owner"} and DR is nonempty,
                             //    then the domain as well as any address belonging to that domain must NOT be in DR.
-                            let domain = permission.domain;
                             if(requirement.allowedReaders.length > 0 && readerRoles.includes(permission.role)) {
                                 if(!requirement.allowedReaders.includes(domain)) {
                                     violation.data.push({
@@ -489,10 +488,189 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
     }
     // TODO
     else if(driveType === "microsoft") {
+        requirements.forEach((requirement) => {
+            let files = Array.from(filterSnapshotBySearchQuery(currentSnapshot.data, requirement.searchQuery, email, domain, driveType, closestGMSnapshots, requirement.group));
+            //let files = currentSnapshot.data;
+            //console.log(files);
+            files.forEach((file) => {
+                let violation = {
+                    requirement: requirement,
+                    file: file,
+                    data: []
+                };
+
+                file.permissions.value.forEach((permission) => {
+                    // Check each permission against current requirement
+                    if(permission.grantedToIdentitiesV2) {
+                        // The following must be satisfied:
+                        // 1) If the permission role is in
+                        //    {"read"} and AR is nonempty,
+                        //    then the email address or its domain
+                        //    must be in AR.
+                        // 2) If the permission role is in
+                        //    {"write", "owner"} and AW is nonempty,
+                        //    then the email address or its domain
+                        //    must be in AW.
+                        // 3) If the permission role is in
+                        //    {"read"} and DR is nonempty,
+                        //    then the email address and its domain
+                        //    must NOT be in DR.
+                        // 4) If the permission role is in
+                        //    {"write", "owner"} and DW is nonempty,
+                        //    then the email address and its domain
+                        //    must NOT be in DW.
+                        // 5) If the permission role is in
+                        //    {"writer", "owner"} and DR is nonempty,
+                        //    then the email address and its domain
+                        //    must NOT be in DR.
+                        for (const user of permission.grantedToIdentitiesV2) {
+                            checkRequirementUser(user, permission, requirement, violation);
+                        }
+                    }
+                    else if (permission.grantedToV2) {
+                        checkRequirementUser(permission.grantedToV2, permission, requirement, violation);
+                    }
+                    else if(permission.link && permission.link.scope === "organization") {
+                        if(requirement.allowedReaders.length > 0) {
+                            if(!requirement.allowedReaders.includes(domain)) {
+                                violation.data.push({
+                                    permission: permission, 
+                                    violationType: "read",
+                                    message: domain + " is not in the set of allowed readers"
+                                });
+                            }
+                        }
+                        if(requirement.allowedWriters.length > 0 && permission.link.type === "edit") {
+                            if(!requirement.allowedWriters.includes(domain)) {
+                                violation.data.push({
+                                    permission: permission,
+                                    violationType: "write",
+                                    message: domain + " is not in the set of allowed writers"
+                                });
+                            }
+                        }
+                        if(requirement.deniedReaders.length > 0) {
+                            let filteredDeniedReaders = requirement.deniedReaders.filter(s => s.substring(s.lastIndexOf("@") + 1) === domain);
+                            filteredDeniedReaders.forEach((deniedReader) => {
+                                violation.data.push({
+                                    permission: permission,
+                                    violationType: "read",
+                                    message: deniedReader + " is in the set of denied readers"
+                                });
+                            });
+                        }
+                        if(requirement.deniedWriters.length > 0 && permission.link.type === "edit") {
+                            let filteredDeniedWriters = requirement.deniedWriters.filter(s => s.substring(s.lastIndexOf("@") + 1) === domain);
+                            filteredDeniedWriters.forEach((deniedWriter) => {
+                                violation.data.push({
+                                    permission: permission,
+                                    violationType: "write",
+                                    message: deniedWriter + " is in the set of denied writers"
+                                });
+                            });
+                        }
+                    }
+                    else if(permission.link && permission.link.scope === "anonymous") {
+                        if(requirement.allowedReaders.length > 0) {
+                            violation.data.push({
+                                permission: permission,
+                                violationType: "read",
+                                message: "Set of allowed readers is not empty"
+                            });
+                        }
+                        if(requirement.deniedReaders.length > 0) {
+                            violation.data.push({
+                                permission: permission,
+                                violationType: "read",
+                                message: "Set of denied readers is not empty"
+                            });
+                        }
+                        if (permission.link.type === "edit") {
+                            if(requirement.allowedWriters.length > 0) {
+                                violation.data.push({
+                                    permission: permission,
+                                    violationType: "write",
+                                    message: "Set of allowed writers is not empty"
+                                });
+                            }
+                            if(requirement.deniedWriters.length > 0) {
+                                violation.data.push({
+                                    permission: permission,
+                                    violationType: "write",
+                                    message: "Set of denied writers is not empty"
+                                });
+                            }
+                        }
+                    }
+                });
+                // If there exists a violation for the current file and requirement pair,
+                // then add the violation object to the array of violations.
+                if(violation.data.length > 0) violations.push(violation);
+            });
+        });
 
     }
     console.log(violations);
     return violations;
+}
+
+/*
+    This function obtains a user and permission from OneDrive and updates
+    violation if there is a violation with requirement.
+ */
+function checkRequirementUser(user, permission, requirement, violation) {
+    let addresss = user.siteUser.email.toLowerCase();
+    let domain = address.substring(permission.emailAddress.lastIndexOf("@") + 1);
+    if(requirement.allowedReaders.length > 0) {
+        if(!requirement.allowedReaders.includes(address) && !requirement.allowedReaders.includes(domain)) {
+            violation.data.push({
+                permission: permission, 
+                violationType: "read",
+                message: address + " or " + domain + " is not in the set of allowed readers"
+            });
+        }
+    }
+    if(requirement.allowedWriters.length > 0 && (permission.roles.includes("write") || permission.roles.includes("owner"))) {
+        if(!requirement.allowedWriters.includes(address) && !requirement.allowedWriters.includes(domain)) {
+            violation.data.push({
+                permission: permission,
+                violationType: "write",
+                message: address + " or " + domain + " is not in the set of allowed writers"
+            });
+        }
+    }
+    if(requirement.deniedReaders.length > 0) {
+        if(requirement.deniedReaders.includes(address)) {
+            violation.data.push({
+                permission: permission,
+                violationType: "read",
+                message: address + " is in the set of denied readers"
+            });
+        }
+        if(requirement.deniedReaders.includes(domain)) {
+            violation.data.push({
+                permission: permission,
+                violationType: "read",
+                message: domain + " is in the set of denied readers"
+            });
+        }
+    }
+    if(requirement.deniedWriters.length > 0 && (permission.roles.includes("write") || permission.roles.includes("owner"))) {
+        if(requirement.deniedWriters.includes(address)) {
+            violation.data.push({
+                permission: permission,
+                violationType: "write",
+                message: address + " is in the set of denied writers"
+            });
+        }
+        if(requirement.deniedWriters.includes(domain)) {
+            violation.data.push({
+                permission: permission,
+                violationType: "write",
+                message: domain + " is in the set of denied writers"
+            });
+        }
+    }
 }
 
 /*
