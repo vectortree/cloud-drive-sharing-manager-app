@@ -352,12 +352,12 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
     // from this HTML file and saves it as a snapshot with the following properties:
     // Snapshot name, group name, group email address, timestamp (date), and list of members
     // Note: A group-membership snapshot refers to the saved membership (i.e., a list of members) of a single group.
-    console.log(req.body.htmlFile);
+    console.log(req.body.htmlFile.length);
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(userProfile.user.driveType !== "google")
             return res.status(400).json({success: false, message: "Invalid drive type"});
-
+        
         const {
             id,
             name,
@@ -370,7 +370,6 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
         if(!groupName || !groupAddress || !htmlFile)
             return res.status(400).json({success: false, message: "Invalid data format"});
         
-        // TODO: Validate HTML file
         // The system should only be able to scrape the membership of a group if the user has
         // permission to see the email addresses of the group members
 
@@ -382,7 +381,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
 
         const members = $('a[href^="mailto:"]');
 
-        if(!members.length) return res.status(400).json({success: false, message: "Invalid HTML file"});
+        if(members.length == 0) return res.status(400).json({success: false, message: "Invalid HTML file. No group members found."});
 
         members.each((index, element) => membersList.push($(element).attr("href").replace("mailto:", "")));
 
@@ -409,7 +408,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
             timestamp: stamp,
             createdAt: currentDate,
             updatedAt: currentDate,
-            members: membersList.map(m => m.toLowerCase())
+            members: Array.from(new Set(membersList.map(m => m.toLowerCase())))
         };
     
         userProfile.groupMembershipSnapshots.push(snapshot);

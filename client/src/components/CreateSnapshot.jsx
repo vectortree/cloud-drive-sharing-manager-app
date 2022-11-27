@@ -31,18 +31,21 @@ export default function ColorRadioButtons(props) {
     const [groupName, setGroupName] = React.useState('');
     const [groupEmail,setGroupEmail]= React.useState('');
     const [timestamp, setTimestamp] = React.useState(dayjs(today));
-    const [htmlFileData, setHtmlFile] = React.useState('');
+    const [htmlFileData, setHtmlFileData] = React.useState('');
+    const [htmlFile, setHtmlFile] = React.useState('');
     const handleChange = (event) => {setSelectedValue(event.target.value);};
     const handleSnapshotName = (event) => {setSnapShotName(event.target.value);};
     const handleGroupName = (event) =>{setGroupName(event.target.value);};
     const handleGroupEmail = (event) =>{setGroupEmail(event.target.value);};
-    const handleHtmlFile = (event) =>{
+    const handleHtmlFile = async (event) =>{
         console.log(event);
         const fileNameArray = event.target.value.split('.');
         if( fileNameArray[fileNameArray.length-1] == "html"){
+            let file = await event.target.files[0].text();
+            setHtmlFileData(file);
             setHtmlFile(event.target.files[0]);
         }else{
-            alert("Wrong File");
+            alert("Not an HTML File!");
         }
     }
     const handleCreateSnapshot = () => {
@@ -55,7 +58,11 @@ export default function ColorRadioButtons(props) {
             obj = {id: id, name: snapshotName, groupName : groupName, groupAddress:groupEmail, timestamp: timestamp, htmlFile:htmlFileData}
             if(id && groupName && groupEmail && htmlFileData){
                 console.log(obj);
-                api.createGroupMembershipSnapshot(obj);
+                api.createGroupMembershipSnapshot(obj).catch((err) => {
+                    if(err.status != 200) {
+                        alert(err.response.data.message);
+                    }
+                });
             }else{
                 alert("Please Fill out all the requirement");
                 return;
@@ -159,9 +166,9 @@ export default function ColorRadioButtons(props) {
                         onChange={handleHtmlFile}
                     />
                     <Button color="success" variant="contained" component="span">
-                    Upload html
+                    Upload HTML file
                     </Button>
-                    {htmlFileData.name}
+                    {htmlFile.name}
                 </label>
                     </>
                 :
