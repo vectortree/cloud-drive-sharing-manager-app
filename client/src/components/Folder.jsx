@@ -11,9 +11,9 @@ import {useRecoilState} from "recoil";
 export default function MultiActionAreaCard(props) {
     const [file, setFile] = useRecoilState(FileSelectedData);
     const changeColor = (key,file) =>{
+
         setFile(file);
     }
-    console.log(props.dataList)
     return (
             props.dataList.map((data,idx) => {
                 return (

@@ -10,7 +10,7 @@ import {FileSelectedData} from "../recoil";
 
 export default function SideBarFileInfo() {
     const [file, setFile] = useRecoilState(FileSelectedData);
-
+    console.log(file);
     return (
         <Card sx={{ width: 1/4, height:1}} style={{position:"fixed",right:"0px"}}>
             <CardMedia
@@ -26,11 +26,35 @@ export default function SideBarFileInfo() {
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                     {file.description}<br/>
-                    File Type : {file.type}<br/>
+                        File Type : {file.folder == undefined ? "file" : "folder"}<br/>
                     File Size : {file.size}<br/>
-                    AccessPermission :{file.accessPermission}<br/>
-                    sharing: {file.sharing}<br/>
-                    owner:{file.owner}<br/>
+                    AccessPermission :{
+                    file.file == undefined ?
+                        file.permissions.value.map( (data,idx) =>{
+                            let name = "";
+                            if(data.grantedToIdentities){
+                                if(data.grantedToIdentities[0] != undefined){
+                                    name = data.grantedToIdentities[0].user.displayName
+                                }
+                            }
+                            return (
+                                name
+                            )
+                        })
+                        :
+                        file.permission.value.map( (data,idx) =>{
+                            let name = "";
+                            if(data.grantedTo.user){
+                                name = data.grantedTo.user.displayName
+                            }
+                            return (
+                                name
+                            )
+                        })
+
+                    }<br/>
+                    Sharing: {file.shared == undefined ? "User Only": file.shared.scope}<br/>
+                    Owner:{file.createdBy.user.displayName}<br/>
                 </Typography>
             </CardContent>
         </Card>

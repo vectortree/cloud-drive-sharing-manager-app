@@ -6,7 +6,14 @@ export const AccessControlData = atom({
 });
 export const FileSelectedData = atom({
     key:'FileSelectedData',
-    default:[],
+    default:{
+        shared:{scope:""},
+        type:"",
+        size:0,
+        createdBy:{user:{displayName:""}},
+        permission:{value:[]},
+        permissions:{value:[]}
+    },
 })
 export const FileSharingSnapShotData = atom({
     key:'FileSharingSnapShotData',

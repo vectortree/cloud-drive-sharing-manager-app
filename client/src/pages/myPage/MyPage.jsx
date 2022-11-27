@@ -20,6 +20,7 @@ const MyPage = (props)=>{
     const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
     const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
     const [SearchQuery,setSearchQuery] = useRecoilState(searchQueryHistoryData);
+
     useEffect(() => {
         setACR(props.userData.accessControlRequirements);
         setFileSharing(props.userData.fileSharingSnapshots);
@@ -39,6 +40,7 @@ const MyPage = (props)=>{
         let FileSharing_Data = variable.filter((row) => row.id !== id)
         props.FileSharing_Handler(FileSharing_Data);
         setFileSharing(FileSharing_Data)
+
     }
     const ACR_Controller = (data) =>{
         props.ACR_Handler([...ACR,data]);
