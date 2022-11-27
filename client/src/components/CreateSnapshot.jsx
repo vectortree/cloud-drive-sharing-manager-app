@@ -26,13 +26,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 export default function ColorRadioButtons(props) {
     const date = new Date();
     let today = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes();
-
     const [selectedValue, setSelectedValue] = React.useState('fileSnapshot');
     const [snapshotName, setSnapShotName] = React.useState('');
     const [groupName, setGroupName] = React.useState('');
     const [groupEmail,setGroupEmail]= React.useState('');
     const [timestamp, setTimestamp] = React.useState(dayjs(today));
-    const [htmlFile, setHtmlFile] = React.useState('');
+    const [htmlFileData, setHtmlFile] = React.useState('');
     const handleChange = (event) => {setSelectedValue(event.target.value);};
     const handleSnapshotName = (event) => {setSnapShotName(event.target.value);};
     const handleGroupName = (event) =>{setGroupName(event.target.value);};
@@ -52,8 +51,9 @@ export default function ColorRadioButtons(props) {
         if(selectedValue == 'fileSnapshot'){
             api.createFileSharingSnapshot(obj);
         }else if(selectedValue == 'groupSnapshot'){
-            obj = {id: id, name: snapshotName, groupName : groupName, groupAddress:groupEmail, timestamp: timestamp, htmlFile:''}
-            if(id && groupName && groupEmail && htmlFile){
+            console.log(htmlFileData);
+            obj = {id: id, name: snapshotName, groupName : groupName, groupAddress:groupEmail, timestamp: timestamp, htmlFile:htmlFileData}
+            if(id && groupName && groupEmail && htmlFileData){
                 console.log(obj);
                 api.createGroupMembershipSnapshot(obj);
             }else{
@@ -84,6 +84,7 @@ export default function ColorRadioButtons(props) {
                 name="radio-buttons-group"
             >
                 <FormControlLabel value="snapshot" control={<Radio {...controlProps('fileSnapshot')} color="success"/>} label="Take file sharing snapshot" />
+                {props.dataSet.driveType == "google" ?
                 <FormControlLabel value="groupSnapshot" control={<Radio
                     {...controlProps('groupSnapshot')}
                     sx={{
@@ -93,6 +94,7 @@ export default function ColorRadioButtons(props) {
                         },
                     }}/>} label="Take group membership snapshot" >
                 </FormControlLabel>
+                    : ""}
             </RadioGroup>
 
             <h3>Snapshot Information</h3>
@@ -116,7 +118,7 @@ export default function ColorRadioButtons(props) {
                 </div>
 
                 {selectedValue === "groupSnapshot" ?
-
+                    <>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TextField
                         required
@@ -146,10 +148,8 @@ export default function ColorRadioButtons(props) {
                             />
                         </Stack>
                 </LocalizationProvider>
-                : ''
-                 }
+
                 <br></br>
-                {selectedValue === "groupSnapshot" ?
                 <label htmlFor="upload-html">
                     <input
                         style={{ display: 'none' }}
@@ -161,8 +161,9 @@ export default function ColorRadioButtons(props) {
                     <Button color="success" variant="contained" component="span">
                     Upload html
                     </Button>
-                    {htmlFile.name}
+                    {htmlFileData.name}
                 </label>
+                    </>
                 :
                 ''
                 }
