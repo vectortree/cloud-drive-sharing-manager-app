@@ -409,7 +409,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
             timestamp: stamp,
             createdAt: currentDate,
             updatedAt: currentDate,
-            members: membersList.map(m => m.toLowerCase());
+            members: membersList.map(m => m.toLowerCase())
         };
     
         userProfile.groupMembershipSnapshots.push(snapshot);
