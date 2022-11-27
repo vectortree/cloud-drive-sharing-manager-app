@@ -17,7 +17,7 @@ const api = axios.create({
 export const createFileSharingSnapshot = (payload) => api.post(`/createfilesharingsnapshot/`, payload);
 export const editFileSharingSnapshot = (id, payload) => api.put(`/editfilesharingsnapshot/${id}`, payload);
 export const removeFileSharingSnapshot = (id) => api.delete(`/removefilesharingsnapshot/${id}`);
-export const createGroupMembershipSnapshot = () => api.post('/creategroupmembershipsnapshot');
+export const createGroupMembershipSnapshot = (payload) => api.post('/creategroupmembershipsnapshot',payload);
 export const editGroupMembershipSnapshot = (id, payload) => api.put(`/editgroupmembershipsnapshot/${id}`, payload);
 export const removeGroupMembershipSnapshot = (id) => api.delete(`/removegroupmembershipsnapshot/${id}`);
 export const createAccessControlRequirement = (payload) => api.post('/createaccesscontrolrequirement', payload);
