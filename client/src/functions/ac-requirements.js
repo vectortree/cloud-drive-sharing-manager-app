@@ -74,8 +74,8 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                             //    {"writer", "fileOrganizer", "organizer", "owner"} and DR is nonempty,
                             //    then the email address and its domain (and its group, if on)
                             //    must NOT be in DR.
-                            let address = permission.emailAddress;
-                            let domain = permission.emailAddress.substring(permission.emailAddress.lastIndexOf("@") + 1);
+                            let address = permission.emailAddress.toLowerCase();
+                            let domain = address.substring(address.lastIndexOf("@") + 1);
                             if(requirement.allowedReaders.length > 0 && readerRoles.includes(permission.role)) {
                                 if(!requirement.allowedReaders.includes(address) && !requirement.allowedReaders.includes(domain)) {
                                     if(!requirement.group) {
@@ -245,8 +245,8 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                             // 5) If the permission role is in
                             //    {"writer", "fileOrganizer", "organizer", "owner"} and DR is nonempty,
                             //    then the email address of the group, its domain, and any member addresses of the group must NOT be in DR.
-                            let address = permission.emailAddress;
-                            let domain = permission.emailAddress.substring(permission.emailAddress.lastIndexOf("@") + 1);
+                            let address = permission.emailAddress.toLowerCase();
+                            let domain = address.substring(address.lastIndexOf("@") + 1);
                             // Note: This should always return a non-null group-membership snapshot.
                             // The null case is handled in the previous branch.
                             let groupMembershipSnapshot = getGMSnapshot(closestGMSnapshots, address);
@@ -376,6 +376,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                             // 5) If the permission role is in
                             //    {"writer", "fileOrganizer", "organizer", "owner"} and DR is nonempty,
                             //    then the domain as well as any address belonging to that domain must NOT be in DR.
+                            let domain = permission.domain.toLowerCase();
                             if(requirement.allowedReaders.length > 0 && readerRoles.includes(permission.role)) {
                                 if(!requirement.allowedReaders.includes(domain)) {
                                     violation.data.push({
@@ -531,6 +532,8 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                         checkRequirementUser(permission.grantedToV2, permission, requirement, violation);
                     }
                     else if(permission.link && permission.link.scope === "organization") {
+                        // TODO: Define domain variable
+                        let domain = field.toLowerCase();
                         if(requirement.allowedReaders.length > 0) {
                             if(!requirement.allowedReaders.includes(domain)) {
                                 violation.data.push({
@@ -619,8 +622,8 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
     violation if there is a violation with requirement.
  */
 function checkRequirementUser(user, permission, requirement, violation) {
-    let addresss = user.siteUser.email.toLowerCase();
-    let domain = address.substring(permission.emailAddress.lastIndexOf("@") + 1);
+    let address = user.siteUser.email.toLowerCase();
+    let domain = address.substring(address.lastIndexOf("@") + 1);
     if(requirement.allowedReaders.length > 0) {
         if(!requirement.allowedReaders.includes(address) && !requirement.allowedReaders.includes(domain)) {
             violation.data.push({

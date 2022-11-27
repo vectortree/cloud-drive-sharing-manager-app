@@ -17,7 +17,7 @@ function getClosestGMSnapshots(groupMembershipSnapshots, currentSnapshot) {
     let fsTimestamp = currentSnapshot.createdAt;
     closestGMSnapshots.sort((s1, s2) => Math.abs(s1.timestamp - fsTimestamp) - Math.abs(s2.timestamp - fsTimestamp));
     closestGMSnapshots = closestGMSnapshots.filter((value, index, self) =>
-        index == self.findIndex((s) => s.groupAddress === value.groupAddress)
+        index == self.findIndex((s) => s.groupAddress.toLowerCase() === value.groupAddress.toLowerCase())
     );
     return closestGMSnapshots;
 }
@@ -27,7 +27,7 @@ function getClosestGMSnapshots(groupMembershipSnapshots, currentSnapshot) {
 */
 function getGMSnapshot(closestGMSnapshots, groupAddress) {
     closestGMSnapshots.forEach((groupMembershipSnapshot) => {
-        if(groupMembershipSnapshot.groupAddress === groupAddress)
+        if(groupMembershipSnapshot.groupAddress.toLowerCase() === groupAddress.toLowerCase())
             return groupMembershipSnapshot;
     });
     return null;
@@ -39,7 +39,7 @@ function getGMSnapshot(closestGMSnapshots, groupAddress) {
 function getGroupAddresses(closestGMSnapshots, userAddress) {
     let groupAddresses = [];
     closestGMSnapshots.forEach((groupMembershipSnapshot) => {
-        if(groupMembershipSnapshot.members.includes(userAddress)) {
+        if(groupMembershipSnapshot.members.includes(userAddress.toLowerCase())) {
             groupAddresses.push(groupMembershipSnapshot.groupAddress);
         }
     });
