@@ -11,6 +11,9 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import {useRecoilState} from "recoil";
+import {searchQueryHistoryData} from "../recoil";
+import {id_generator} from "../functions/id_generator";
 //import { MuiChipsInput } from 'mui-chips-input'
 //import Chip from "@material-ui/core/Chip";
 
@@ -22,16 +25,25 @@ export default function SearchQueryModal(props) {
     const [openSuccess, setOpenSuccess] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
     const queryArray = ["Drive","Owner","Creator","From","To","Readable","Writable","Sharable","name","inFolder","folder","path","sharing"];
+    const [searchQuery, setSearchQuery] = useRecoilState(searchQueryHistoryData);
 
+    console.log(searchQuery);
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
-
+    const handleRecentQuery = (event) =>{
+        const string = event.target.value;
+        const txt = string.split('\"');
+        let queryStringBox = queryString;
+        for(let i = 1; i < txt.length-1; i++){
+            queryStringBox.push(txt[i]);
+        }
+        setQueryString([...queryString]);
+    }
     const addingQuery = (event) => {
         if(QueryType === "" || QueryName == ""){
             handleErrorAlertOpen();
         }else{
             const query = "{" +QueryType + ":" + QueryName + "} ";
-            console.log(query)
-            setQueryString([...queryString, query])
+            setQueryString([...queryString, query]);
             handleSuccessAlertOpen();
         }
     }
@@ -47,7 +59,9 @@ export default function SearchQueryModal(props) {
         setOpenError(false);
     }
 
-    const handleChange = (event) => {setQueryType(event.target.value);};
+    const handleChange = (event) => {
+        console.log(event.target.value);
+        setQueryType(event.target.value);};
 
     const [inputValue, setInputValue] = React.useState('');
     const [chips, setChips] = React.useState([])
@@ -59,7 +73,8 @@ export default function SearchQueryModal(props) {
     }
 };
     const submit = () =>{
-        const query = { searchQuery : queryString}
+        const id = id_generator(searchQuery);
+        const query = { id: id, searchQuery : queryString}
         console.log(query);
         api.addSearchQuery(query);
         props.handleClose();
@@ -127,12 +142,13 @@ export default function SearchQueryModal(props) {
                         id="demo-select-small"
                         value={QueryType}
                         label="Recent Query"
-                        onChange={handleChange}
+                        onChange={handleRecentQuery}
                         style={{ width: 600 }}
                     >
-                        <MenuItem value={"RecentQuery1"}>groups : CSE416 </MenuItem>
-                        <MenuItem value={"RecentQuery2"}>Owner : JeongYoon</MenuItem>
-                        <MenuItem value={"RecentQuery3"}>Folder : HW2 </MenuItem>
+                        {searchQuery.map((data,idx)=>{
+                            const searchQueryText = JSON.stringify(data.searchQuery);
+                          return <MenuItem value={searchQueryText} >{searchQueryText}</MenuItem>
+                        })}
                     </Select>
                 </FormControl>
                     <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQuery}>

@@ -291,7 +291,7 @@ export default function PrimarySearchAppBar(props) {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
-            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Search Query"} ><SearchQueryModal handleClose={handleCloseModal}/></BasicModal>
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Search Query"} ><SearchQueryModal userData={props.userData}handleClose={handleCloseModal}/></BasicModal>
         </Box>
     );
 }

@@ -9,6 +9,7 @@ import {
     GroupMembershipSnapshotsData,
     searchQueryHistoryData, selectedSnapshot
 } from "../../recoil";
+import {makeFilesForDisplay} from "../../functions/snapshot-files";
 
 
 const file1 ={
@@ -74,8 +75,12 @@ const Home = (props) =>{
         setACR(props.userData.accessControlRequirements);
         setFileSharing(props.userData.fileSharingSnapshots);
         setGroupSharing(props.userData.groupMembershipSnapshots);
-        setSearchQuery(props.userData.searchQuery);
+        setSearchQuery(props.userData.searchQueryHistory);
     },[]);
+
+
+    //console.log(makeFilesForDisplay(FileSharing,FileSharing[0].data,props.userData.driveType));
+
     console.log(selSnapshot)
     //let  current_snapshot = FileSharing.length-1
     //console.log(FileSharing[current_snapshot])
