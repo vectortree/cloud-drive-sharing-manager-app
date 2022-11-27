@@ -352,7 +352,7 @@ router.post('/creategroupmembershipsnapshot', async (req, res) => {
     // from this HTML file and saves it as a snapshot with the following properties:
     // Snapshot name, group name, group email address, timestamp (date), and list of members
     // Note: A group-membership snapshot refers to the saved membership (i.e., a list of members) of a single group.
-    console.log(req.body.htmlFile.length);
+    console.log(req.body);
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     UserProfile.findById(req.user._id, async (err, userProfile) => {
         if(userProfile.user.driveType !== "google")

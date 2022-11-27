@@ -42,21 +42,29 @@ export default function ColorRadioButtons(props) {
         const fileNameArray = event.target.value.split('.');
         if( fileNameArray[fileNameArray.length-1] == "html"){
             let file = await event.target.files[0].text();
+            console.log(file);
             setHtmlFileData(file);
-            setHtmlFile(event.target.files[0]);
         }else{
             alert("Not an HTML File!");
         }
     }
     const handleCreateSnapshot = () => {
-        let id =id_generator(props.dataSet.fileSharingSnapshots);
+        let id =id_generator(props.dataSet.groupMembershipSnapshots);
         let obj = {id:id, name: snapshotName};
         if(selectedValue == 'fileSnapshot'){
             api.createFileSharingSnapshot(obj);
         }else if(selectedValue == 'groupSnapshot'){
             console.log(htmlFileData);
-            obj = {id: id, name: snapshotName, groupName : groupName, groupAddress:groupEmail, timestamp: timestamp, htmlFile:JSON.stringify(htmlFileData)}
-            if(id && groupName && groupEmail && htmlFileData){
+            obj = {
+                id: id,
+                name: snapshotName,
+                groupName : groupName,
+                groupAddress:groupEmail,
+                timestamp: timestamp,
+                htmlFile:htmlFileData
+            }
+            
+            if( groupName && groupEmail && htmlFileData){
                 console.log(obj);
                 api.createGroupMembershipSnapshot(obj).catch((err) => {
                     if(err.status != 200) {
