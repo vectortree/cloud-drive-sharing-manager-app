@@ -1,31 +1,4 @@
-import { atom, selector } from "recoil";
-import api from './api/api';
-
-const mySelectorSelectedSnapshot = selector({
-    key: 'mySelectorSelectedSnapshot',
-    get: async () => {
-      const res = await api.getUserProfile();
-      if(res.status === 200) {
-          if(res.data.profile && res.data.profile.fileSharingSnapshots.length > 0) {
-              return res.data.profile.fileSharingSnapshots[res.data.profile.fileSharingSnapshots.length - 1];
-          }
-      }
-      return {data:{}};
-    }
-});
-
-const mySelectorSelectedCheckSnapshot = selector({
-    key: 'mySelectorSelectedCheckSnapshot',
-    get: async () => {
-      const res = await api.getUserProfile();
-      if(res.status === 200) {
-          if(res.data.profile && res.data.profile.fileSharingSnapshots.length > 0) {
-              return res.data.profile.fileSharingSnapshots[res.data.profile.fileSharingSnapshots.length - 1];
-          }
-      }
-      return {data:{}};
-    }
-});
+import { atom } from "recoil";
 
 export const AccessControlData = atom({
     key: 'AccessControlData', // unique ID (with respect to other atoms/selectors)
@@ -41,7 +14,7 @@ export const FileSharingSnapShotData = atom({
 })
 export const selectedSnapshot = atom({
     key:'selectedSnapshot',
-    default: mySelectorSelectedSnapshot,
+    default:{data:{}},
 })
 export const GroupMembershipSnapshotsData = atom({
     key:'GroupMembershipSnapshotsData',
@@ -53,5 +26,5 @@ export const searchQueryHistoryData = atom({
 })
 export const selectedCheckSnapshot = atom({
     key:'selectedCheckSnapshot',
-    default:mySelectorSelectedCheckSnapshot
+    default:{data:{}},
 })
