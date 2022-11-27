@@ -6,7 +6,7 @@ const mySelectorSelectedSnapshot = selector({
     get: async () => {
       const res = await api.getUserProfile();
       if(res.status === 200) {
-          if(res.data.profile) {
+          if(res.data.profile && res.data.profile.fileSharingSnapshots.length > 0) {
               return res.data.profile.fileSharingSnapshots[res.data.profile.fileSharingSnapshots.length - 1];
           }
       }
@@ -19,7 +19,7 @@ const mySelectorSelectedCheckSnapshot = selector({
     get: async () => {
       const res = await api.getUserProfile();
       if(res.status === 200) {
-          if(res.data.profile) {
+          if(res.data.profile && res.data.profile.fileSharingSnapshots.length > 0) {
               return res.data.profile.fileSharingSnapshots[res.data.profile.fileSharingSnapshots.length - 1];
           }
       }
