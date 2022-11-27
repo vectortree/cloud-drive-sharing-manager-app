@@ -66,11 +66,15 @@ export default function ColorRadioButtons(props) {
 
             if( groupName && groupEmail && htmlFileData){
                 console.log(obj);
-                api.createGroupMembershipSnapshot(obj).catch((err) => {
+                const groupSnapshot = api.createGroupMembershipSnapshot(obj).then(
+                    (value) =>{
+                        console.log(value)
+                    }
+                ).catch((err) => {
                     if(err.status != 200) {
                         alert(err.response.data.message);
                     }
-                });
+                })
             }else{
                 alert("Please Fill out all the requirement");
                 return;

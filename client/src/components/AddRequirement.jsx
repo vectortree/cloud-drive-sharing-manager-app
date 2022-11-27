@@ -15,6 +15,8 @@ import PropTypes from 'prop-types';
 import {createAccessControlRequirement} from "../api/api";
 import {id_generator} from "../functions/id_generator";
 import { serializeSearchQuery } from '../functions/query';
+import {useRecoilState} from "recoil";
+import {selectedSnapshot} from "../recoil";
 
 function EditToolbar(props) {
     const { selectedCellParams, cellMode, cellModesModel, setCellModesModel } = props;
@@ -120,6 +122,7 @@ const useFakeMutation = () => {
 };
 
 export default function AddRequirement(props) {
+
     //State
     const [QueryType, setQueryType] = React.useState('');
     const [QueryName, setQueryName] = React.useState('');
@@ -132,6 +135,7 @@ export default function AddRequirement(props) {
     const [selectedCellParams, setSelectedCellParams] = React.useState(null);
     const [cellModesModel, setCellModesModel] = React.useState({});
     const [snackbar, setSnackbar] = React.useState(null);
+
     //Handler
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
