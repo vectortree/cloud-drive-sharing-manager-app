@@ -23,16 +23,16 @@ function makeFilesForDisplay(snapshot, files, driveType) {
         files.forEach((file) => {
             filesForDisplay.push({
                 name: file.name,
-                mimeType: file.file.mimeType,
+                mimeType: file.file ? file.file.mimeType : "application/folder",
                 link: file.webUrl,
                 createdTime: file.createdDateTime,
                 modifiedTime: file.lastModifiedDateTime,
-                owner: "", // TODO
-                lastModifyingUser: "", // TODO
+                owner: file.permissions.value.find(p => p.roles.contains("owner")).grantedToV2.siteUser.email,
+                lastModifyingUser: file.lastModifiedBy ? file.lastModifiedBy.user.email : "unavailable",
                 size: file.size ? file.size : "unavailable",
                 driveName: file.driveName,
                 location: file.parentReference ? file.parentReference.path : "unavailable",
-                permissions: [] // TODO
+                permissions: partitionPermissions(snapshot, file, driveType)
     
             });
         });
@@ -72,21 +72,89 @@ function partitionPermissions(snapshot, file, driveType) {
                 return {
                     role: p.role,
                     type: p.type,
-                    value: p.type === 'user' || p.type === 'group' ? p.emailAddress : p.type === 'domain' ? p.domain : null
+                    value: p.type === 'user' || p.type === 'group' ? p.emailAddress : p.type === 'domain' ? p.domain : 'n/a'
                 };
             });
             partitionedPermissions.inherited = partitionedPermissions.inherited.map(p => {
                 return {
                     role: p.role,
                     type: p.type,
-                    value: p.type === 'user' || p.type === 'group' ? p.emailAddress : p.type === 'domain' ? p.domain : null
+                    value: p.type === 'user' || p.type === 'group' ? p.emailAddress : p.type === 'domain' ? p.domain : 'n/a'
                 };
             });
         }
     }
-    // TODO
-    else if(driveType === "microsoft") {
 
+    else if(driveType === "microsoft") {
+        let directPermissions = file.permissions.value;
+        let inheritedPermissions = [];
+        let parent = snapshot.find(f => f.id === file.parentReference.id);
+        if (parent) {
+            let parentPermissionIds = new Set(parent.permissions.value.map(p => p.id));
+            directPermissions = file.permissions.value.filter(p => !parentPermissionIds.has(p.id));
+            inheritedPermissions = file.permissions.value.filter(p => parentPermissionIds.has(p.id));
+        }
+        for (const permission of directPermissions) {
+            if (permission.grantedToIdentitiesV2 && !permission.roles.includes("owner")) {
+                for (const user of permission.grantedToIdentitiesV2) {
+                    partitionedPermissions.direct.push({
+                        role: user.roles ? user.roles[0] : "unavailable",
+                        type: "users",
+                        value: user.siteUser.email
+                    });
+                }
+            } else if (permission.grantedToV2 && !permission.roles.includes("owner")) {
+                partitionedPermissions.direct.push({
+                    role: permission.grantedToV2.roles ? permission.grantedToV2.roles[0] : "unavailable",
+                    type: "users",
+                    value: permission.grantedToV2.siteUser.email
+                });
+            } else if (permission.link && permission.link.scope === "anonymous") {
+                partitionedPermissions.direct.push({
+                    role: permission.link.type,
+                    type: "anonymous",
+                    value: "n/a"
+                });
+            } else if (permission.link && permission.link.scope === "organization") {
+                let owner = file.permissions.value.find(p => p.roles.contains("owner")).grantedToV2.siteUser.email;
+                partitionedPermissions.direct.push({
+                    role: permission.link.type,
+                    type: "organization",
+                    value: owner.substring(owner.lastIndexOf("@") + 1)
+                });
+            }
+        }
+
+        for (const permission of inheritedPermissions) {
+            if (permission.grantedToIdentitiesV2 && !permission.roles.includes("owner")) {
+                for (const user of permission.grantedToIdentitiesV2) {
+                    partitionedPermissions.inherited.push({
+                        role: user.roles ? user.roles[0] : "unavailable",
+                        type: "users",
+                        value: user.siteUser.email
+                    });
+                }
+            } else if (permission.grantedToV2 && !permission.roles.includes("owner")) {
+                partitionedPermissions.inherited.push({
+                    role: permission.grantedToV2.roles ? permission.grantedToV2.roles[0] : "unavailable",
+                    type: "users",
+                    value: permission.grantedToV2.siteUser.email
+                });
+            } else if (permission.link && permission.link.scope === "organization") {
+                let owner = file.permissions.value.find(p => p.roles.contains("owner")).grantedToV2.siteUser.email;
+                partitionedPermissions.inherited.push({
+                    role: permission.link.type,
+                    type: "organization",
+                    value: owner.substring(owner.lastIndexOf("@") + 1)
+                });
+            } else if (permission.link && permission.link.scope === "anonymous") {
+                partitionedPermissions.inherited.push({
+                    role: permission.link.type,
+                    type: "anonymous",
+                    value: "n/a"
+                });
+            }
+        }
     }
     
     return partitionedPermissions;
