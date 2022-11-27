@@ -533,7 +533,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                     }
                     else if(permission.link && permission.link.scope === "organization") {
                         // TODO: Define domain variable
-                        let domain = field.toLowerCase();
+                        //let domain = field.toLowerCase();
                         if(requirement.allowedReaders.length > 0) {
                             if(!requirement.allowedReaders.includes(domain)) {
                                 violation.data.push({
