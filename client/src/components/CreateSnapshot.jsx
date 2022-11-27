@@ -55,7 +55,7 @@ export default function ColorRadioButtons(props) {
             api.createFileSharingSnapshot(obj);
         }else if(selectedValue == 'groupSnapshot'){
             console.log(htmlFileData);
-            obj = {id: id, name: snapshotName, groupName : groupName, groupAddress:groupEmail, timestamp: timestamp, htmlFile:htmlFileData}
+            obj = {id: id, name: snapshotName, groupName : groupName, groupAddress:groupEmail, timestamp: timestamp, htmlFile:JSON.stringify(htmlFileData)}
             if(id && groupName && groupEmail && htmlFileData){
                 console.log(obj);
                 api.createGroupMembershipSnapshot(obj).catch((err) => {
