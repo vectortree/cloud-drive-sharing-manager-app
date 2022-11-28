@@ -31,11 +31,13 @@ export default function SearchQueryModal(props) {
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
     const handleRecentQuery = (event) =>{
         const string = event.target.value;
+
         const txt = string.split('\"');
         let queryStringBox = queryString;
         for(let i = 1; i < txt.length-1; i++){
             queryStringBox.push(txt[i]);
         }
+
         setQueryString([...queryString]);
     }
     const addingQuery = (event) => {
