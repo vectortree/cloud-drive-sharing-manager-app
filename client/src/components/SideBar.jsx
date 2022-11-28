@@ -27,6 +27,15 @@ import Stack from '@mui/material/Stack';
 import ColorRadioButtons from "./CreateSnapshot";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
+import {useContext} from "react"
+import api from '../api/api';
+import {useRecoilState, useResetRecoilState} from "recoil";
+import {
+    AccessControlData,
+    FileSharingSnapShotData,
+    GroupMembershipSnapshotsData,
+    searchQueryHistoryData, selectedSnapshot
+} from "../recoil";
 
 import SettingsIcon from '@mui/icons-material/Settings';
 
@@ -41,6 +50,7 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import HomeHeader from "./HomeHeader";
 import MultiActionAreaCard from "./Folder";
 import SideBarFileInfo from "./SideBarFileInfo";
+import { AuthContext } from '../auth/auth';
 
 
 //This is for the left side bar
@@ -115,12 +125,62 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 export default function MiniDrawer({children, ...props}) {
+    console.log(props)
     const navigate = useNavigate()
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const [openModal, setOpenModal] = React.useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
+
+    const ResetACR =useResetRecoilState(AccessControlData);
+    const ResetFileSharing = useResetRecoilState(FileSharingSnapShotData);
+    const ResetGMS = useResetRecoilState(GroupMembershipSnapshotsData);
+    const ResetSearchQuery = useResetRecoilState(searchQueryHistoryData);
+    const { userProfile, setUserProfile } = useContext(AuthContext);
+
+    const handleLogout = () => {
+        if(userProfile) {
+            api.logout().then((res) => {
+                if(res.status === 200) {
+                    setUserProfile(null);
+                }
+            });
+            ResetACR();
+            ResetFileSharing();
+            ResetGMS();
+            ResetSearchQuery();
+        }
+    
+    }
+
+    const googleLogin = () => {
+        window.open(process.env.REACT_APP_SERVER_URL + '/auth/google', "_self");
+     }
+
+    const handleGoogleAuth = () => {
+        if (props.userData.driveType !== "google"){
+            //OneDrive, should logout and login to google
+            handleLogout();
+            googleLogin();
+            
+        }
+
+    }
+
+    const microsoftLogin = () => {
+        window.open(process.env.REACT_APP_SERVER_URL + '/auth/microsoft', "_self");
+    }
+    const handleOneDriveAuth = () => {
+        if (props.userData.driveType !== "microsoft"){
+            //OneDrive, should logout and login to google
+            handleLogout();
+            microsoftLogin();
+            
+            
+        }
+        
+    }
 
     let twoD_Array = new Array(0);
     for (var i = 0; i < props.components.length/4; i++) {
@@ -238,6 +298,9 @@ export default function MiniDrawer({children, ...props}) {
                                     justifyContent: open ? 'initial' : 'center',
                                     px: 1.5,
                                 }}
+                                onClick=
+                                        {text === "Google Drive" ? handleGoogleAuth : handleOneDriveAuth                                                                                            
+                                        }
                             >
                                 <ListItemIcon
                                     sx={{
@@ -248,6 +311,7 @@ export default function MiniDrawer({children, ...props}) {
                                     }}
                                 >
                                     {index % 2 === 0 ? <ListItemIcon
+                                    // onClick = {handleGoogleAuth}
                                     sx={{
                                         minWidth: 0,
                                         mr: open ? 3 : 'auto',
@@ -257,6 +321,7 @@ export default function MiniDrawer({children, ...props}) {
                                 >
                                     <GoogleIcon></GoogleIcon>
                                 </ListItemIcon> : <ListItemIcon
+                                // onClick = {handleOneDriveAuth}
                                     sx={{
                                         minWidth: 0,
                                         mr: open ? 3 : 'auto',
