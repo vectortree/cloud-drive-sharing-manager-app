@@ -68,7 +68,8 @@ export default function SideBarFileInfo() {
                                 {file.permissions.direct.map((userData) =>{
                                     return (
                                         <>
-                                            <p>Role:{userData.role} Type:{userData.type}Email:{userData.value}</p>
+                                            <p>Role:{userData.role} /Type:{userData.type} </p>
+                                            <p>Email:{userData.value}</p>
                                         </>
                                     )
                                 })}
