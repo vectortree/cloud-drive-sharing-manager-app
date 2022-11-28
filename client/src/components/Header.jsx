@@ -226,7 +226,7 @@ export default function PrimarySearchAppBar(props) {
                 alert("no SearchQuery")
             }else{
                 const query = searchQuery;
-                let sq = serializeSearchQuery(query);
+                let sq = serializeSearchQuery(query, true);
                 if(sq.error) alert(sq.error);
                 else {
                     setSearchQuery(query);

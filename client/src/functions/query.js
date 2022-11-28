@@ -155,7 +155,7 @@ function deserializeSearchQuery(sq) {
         if (index !== 0) {
             s += " " + sq["logicalOp"] + " ";
         }
-        s += deserializeSearchQuery(child, false);
+        s += deserializeSearchQuery(child);
     })
     if (sq["groups"] === undefined)
         return "(" + s + ")";
