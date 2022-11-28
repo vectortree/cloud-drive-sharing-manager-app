@@ -377,7 +377,7 @@ export default function MiniDrawer({children, ...props}) {
                                         // opacity: open ? 1 : 0
                                     }}
                                 >
-                                    <PermIdentityIcon></PermIdentityIcon>
+                                    <PermIdentityIcon/>
                                 </ListItemIcon>
                                 <ListItemText primaryTypographyProps={{fontSize: '15px'}}  primary={text} sx={{  opacity: open ? 1 : 0 }} />
                                 </ListItemButton>
@@ -399,16 +399,13 @@ export default function MiniDrawer({children, ...props}) {
                                     <MultiActionAreaCard dataList={file}/>
                                 </Box>
                                 )
-                        })
-                        }
+                        })}
                     </div>
                     </>
                     :
                     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                         {
-                            props.components.map((element) => (
-                                element
-                            ))
+                            props.components.map((element) => (element))
                         }
                     </Box>
                 }

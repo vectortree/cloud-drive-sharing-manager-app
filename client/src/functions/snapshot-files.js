@@ -1,4 +1,5 @@
 function makeFilesForDisplay(snapshot, files, driveType) {
+
     let filesForDisplay = [];
     if(driveType === "google") {
         files.forEach((file) => {
@@ -22,13 +23,14 @@ function makeFilesForDisplay(snapshot, files, driveType) {
     else if (driveType === "microsoft") {
 
         files.forEach((file) => {
+            console.log(file.permissions);
             filesForDisplay.push({
                 name: file.name,
                 mimeType: file.file ? file.file.mimeType : "application/folder",
                 link: file.webUrl,
                 createdTime: file.createdDateTime,
                 modifiedTime: file.lastModifiedDateTime,
-                owner: file.permissions.value.find(p => p.roles.includes("owner")).grantedToV2.siteUser.email,
+                owner: file.permissions.value == undefined || file.permissions.value == [] ? "" :file.permissions.value.find(p => p.roles.includes("owner")).grantedToV2.siteUser.email,
                 lastModifyingUser: file.lastModifiedBy ? file.lastModifiedBy.user.email : "unavailable",
                 size: file.size ? file.size : "unavailable",
                 driveName: file.driveName,
@@ -86,10 +88,18 @@ function partitionPermissions(snapshot, file, driveType) {
     }
 
     else if(driveType === "microsoft") {
+        console.log(file);
         let directPermissions = file.permissions.value;
         let inheritedPermissions = [];
-
-        let parent = snapshot.find(f => f.id === file.parentReference.id);
+        console.log(snapshot);
+        let parent = snapshot == undefined || snapshot == {} ? false : snapshot.find(f => {
+            console.log(f.id);
+            if(f.id != undefined){
+                return f.id === file.parentReference.id
+            }else{
+                return false;
+            }
+        });
         if (parent) {
             let parentPermissionIds = new Set(parent.permissions.value.map(p => p.id));
             directPermissions = file.permissions.value.filter(p => !parentPermissionIds.has(p.id));

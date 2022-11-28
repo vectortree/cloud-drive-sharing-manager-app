@@ -11,8 +11,8 @@ export const FileSelectedData = atom({
         type:"",
         size:0,
         createdBy:{user:{displayName:""}},
-        permission:{direct:[],inherited:[]},
-        permissions:{direct:[],inherited:[]}
+        permission:{value: [],direct:[],inherited:[]},
+        permissions:{value: [], direct:[],inherited:[]}
     },
 })
 export const FileSharingSnapShotData = atom({
@@ -34,4 +34,15 @@ export const searchQueryHistoryData = atom({
 export const selectedCheckSnapshot = atom({
     key:'selectedCheckSnapshot',
     default:{data:{}},
+})
+export const fileData = atom({
+    key:'fileData',
+    default:{
+        shared:{scope:""},
+        type:"",
+        size:0,
+        createdBy:{user:{displayName:""}},
+        permission:{value: [],direct:[],inherited:[]},
+        permissions:{value: [], direct:[],inherited:[]}
+    },
 })

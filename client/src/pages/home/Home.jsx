@@ -68,19 +68,21 @@ const Home = (props) =>{
     const [SearchQuery,setSearchQuery] = useRecoilState(searchQueryHistoryData);
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
     useEffect(() => {
-        setSelSnapshot(props.userData.fileSharingSnapshots.length > 0 ?
-            props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1] :
-            selSnapshot
+        setSelSnapshot(
+            props.userData.fileSharingSnapshots.length === 0 ?
+                {data:[]}
+                :selSnapshot.data.length > 0 ?
+                    selSnapshot : props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1]
         );
         setACR(props.userData.accessControlRequirements);
         setFileSharing(props.userData.fileSharingSnapshots);
         setGroupSharing(props.userData.groupMembershipSnapshots);
         setSearchQuery(props.userData.searchQueryHistory);
     },[])
-
-    const fileData = makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType)
-
-    console.log(selSnapshot)
+    console.log(selSnapshot.data.length);
+    console.log(props.userData.fileSharingSnapshots);
+    const fileData = makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType);
+    console.log(fileData);
     //let  current_snapshot = FileSharing.length-1
     //console.log(FileSharing[current_snapshot])
 

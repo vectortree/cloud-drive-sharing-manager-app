@@ -52,11 +52,21 @@ const MyPage = (props)=>{
         props.ACR_Handler(ACR_Data);
         setACR(ACR_Data)
     }
+    const Group_Controller = (data) =>{
+        props.GroupSharing_Handler([...GroupSharing,data]);
+        setGroupSharing([...GroupSharing,data])
+    }
+    const Group_DeleteController = (id) =>{
+        let variable = [...GroupSharing];
+        let GroupSharing_Data = variable.filter((row) => row.id !== id)
+        props.GroupSharing_Handler(GroupSharing_Data);
+        setGroupSharing(GroupSharing_Data)
+    }
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
         <ColumnMenuGrid name="Recent Access Control Requirement" type= "ACR"dataSet = {ACR} Data_Handler={ACR_Controller} Data_DeleteHandler={ACR_DeleteController}/>,
         <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {FileSharing} type= "FSS" Data_Handler={FileSharing_Controller} Data_DeleteHandler = {DeleteFileSharing_Controller}/>,
-        <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {GroupSharing} type= "GSS"/>,
+        <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {GroupSharing} type= "GSS"Data_Handler={Group_Controller} Data_DeleteHandeler={Group_DeleteController}/>,
         <ColumnMenuGrid name="User's Recent Query" dataSet = {[]} type= "SearchQuery"/>
     ];
 
