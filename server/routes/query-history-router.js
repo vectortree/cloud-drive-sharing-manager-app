@@ -63,7 +63,7 @@ router.delete('/clearsearchqueries', async (req, res) => {
     });
 });
 
-router.delete('/removesearchquery', async (req, res) => {
+router.delete('/removesearchquery/:id', async (req, res) => {
     if(!req.user) return res.status(401).json({success: false, message: "Error"});
     console.log(req.user);
     UserProfile.findById(req.user._id, async (err, userProfile) => {

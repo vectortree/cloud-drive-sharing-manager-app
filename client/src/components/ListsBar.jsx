@@ -76,6 +76,7 @@ export default function ColumnMenuGrid( props) {
               console.log(id);
               removeGroupMembershipSnapshot(id);
           }else if (props.type == "SearchQuery"){
+              console.log("Remove SearchQuery");
               removeSearchQuery(id);
           }else{
               console.error("Error: No matched Name");

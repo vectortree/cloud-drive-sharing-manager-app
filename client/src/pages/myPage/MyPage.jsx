@@ -62,6 +62,13 @@ const MyPage = (props)=>{
         props.GroupSharing_Handler(GroupSharing_Data);
         setGroupSharing(GroupSharing_Data)
     }
+    const Delete_RecentSearchQuery = (id) =>{
+        console.log("recent Search Query Delete");
+        let variable = [...SearchQuery];
+        let SearchQueryData = variable.filter((row) => row.id !== id)
+        props.SearchQuery_Handler(SearchQueryData);
+        setSearchQuery(SearchQueryData)
+    }
     console.log(SearchQuery);
 
     let searchQuery_Grid = [];
@@ -86,7 +93,7 @@ const MyPage = (props)=>{
         <ColumnMenuGrid name="Recent Access Control Requirement" type= "AccessControlRequirement"dataSet = {ACR} Data_Handler={ACR_Controller} Data_DeleteHandler={ACR_DeleteController}/>,
         <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {FileSharing} type= "FileSharingSnapshot" Data_Handler={FileSharing_Controller} Data_DeleteHandler = {DeleteFileSharing_Controller}/>,
         <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {GroupSharing} type= "GroupSharingSnapshot"Data_Handler={Group_Controller} Data_DeleteHandler={Group_DeleteController}/>,
-        <ColumnMenuGrid name="User's Recent Query" dataSet = {searchQuery_Grid} type= "SearchQuery"/>
+        <ColumnMenuGrid name="User's Recent Query" dataSet = {searchQuery_Grid} type= "SearchQuery" Data_DeleteHandler={Delete_RecentSearchQuery}/>
     ];
 
     return (
