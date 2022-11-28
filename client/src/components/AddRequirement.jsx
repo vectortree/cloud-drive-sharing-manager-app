@@ -161,7 +161,7 @@ export default function AddRequirement(props) {
             handleErrorAlertOpen();
         }else{
             const query = QueryName;
-            let sq = serializeSearchQuery(query);
+            let sq = serializeSearchQuery(query, true);
             if(sq.error) handleQueryErrorAlertOpen(sq.error);
             else {
                 setQueryString(query);
@@ -233,7 +233,7 @@ export default function AddRequirement(props) {
             const accessControlData = {
                 id: id,
                 name: requirementName,
-                searchQuery: serializeSearchQuery(query),
+                searchQuery: serializeSearchQuery(query, true),
                 group: group,
                 allowedReaders:allowedReaderArray,
                 allowedWriters: allowedWriter,
