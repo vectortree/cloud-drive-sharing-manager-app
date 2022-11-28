@@ -10,6 +10,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import {deviantSharing} from "../functions/sharing-analysis";
 
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
@@ -25,12 +26,23 @@ export default function AnalysisComponent(props) {
     }
     const handleKeyup = (e) =>{
         if(e.code == "Enter"){
-            const currentSnapshot = props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1];
-            // let deviantSharingData = deviantSharing(currentSnapshot, drive, path, threshold, props.userData.driveType)
+            if(props.text=="Deviant Sharing" && threshold < 50 ){
+                alert("Threshold should be bigger than 50%");
+                const currentSnapshot = props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1];
+                let deviantSharingData = deviantSharing(currentSnapshot, driveName, drivePath, threshold, props.userData.driveType)
+                console.log(deviantSharingData);
+            }else{
+
+            }
         }
     }
     const handleClick = (e) =>{
-        if(e.target.value === "Deviant Sharing"){
+        if(props.text=="Deviant Sharing" && threshold < 50 ){
+            alert("Threshold should be bigger than 50%");
+            const currentSnapshot = props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1];
+            let deviantSharingData = deviantSharing(currentSnapshot, driveName, drivePath, threshold, props.userData.driveType)
+            console.log(deviantSharingData);
+        }else{
 
         }
     }
