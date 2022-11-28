@@ -26,7 +26,6 @@ export default function SideBarFileInfo() {
     const handleClickOpenInherit = () => {setOpenInherit(true);};
     const handleCloseInherit = () => {setOpenInherit(false);};
 
-    console.log(file.permissions.direct);
     return (
         <Card sx={{ width: 1/4, height:1}} style={{position:"fixed",right:"0px"}}>
             <CardMedia

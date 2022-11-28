@@ -40,6 +40,7 @@
     "passport-microsoft": "^1.0.0",
     "passport-oauth2-refresh": "^2.1.0",
     "puppeteer": "^19.0.0",
+    "react-virtualized": "^9.22.3",
     "socket.io": "^4.5.2"
   }
 }
