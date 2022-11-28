@@ -60,6 +60,17 @@ const UserProfileSchema = new Schema({
             searchQuery: Object
         }],
         required: false
+    },
+    // Log of all sharing changes performed by the system
+    sharingChangesLog: {
+        type: [{
+            files: [Object],
+            permissionType: String,
+            permissionRole: String,
+            permissionValue: String,
+            action: {type: String, enum: ['add', 'remove', 'unshare']}
+        }],
+        required: false
     }
 });
 
