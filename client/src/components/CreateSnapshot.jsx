@@ -49,13 +49,14 @@ export default function ColorRadioButtons(props) {
         }
     }
     const handleCreateSnapshot = () => {
-        let id =id_generator(props.dataSet.groupMembershipSnapshots);
-        let obj = {id:id, name: snapshotName};
+
         if(selectedValue == 'fileSnapshot'){
+            let id =id_generator(props.dataSet.fileSharingSnapshots);
+            let obj = {id:id, name: snapshotName};
             api.createFileSharingSnapshot(obj);
         }else if(selectedValue == 'groupSnapshot'){
-            console.log(htmlFileData);
-            obj = {
+            let id =id_generator(props.dataSet.groupMembershipSnapshots);
+            let obj = {
                 id: id,
                 name: snapshotName,
                 groupName : groupName,
