@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {useRecoilState} from "recoil";
-import {AccessControlData} from "../recoil";
 import Button from '@mui/material/Button';
-import { checkRequirements } from "../functions/ac-requirements"
-import { getClosestGMSnapshots } from "../functions/gm-snapshots"
 import { deserializeSearchQuery } from "../functions/query"
 import {selectedSnapshot} from "../recoil";
 import {FileSharingSnapShotData} from "../recoil";
@@ -42,6 +39,7 @@ export default function AccessControlComponent(props) {
     const searchQueryModalOpen = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
+    console.log(props)
     console.log(props.ACR_data);
     console.log(props.userData)
     console.log(selSnapshot)
@@ -76,7 +74,7 @@ export default function AccessControlComponent(props) {
             &emsp;&emsp;
             <b style={{color:"gray"}}>{checkSnapShot.name}</b>
             <Button onClick = {searchQueryModalOpen} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
-            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {props}/></BasicModal>
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {props} selectionModel = {selectionModel}/></BasicModal>
             <br></br>
             <br></br>
             <DataGrid

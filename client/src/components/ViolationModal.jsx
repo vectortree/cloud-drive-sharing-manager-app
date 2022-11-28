@@ -35,6 +35,13 @@ const columns = [
 
 
 export default function ViolationModal(props) {
+    console.log(props.selectionModel)
+    let selectedRequirements = []
+    props.selectionModel.map((idx) => {
+        selectedRequirements.push(props.components.ACR_data[idx])
+        console.log(idx)        
+    })
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -42,8 +49,7 @@ export default function ViolationModal(props) {
   const [checkSnapShot, setCheckSnapShot] = useRecoilState(selectedCheckSnapshot);
 
   let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, checkSnapShot)
-  let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, props.components.ACR_data, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )
-  console.log(checkRequirement)
+  let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, selectedRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )
 
   let ch_req_obj = [] 
   checkRequirement.map((req) => {
