@@ -13,7 +13,7 @@ require('./passport/passport-microsoft');
 const port = process.env.PORT || 5001;
 
 app.use(compression());
-app.use(express.json({limit: '50mb'}));
+app.use(express.json({ limit: '50mb' }));
 
 app.use(cors({
     origin: process.env.CLIENT_URL,
@@ -39,11 +39,12 @@ app.use(require("./routes/auth-router"));
 app.use(require("./routes/ac-requirements-router"));
 app.use(require("./routes/query-history-router"));
 app.use(require("./routes/snapshot-router"));
+app.use(require("./routes/update-sharing-router"));
   
 app.listen(port, () => {
     // Perform a database connection when server starts
     mongoose
-    .connect(process.env.ATLAS_URI, { useNewUrlParser: true, useUnifiedTopology: true})
+    .connect(process.env.ATLAS_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Successfully connected to MongoDB."))
     .catch((err) => console.log(err));
     console.log(`Server is running on port: ${port}`);

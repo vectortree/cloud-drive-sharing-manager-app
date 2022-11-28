@@ -173,7 +173,7 @@ function fileFolderSharingChanges(snapshot, drive, path, driveType) {
         });
     }
 
-    return fileDeviations;
+    return fileFolderDifferences;
 }
 
 
