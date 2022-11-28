@@ -10,14 +10,19 @@ import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import {deviantSharing} from "../functions/sharing-analysis";
+import {deviantSharing, fileFolderSharingChanges, snapshotsSharingChanges} from "../functions/sharing-analysis";
 import {useRecoilState} from "recoil";
 import {selectedSnapshot} from "../recoil";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+
+import Select from '@mui/material/Select';
 
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
     const [ driveName,setDriveName ] = React.useState(null);
     const [ drivePath,setdrivePath ] = React.useState(null);
+    const [ compSnapshot, setcompSnapshot] = React.useState();
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
 
     const { data, loading } = useDemoData({
@@ -28,25 +33,22 @@ export default function AnalysisComponent(props) {
     const handleThreshold = (event) =>{
         setThreshold(event.target.value);
     }
-    const handleKeyup = (e) =>{
-        if(e.code == "Enter"){
-            if(props.text=="Deviant Sharing" && threshold < 50 ){
-                alert("Threshold should be bigger than 50%");
-                let deviantSharingData = deviantSharing(selSnapshot, driveName, drivePath, threshold, props.userData.driveType)
-                console.log(deviantSharingData);
-            }else{
 
-            }
-        }
-    }
     const handleClick = (e) =>{
         if(props.text=="Deviant Sharing" && threshold < 50 ){
             alert("Threshold should be bigger than 50%");
-            const currentSnapshot = props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1];
-            let deviantSharingData = deviantSharing(currentSnapshot, driveName, drivePath, threshold, props.userData.driveType)
+            let deviantSharingData = deviantSharing(selSnapshot, driveName, drivePath, threshold, props.userData.driveType)
             console.log(deviantSharingData);
-        }else{
+        }else if(props.text=="Sharing Changes"){
+            let sharingChange = snapshotsSharingChanges(selSnapshot, compSnapshot, props.userData.driveType);
+            console.log(sharingChange);
+        }else if(props.text == "File-folder Sharing Differences"){
+            let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot, driveName, drivePath, props.userData.driveType);
+            console.log(fileFolderSharingChange);
+        }else if(props.text == "Redundant Sharing"){
 
+        }else{
+            console.error("Error");
         }
     }
     const handleDriveName = (e) =>{
@@ -54,6 +56,10 @@ export default function AnalysisComponent(props) {
     }
     const handleDrivePath = (e) =>{
         setdrivePath(e.target.value);
+    }
+    const handleSharing = (e) =>{
+        console.log(e.target.value);
+        setcompSnapshot(e.target.value);
     }
     const columns = [
         {field: 'Title', headerName: 'Title', width: 400,editable: true,sortable: true,},
@@ -74,7 +80,6 @@ export default function AnalysisComponent(props) {
                             id="outlined-adornment-weight"
                             value={threshold}
                             onChange={handleThreshold}
-                            onKeyUp={handleKeyup}
                             endAdornment={<InputAdornment position="end">%</InputAdornment>}
                             aria-describedby="outlined-weight-helper-text"
                             inputProps={{
@@ -86,23 +91,47 @@ export default function AnalysisComponent(props) {
                     </FormControl>
                     : ""
                 }
-                <TextField
-                    id="outlined-required"
-                    label="Drive Name"
-                    defaultValue=""
-                    size="small"
-                    onChange={handleDriveName}
-                />
-                <TextField
-                    id="outlined-required"
-                    label="Drive Path"
-                    defaultValue=""
-                    size="small"
-                    onChange={handleDrivePath}
-                />
-                <Button variant="contained" value={props.text} endIcon={<SendIcon />} style={{color:"gray"}} onClick={handleClick} onKeyUp={handleKeyup}>
+                {props.text == "Sharing Changes"?
+                    <>
+                        <FormControl sx={{ m: 1, minWidth: 200 }} size="small" style={{ }}>
+                            <InputLabel id="demo-select-small">Comparing Snapshot</InputLabel>
+                            <Select
+                                labelId="demo-select-small"
+                                id="demo-select-small"
+                                value={compSnapshot}
+                                label="Comparing Snapshot"
+                                onChange={handleSharing}
+                            >
+                                <MenuItem value=""><em>None</em></MenuItem>
+                                {props.userData.fileSharingSnapshots.map((data) =>{
+                                    return <MenuItem value={data}>{data.name}</MenuItem>
+                                })}
+
+                            </Select>
+                        </FormControl>
+
+                    </>:
+                    <>
+                        <TextField
+                            id="outlined-required"
+                            label="Drive Name"
+                            defaultValue=""
+                            size="small"
+                            onChange={handleDriveName}
+                        />
+                        <TextField
+                        id="outlined-required"
+                        label="Drive Path"
+                        defaultValue=""
+                        size="small"
+                        onChange={handleDrivePath}
+                        />
+                    </>
+                }
+                <Button variant="contained" value={props.text} endIcon={<SendIcon />} style={{color:"gray"}} onClick={handleClick} >
                     Analyze
                 </Button>
+
             </h3>
         <div style={{ height: 600, width: '100%' }}>
             <DataGrid
