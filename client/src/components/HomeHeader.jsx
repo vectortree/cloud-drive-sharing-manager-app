@@ -14,9 +14,6 @@ export default function HomeHeader(props) {
         <>
             <Typography>{props.userData.driveType == "microsoft" ? "One":"Google"}Drive&emsp;&emsp;
                 <MultipleSelectPlaceholder userData={props.userData} snapshot={props.snapShotData}/>
-                <IconButton style={{float: "right", padding: "5px", marginLeft: "30px", marginRight: "30px"}}>
-                    <RestoreIcon/>
-                </IconButton>
                 <Button onClick={props.handleOpenModal} style={{float: "right"}}>
                     <PhotoCameraIcon style={{ float:"right", marginLeft:"30px"}}/>
                 </Button>
