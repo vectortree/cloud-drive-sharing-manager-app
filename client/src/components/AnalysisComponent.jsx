@@ -13,6 +13,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
+    const [ driveName,setDriveName ] = React.useState(0);
+    const [ drivePath,setdrivePath ] = React.useState(0);
     const { data, loading } = useDemoData({
         dataSet: 'Commodity',
         rowLength: 100,
@@ -31,6 +33,12 @@ export default function AnalysisComponent(props) {
         if(e.target.value === "Deviant Sharing"){
 
         }
+    }
+    const handleDriveName = (e) =>{
+        setDriveName(e.target.value);
+    }
+    const handleDrivePath = (e) =>{
+        setdrivePath(e.target.value);
     }
     const columns = [
         {field: 'Title', headerName: 'Title', width: 400,editable: true,sortable: true,},
@@ -68,12 +76,14 @@ export default function AnalysisComponent(props) {
                     label="Drive Name"
                     defaultValue=""
                     size="small"
+                    onChange={handleDriveName}
                 />
                 <TextField
                     id="outlined-required"
                     label="Drive Path"
                     defaultValue=""
                     size="small"
+                    onChange={handleDrivePath}
                 />
                 <Button variant="contained" value={props.text} endIcon={<SendIcon />} style={{color:"gray"}} onClick={handleClick} onKeyUp={handleKeyup}>
                     Analyze
