@@ -11,11 +11,15 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import {deviantSharing} from "../functions/sharing-analysis";
+import {useRecoilState} from "recoil";
+import {selectedSnapshot} from "../recoil";
 
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
-    const [ driveName,setDriveName ] = React.useState(0);
-    const [ drivePath,setdrivePath ] = React.useState(0);
+    const [ driveName,setDriveName ] = React.useState(null);
+    const [ drivePath,setdrivePath ] = React.useState(null);
+    const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
+
     const { data, loading } = useDemoData({
         dataSet: 'Commodity',
         rowLength: 100,
@@ -28,8 +32,7 @@ export default function AnalysisComponent(props) {
         if(e.code == "Enter"){
             if(props.text=="Deviant Sharing" && threshold < 50 ){
                 alert("Threshold should be bigger than 50%");
-                const currentSnapshot = props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1];
-                let deviantSharingData = deviantSharing(currentSnapshot, driveName, drivePath, threshold, props.userData.driveType)
+                let deviantSharingData = deviantSharing(selSnapshot, driveName, drivePath, threshold, props.userData.driveType)
                 console.log(deviantSharingData);
             }else{
 
