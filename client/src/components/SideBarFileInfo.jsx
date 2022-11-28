@@ -66,7 +66,11 @@ export default function SideBarFileInfo() {
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
                                 {file.permissions.direct.map((userData) =>{
-                                    return <p>{userData.value}</p>
+                                    return (
+                                        <>
+                                            <p>Role:{userData.role} Type:{userData.type}Email:{userData.value}</p>
+                                        </>
+                                    )
                                 })}
                             </DialogContentText>
                         </DialogContent>
@@ -100,7 +104,11 @@ export default function SideBarFileInfo() {
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
                                 {file.permissions.inherited.map((userData) =>{
-                                    return <p>{userData.value}</p>
+                                    return (
+                                        <>
+                                            <p>Role:{userData.role} Type:{userData.type}Email:{userData.value}</p>
+                                        </>
+                                    )
                                 })}
                             </DialogContentText>
                         </DialogContent>
@@ -114,6 +122,11 @@ export default function SideBarFileInfo() {
                     {/*Sharing: {file.shared == undefined ? "User Only": file.shared.scope}<br/>*/}
                     <b>Owner:</b>{file.owner}<br/>
                     <b>Link : </b><a href={file.link} target="_blank">Access</a><br/>
+                    <b>CreatedTime Time:</b>{file.createdTime}<br/>
+                    <b>Last Modifying User:</b>{file.lastModifyingUser}<br/>
+                    <b>Modified Time:</b>{file.modifiedTime}<br/>
+                    <b>Drive Name :</b>{file.driveName}<br/>
+                    <b>Location :</b>{file.location}<br/>
                 </Typography>
             </CardContent>
         </Card>
