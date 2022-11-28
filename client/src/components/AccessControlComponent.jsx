@@ -65,15 +65,18 @@ export default function AccessControlComponent(props) {
         }
     });
     console.log(ac_req);
+
+    const [selectionModel, setSelectionModel] = React.useState([]);
     
+    console.log(selectionModel)
+
     return (
         <div style={{ height: props.size, width: '100%' }}>
             <DropDownForReq fileSharingSnapshot={FileSharing} sx = {{ float : "right"}}/>
             &emsp;&emsp;
             <b style={{color:"gray"}}>{checkSnapShot.name}</b>
-            {/* <Button onClick = {handleCheckReq} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button> */}
             <Button onClick = {searchQueryModalOpen} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
-            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {props}/></BasicModal>
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {props.components}/></BasicModal>
             <br></br>
             <br></br>
             <DataGrid
@@ -82,6 +85,10 @@ export default function AccessControlComponent(props) {
                 pageSize={10}
                 rowsPerPageOptions={[5]}
                 checkboxSelection
+                onSelectionModelChange = { (newSelectionModel) => {
+                    setSelectionModel(newSelectionModel);
+                }}
+                selectionModel = {selectionModel}
             />
         </div>
     );
