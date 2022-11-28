@@ -196,7 +196,7 @@ export default function ViolationModal(props) {
     const [checkSnapShot, setCheckSnapShot] = useRecoilState(selectedCheckSnapshot);
 
     let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, checkSnapShot)
-    let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, props.ACR_data, props.userData.email, props.userData.domain, props.userData.driveType )
+    let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, props.components.ACR_data, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )
     console.log(checkRequirement)
 
     let ch_req_obj = [] 
