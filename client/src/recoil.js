@@ -11,8 +11,8 @@ export const FileSelectedData = atom({
         type:"",
         size:0,
         createdBy:{user:{displayName:""}},
-        permission:{value:[]},
-        permissions:{value:[]}
+        permission:{direct:[],inherited:[]},
+        permissions:{direct:[],inherited:[]}
     },
 })
 export const FileSharingSnapShotData = atom({

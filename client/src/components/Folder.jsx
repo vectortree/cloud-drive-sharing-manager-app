@@ -11,7 +11,7 @@ import {useRecoilState} from "recoil";
 export default function MultiActionAreaCard(props) {
     const [file, setFile] = useRecoilState(FileSelectedData);
     const changeColor = (key,file) =>{
-
+        console.log(file);
         setFile(file);
     }
     return (
@@ -40,10 +40,9 @@ export default function MultiActionAreaCard(props) {
                                     <Typography gutterBottom variant="h5" component="div">
                                         {data.name}
                                     </Typography>
-                                    <Typography size="small" variant="body2" color="text.secondary">
-                                        {data.description}
-
-                                    </Typography>
+                                    {/*<Typography size="small" variant="body2" color="text.secondary">*/}
+                                    {/*    {data.description}*/}
+                                    {/*</Typography>*/}
                                 </CardContent>
                             </CardActionArea>
                         </Card>

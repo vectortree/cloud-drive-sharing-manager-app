@@ -78,7 +78,7 @@ const Home = (props) =>{
         setSearchQuery(props.userData.searchQueryHistory);
     },[])
 
-    console.log("files for display", makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType));
+    const fileData = makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType)
 
     console.log(selSnapshot)
     //let  current_snapshot = FileSharing.length-1
@@ -86,7 +86,7 @@ const Home = (props) =>{
 
     return (
         <Grid>
-            <MiniDrawer components={selSnapshot.data} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={fileData} type = "home" userData = {props.userData}/>
         </Grid>
     )
 }
