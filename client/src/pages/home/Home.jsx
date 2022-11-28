@@ -76,10 +76,9 @@ const Home = (props) =>{
         setFileSharing(props.userData.fileSharingSnapshots);
         setGroupSharing(props.userData.groupMembershipSnapshots);
         setSearchQuery(props.userData.searchQueryHistory);
-    },[]);
+    },[])
 
-
-    //console.log(makeFilesForDisplay(FileSharing,FileSharing[0].data,props.userData.driveType));
+    console.log(makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType));
 
     console.log(selSnapshot)
     //let  current_snapshot = FileSharing.length-1

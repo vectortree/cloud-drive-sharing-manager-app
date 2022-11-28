@@ -21,7 +21,7 @@ export const FileSharingSnapShotData = atom({
 })
 export const selectedSnapshot = atom({
     key:'selectedSnapshot',
-    default:{data:{}},
+    default:{data:[]},
 })
 export const GroupMembershipSnapshotsData = atom({
     key:'GroupMembershipSnapshotsData',

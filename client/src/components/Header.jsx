@@ -32,8 +32,9 @@ import {
     AccessControlData,
     FileSharingSnapShotData,
     GroupMembershipSnapshotsData,
-    searchQueryHistoryData
+    searchQueryHistoryData, selectedSnapshot
 } from "../recoil";
+import {checkRequirements} from "../functions/ac-requirements";
 
 // This is for the Header which is the very top of our website
 
@@ -84,6 +85,7 @@ export default function PrimarySearchAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
     const ResetACR =useResetRecoilState(AccessControlData);
     const ResetFileSharing = useResetRecoilState(FileSharingSnapShotData);
     const ResetGMS = useResetRecoilState(GroupMembershipSnapshotsData);
@@ -228,8 +230,9 @@ export default function PrimarySearchAppBar(props) {
                 if(sq.error) alert(sq.error);
                 else {
                     setSearchQuery(query);
-
                 }
+                let closestGMSnapShots = getClosestGMSnapshots(props.userData.groupMembershipSnapshots, selSnapshot);
+                console.log( filterSnapshotBySearchQuery(props.userData.fileSharingSnapshots, sq, props.userData.email, props.userData.domain, props.userData.driveType, closestGMSnapShots, props.userData.groupMembershipSnapshots));
             }
         }
     }

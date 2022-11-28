@@ -20,6 +20,7 @@ function makeFilesForDisplay(snapshot, files, driveType) {
     }
     // TODO
     else if (driveType === "microsoft") {
+
         files.forEach((file) => {
             filesForDisplay.push({
                 name: file.name,
@@ -27,13 +28,12 @@ function makeFilesForDisplay(snapshot, files, driveType) {
                 link: file.webUrl,
                 createdTime: file.createdDateTime,
                 modifiedTime: file.lastModifiedDateTime,
-                owner: file.permissions.value.find(p => p.roles.contains("owner")).grantedToV2.siteUser.email,
+                owner: file.permissions.value.find(p => p.roles.includes("owner")).grantedToV2.siteUser.email,
                 lastModifyingUser: file.lastModifiedBy ? file.lastModifiedBy.user.email : "unavailable",
                 size: file.size ? file.size : "unavailable",
                 driveName: file.driveName,
                 location: file.parentReference ? file.parentReference.path : "unavailable",
                 permissions: partitionPermissions(snapshot, file, driveType)
-    
             });
         });
     }
@@ -88,6 +88,7 @@ function partitionPermissions(snapshot, file, driveType) {
     else if(driveType === "microsoft") {
         let directPermissions = file.permissions.value;
         let inheritedPermissions = [];
+
         let parent = snapshot.find(f => f.id === file.parentReference.id);
         if (parent) {
             let parentPermissionIds = new Set(parent.permissions.value.map(p => p.id));
