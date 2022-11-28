@@ -81,7 +81,8 @@ export default function ViolationModal(props) {
                 <TableCell
                   key={column.dataKey}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{ minWidth: column.width }}
+                  sx = {{fontSize : '15px'}}
                 >
                   {column.label}
                 </TableCell>
@@ -97,7 +98,7 @@ export default function ViolationModal(props) {
                     {columns.map((column) => {
                       const value = row[column.dataKey];
                       return (
-                        <TableCell key={column.dataKey} align={column.align}>
+                        <TableCell key={column.dataKey} align={column.align} sx = {{fontSize : '13px'}} >
                           {column.format && typeof value === 'number'
                             ? column.format(value)
                             : value}
