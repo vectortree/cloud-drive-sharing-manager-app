@@ -13,8 +13,6 @@ import {
 import {AuthContext} from "../../auth/auth";
 import {useEffect, useContext, useState, useRef} from "react"
 
-
-
 const MyPage = (props)=>{
     const [ACR, setACR]=useRecoilState(AccessControlData);
     const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
@@ -64,12 +62,31 @@ const MyPage = (props)=>{
         props.GroupSharing_Handler(GroupSharing_Data);
         setGroupSharing(GroupSharing_Data)
     }
+    console.log(SearchQuery);
+
+    let searchQuery_Grid = [];
+
+
+    for(let i = 0; i < SearchQuery.length; i++){
+        let queryString="";
+        for(let j = 0; j < SearchQuery[i].searchQuery.length; j++){
+            queryString += SearchQuery[i].searchQuery[j]
+        }
+        console.log(queryString);
+        searchQuery_Grid.push(
+            {
+                id: SearchQuery[i].id,
+                name: queryString
+            })
+    }
+    console.log(searchQuery_Grid);
+
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" type= "ACR"dataSet = {ACR} Data_Handler={ACR_Controller} Data_DeleteHandler={ACR_DeleteController}/>,
-        <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {FileSharing} type= "FSS" Data_Handler={FileSharing_Controller} Data_DeleteHandler = {DeleteFileSharing_Controller}/>,
-        <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {GroupSharing} type= "GSS"Data_Handler={Group_Controller} Data_DeleteHandler={Group_DeleteController}/>,
-        <ColumnMenuGrid name="User's Recent Query" dataSet = {[]} type= "SearchQuery"/>
+        <ColumnMenuGrid name="Recent Access Control Requirement" type= "AccessControlRequirement"dataSet = {ACR} Data_Handler={ACR_Controller} Data_DeleteHandler={ACR_DeleteController}/>,
+        <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {FileSharing} type= "FileSharingSnapshot" Data_Handler={FileSharing_Controller} Data_DeleteHandler = {DeleteFileSharing_Controller}/>,
+        <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {GroupSharing} type= "GroupSharingSnapshot"Data_Handler={Group_Controller} Data_DeleteHandler={Group_DeleteController}/>,
+        <ColumnMenuGrid name="User's Recent Query" dataSet = {searchQuery_Grid} type= "SearchQuery"/>
     ];
 
     return (

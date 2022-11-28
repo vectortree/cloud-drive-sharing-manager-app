@@ -20,14 +20,9 @@ import {userData} from "../App";
 
 const accessDataTable = <DataTable/>
 
-  const columns = [
+const columns = [
     { field: 'id', headerName: 'Index', width: 90 ,editable: true },
-    {
-      field: 'name',
-      headerName: 'Requirement Name',
-      width: 550,
-      editable: true,
-    },
+    {field: 'name', headerName: 'Requirement Name', width: 550, editable: true,},
     {
         renderCell: (params) => (
         <strong>
@@ -41,24 +36,19 @@ const accessDataTable = <DataTable/>
             X
           </Button>
         </strong>
-      ),}
-  ];
+        )
+    }
+];
 
 export default function ColumnMenuGrid( props) {
     const [openModal, setOpenModal] = React.useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
-
     const accessDataTable = <AddRequirement opdataSet={props.dataSet} onClick={handleCloseModal} ACR_Handler={props.Data_Handler}/>
     const columns = [
         { field: 'id', headerName: 'Index', width: 90 ,editable: true },
-        {
-            field: 'name',
-            headerName: 'Requirement Name',
-            width: 550,
-            editable: true,
-        },
+        { field: 'name', headerName: props.type, width: 550, editable: true,},
         {
             renderCell: (params) => (
                 <strong>
@@ -72,18 +62,17 @@ export default function ColumnMenuGrid( props) {
                         X
                     </Button>
                 </strong>
-            ),}
+            )
+        }
     ];
-    console.log(props.dataSet);
 
     const deleteRequirement = (id) => {
-        console.log(props.type);
         props.Data_DeleteHandler(id);
-          if(props.type == "ACR"){
+          if(props.type == "AccessControlRequirement"){
               removeAccessControlRequirement(id);
-          }else if( props.type == "FSS"){
+          }else if( props.type == "FileSharingSnapshot"){
               removeFileSharingSnapshot(id);
-          }else if( props.type == "GSS"){
+          }else if( props.type == "GroupSharingSnapshot"){
               console.log(id);
               removeGroupMembershipSnapshot(id);
           }else if (props.type == "SearchQuery"){
@@ -110,13 +99,13 @@ export default function ColumnMenuGrid( props) {
         </div>
         <div style={{display:"inline-flex"}}>
             <br/>
-            {props.type === "ACR" ?
+            {props.type === "AccessControlRequirement" ?
             <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Manage Access Control</Button>
             :
-            props.type === "FSS" ? 
+            props.type === "FileSharingSnapshot" ?
             <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
             :
-            props.type === "GSS" ?
+            props.type === "GroupSharingSnapshot" ?
             <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button> 
             :
             props.type === "SearchQuery" ?
