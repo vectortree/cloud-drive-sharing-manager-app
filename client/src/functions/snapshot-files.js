@@ -18,7 +18,7 @@ function makeFilesForDisplay(snapshot, files, driveType) {
             });
         });
     }
-    // TODO
+
     else if (driveType === "microsoft") {
 
         files.forEach((file) => {
@@ -111,7 +111,6 @@ function partitionPermissions(snapshot, file, driveType) {
                     value: permission.grantedToV2.siteUser.email
                 });
             } else if (permission.link && permission.link.scope === "anonymous") {
-                console.log("anonymous checking")
                 partitionedPermissions.direct.push({
                     role: permission.link.type,
                     type: "anonymous",

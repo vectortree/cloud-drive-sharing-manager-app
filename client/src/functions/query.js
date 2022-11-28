@@ -185,7 +185,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     userArg = sq.argument + (sq.argument.includes("@") ? "" : ("@" + domain));
                 arr = snapshot.filter(file => {
                     for (const permission of file.permissions.value) {
-                        if (permission.grantedToIdentitiesV2 && permission.roles.includes("owner")) {
+                        if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && permission.roles.includes("owner")) {
                             for (const user of permission.grantedToIdentitiesV2) {
                                 if (user.siteUser.email.toLowerCase() === userArg.toLowerCase()) return true;
                             }
@@ -238,7 +238,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                             directPermissions = file.permissions.value.filter(p => !parentPermissionIds.has(p.id));
                         }
                         for (const permission of directPermissions) {
-                            if (permission.grantedToIdentitiesV2 && !permission.roles.includes("owner")) {
+                            if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && !permission.roles.includes("owner")) {
                                 for (const user of permission.grantedToIdentitiesV2) {
                                     if (user.siteUser.email.toLowerCase() === userArg.toLowerCase()) return true;
                                 }
@@ -276,7 +276,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                             return true;
                         }
                         
-                        if (permission.grantedToIdentitiesV2) {
+                        if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
                             for (const user of permission.grantedToIdentitiesV2) {
                                 if (user.siteUser.email.toLowerCase() === userArg.toLowerCase()) return true;
                             }
@@ -303,7 +303,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                             return true;
                         }
 
-                        if (permission.grantedToIdentitiesV2 && (permission.roles.includes("write") || permission.roles.includes("owner"))) {
+                        if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && (permission.roles.includes("write") || permission.roles.includes("owner"))) {
                             for (const user of permission.grantedToIdentitiesV2) {
                                 if (user.siteUser.email.toLowerCase() === userArg.toLowerCase()) return true;
                             }
@@ -326,7 +326,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                     let existingAccess = false;
                     for (const permission of file.permissions.value) {
                         // user can share if they are an owner or editor
-                        if (permission.grantedToIdentitiesV2 && (permission.roles.includes("owner") || permission.roles.includes("write"))) {
+                        if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && (permission.roles.includes("owner") || permission.roles.includes("write"))) {
                             for (const user of permission.grantedToIdentitiesV2) {
                                 if (user.siteUser.email.toLowerCase() === userArg.toLowerCase()) return true;
                             }
@@ -342,7 +342,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                         } else if (permission.link && permission.link.scope === "existingAccess" && permission.link.type === "edit") {
                             existingAccess = true;
                         } else if (permission.link && permission.link.scope === "users" && permission.link.type === "edit") {
-                            if (permission.grantedToIdentitiesV2) {
+                            if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
                                 for (const user of permission.grantedToIdentitiesV2) {
                                     if (user.siteUser.email.toLowerCase() === userArg.toLowerCase()) return true;
                                 }
@@ -351,7 +351,7 @@ function filterSnapshotBySearchQuery(snapshot, sq, email, domain, driveType, clo
                             }
                         }
 
-                        if (existingAccess && permission.grantedToIdentitiesV2) {
+                        if (existingAccess && permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
                             for (const user of permission.grantedToIdentitiesV2) {
                                 if (user.siteUser.email.toLowerCase() === userArg.toLowerCase()) return true;
                             }
