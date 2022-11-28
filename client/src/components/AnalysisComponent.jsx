@@ -6,6 +6,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
+import FormHelperText from '@mui/material/FormHelperText';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
@@ -19,12 +23,14 @@ export default function AnalysisComponent(props) {
     }
     const handleKeyup = (e) =>{
         if(e.code == "Enter"){
-            const currentSnapshot = props.userData.fileSharingSnapshots[[props.userData.fileSharingSnapshots.length-1]];
+            const currentSnapshot = props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1];
             // let deviantSharingData = deviantSharing(currentSnapshot, drive, path, threshold, props.userData.driveType)
         }
     }
     const handleClick = (e) =>{
-        console.log(e);
+        if(e.target.value === "Deviant Sharing"){
+
+        }
     }
     const columns = [
         {field: 'Title', headerName: 'Title', width: 400,editable: true,sortable: true,},
@@ -40,11 +46,36 @@ export default function AnalysisComponent(props) {
             <h3>
                 {props.text}
                 {props.text == "Deviant Sharing" ?
-                    <TextField id="outlined-number" label="Threshold" type="number" InputLabelProps={{shrink: true,}} style={{marginLeft:"50px"}}
-                               onChange={handleThreshold} onKeyUp={handleKeyup}
-                    /> : ""
+                    <FormControl sx={{ m: 0.5, width: '10ch' }} style={{marginLeft:"10px",padding: "5px"}}variant="outlined">
+                        <OutlinedInput
+                            id="outlined-adornment-weight"
+                            value={threshold}
+                            onChange={handleThreshold}
+                            onKeyUp={handleKeyup}
+                            endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                            aria-describedby="outlined-weight-helper-text"
+                            inputProps={{
+                                'aria-label': 'weight',
+                            }}
+                            size="small"
+                        />
+                        <FormHelperText id="outlined-weight-helper-text">Threshold</FormHelperText>
+                    </FormControl>
+                    : ""
                 }
-                <Button variant="contained" endIcon={<SendIcon />} style={{color:"gray"}} onClick={handleClick} onKeyUp={handleKeyup}>
+                <TextField
+                    id="outlined-required"
+                    label="Drive Name"
+                    defaultValue=""
+                    size="small"
+                />
+                <TextField
+                    id="outlined-required"
+                    label="Drive Path"
+                    defaultValue=""
+                    size="small"
+                />
+                <Button variant="contained" value={props.text} endIcon={<SendIcon />} style={{color:"gray"}} onClick={handleClick} onKeyUp={handleKeyup}>
                     Analyze
                 </Button>
             </h3>
