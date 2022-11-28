@@ -197,7 +197,8 @@ function snapshotsSharingChanges(snapshot1, snapshot2, driveType) {
                 let removedPermissionIds = file1PermissionIds.filter(id => !file2PermissionIds.includes(id));
                 let removedPermissions = file1.permissions.value.filter(p => removedPermissionIds.includes(p.id));
 
-                editedFiles.push({ file: file2, addedPermissions: addedPermissions, removedPermissions: removedPermissions });
+                if (addedPermissions.length > 0 || removedPermissions.length > 0)
+                    editedFiles.push({ file: file2, addedPermissions: addedPermissions, removedPermissions: removedPermissions });
                 return false;
             }
         });
@@ -219,7 +220,8 @@ function snapshotsSharingChanges(snapshot1, snapshot2, driveType) {
                 let removedPermissionIds = file1PermissionIds.filter(id => !file2PermissionIds.includes(id));
                 let removedPermissions = file1.permissions.filter(p => removedPermissionIds.includes(p.id));
 
-                editedFiles.push({ file: file2, addedPermissions: addedPermissions, removedPermissions: removedPermissions });
+                if (addedPermissions.length > 0 || removedPermissions.length > 0)
+                    editedFiles.push({ file: file2, addedPermissions: addedPermissions, removedPermissions: removedPermissions });
                 return false;
             }
         });

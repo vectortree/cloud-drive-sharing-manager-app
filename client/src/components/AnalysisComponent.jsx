@@ -36,22 +36,21 @@ export default function AnalysisComponent(props) {
 
     const handleClick = () =>{
         console.log(selSnapshot);
-        let deviantSharingData = deviantSharing(selSnapshot.data, "OneDrive", null, 0.51, "microsoft")
-        console.log("deviant data: ", deviantSharingData);
         if(props.text === "Deviant Sharing" && threshold <= 50 ){
             alert("Threshold should be greater than 50%");
+        } else if(props.text === "Deviant Sharing" && threshold > 50 ){
             let deviantSharingData = deviantSharing(selSnapshot.data, driveName, drivePath, threshold / 100, props.userData.driveType)
-            console.log("deviant sharing data: ", deviantSharingData);
+            console.log("deviant sharing: ", deviantSharingData);
         }else if(props.text === "Sharing Changes"){
-            let sharingChange = snapshotsSharingChanges(selSnapshot, compSnapshot, props.userData.driveType);
-            console.log(sharingChange);
+            let sharingChange = snapshotsSharingChanges(selSnapshot.data, compSnapshot.data, props.userData.driveType);
+            console.log("snapshot changes: ", sharingChange);
         }else if(props.text === "File-folder Sharing Differences"){
-            let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot, driveName, drivePath, props.userData.driveType);
-            console.log(fileFolderSharingChange);
+            let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot.data, driveName, drivePath, props.userData.driveType);
+            console.log("file-folder differences: ", fileFolderSharingChange);
         }else if(props.text == "Redundant Sharing"){
 
         }else{
-            console.error("Error");
+            //console.error("Error");
         }
     }
     const handleDriveName = (e) =>{
