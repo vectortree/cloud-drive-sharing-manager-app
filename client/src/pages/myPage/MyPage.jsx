@@ -25,7 +25,7 @@ const MyPage = (props)=>{
         setACR(props.userData.accessControlRequirements);
         setFileSharing(props.userData.fileSharingSnapshots);
         setGroupSharing(props.userData.groupMembershipSnapshots);
-        setSearchQuery(props.userData.searchQuery);
+        setSearchQuery(props.userData.searchQueryHistory);
     },[]);
 
     console.log(props.userData);
