@@ -21,7 +21,7 @@ import Select from '@mui/material/Select';
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
     const [ driveName,setDriveName ] = React.useState(null);
-    const [ drivePath,setdrivePath ] = React.useState(null);
+    const [ drivePath,setDrivePath ] = React.useState(null);
     const [ compSnapshot, setcompSnapshot] = React.useState();
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
 
@@ -34,15 +34,18 @@ export default function AnalysisComponent(props) {
         setThreshold(event.target.value);
     }
 
-    const handleClick = (e) =>{
-        if(props.text=="Deviant Sharing" && threshold < 50 ){
-            alert("Threshold should be bigger than 50%");
-            let deviantSharingData = deviantSharing(selSnapshot, driveName, drivePath, threshold, props.userData.driveType)
-            console.log(deviantSharingData);
-        }else if(props.text=="Sharing Changes"){
+    const handleClick = () =>{
+        console.log(selSnapshot);
+        let deviantSharingData = deviantSharing(selSnapshot.data, "OneDrive", null, 0.51, "microsoft")
+        console.log("deviant data: ", deviantSharingData);
+        if(props.text === "Deviant Sharing" && threshold <= 50 ){
+            alert("Threshold should be greater than 50%");
+            let deviantSharingData = deviantSharing(selSnapshot.data, driveName, drivePath, threshold / 100, props.userData.driveType)
+            console.log("deviant sharing data: ", deviantSharingData);
+        }else if(props.text === "Sharing Changes"){
             let sharingChange = snapshotsSharingChanges(selSnapshot, compSnapshot, props.userData.driveType);
             console.log(sharingChange);
-        }else if(props.text == "File-folder Sharing Differences"){
+        }else if(props.text === "File-folder Sharing Differences"){
             let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot, driveName, drivePath, props.userData.driveType);
             console.log(fileFolderSharingChange);
         }else if(props.text == "Redundant Sharing"){
@@ -55,7 +58,7 @@ export default function AnalysisComponent(props) {
         setDriveName(e.target.value);
     }
     const handleDrivePath = (e) =>{
-        setdrivePath(e.target.value);
+        setDrivePath(e.target.value);
     }
     const handleSharing = (e) =>{
         console.log(e.target.value);

@@ -33,7 +33,7 @@ function deviantSharing(snapshot, drive, path, threshold, driveType) {
                 }
 
                 permissionsFreq.sort((p1, p2) => p2.files.length - p1.files.length);
-                if (permissionsFreq[0].files.length / filesInFolder.length >= threshold) {
+                if (permissionsFreq.length > 1 && permissionsFreq[0].files.length / filesInFolder.length >= threshold) {
                     fileDeviations.push({
                         folder: file,
                         majorityPermissionSet: permissionsFreq[0],
@@ -76,7 +76,7 @@ function deviantSharing(snapshot, drive, path, threshold, driveType) {
                 }
 
                 permissionsFreq.sort((p1, p2) => p2.files.length - p1.files.length);
-                if (permissionsFreq[0].files.length / filesInFolder.length >= threshold) {
+                if (permissionsFreq.length > 1 && permissionsFreq[0].files.length / filesInFolder.length >= threshold) {
                     fileDeviations.push({
                         folder: file,
                         majorityPermissionSet: permissionsFreq[0],
@@ -125,10 +125,11 @@ function fileFolderSharingChanges(snapshot, drive, path, driveType) {
                         });
                 }
 
-                fileFolderDifferences.push({
-                    folder: file,
-                    differences: permissionDifferences
-                });
+                if (permissionDifferences.length > 0)
+                    fileFolderDifferences.push({
+                        folder: file,
+                        differences: permissionDifferences
+                    });
             }
         });
     }
@@ -165,10 +166,11 @@ function fileFolderSharingChanges(snapshot, drive, path, driveType) {
                         });
                 }
 
-                fileFolderDifferences.push({
-                    folder: file,
-                    differences: permissionDifferences
-                });
+                if (permissionDifferences.length > 0)
+                    fileFolderDifferences.push({
+                        folder: file,
+                        differences: permissionDifferences
+                    });
             }
         });
     }
