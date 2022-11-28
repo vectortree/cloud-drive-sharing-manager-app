@@ -11,6 +11,8 @@ import {FileSharingSnapShotData} from "../recoil";
 import {GroupMembershipSnapshotsData} from "../recoil";
 import {selectedCheckSnapshot} from "../recoil";
 import DropDownForReq from "./DropDownListReq";
+import ViolationModalTable from "./ViolationModal";
+import BasicModal from "./Modal";
 
 //Dummy Data
 const columns = [
@@ -36,6 +38,9 @@ export default function AccessControlComponent(props) {
     const [FileSharing, setFileSharing] = useRecoilState(FileSharingSnapShotData);
     const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
     const [checkSnapShot, setCheckSnapShot] = useRecoilState(selectedCheckSnapshot);
+    const [openModal, setOpenModal] = React.useState(false);
+    const searchQueryModalOpen = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
 
     console.log(props.ACR_data);
     console.log(props.userData)
@@ -44,18 +49,6 @@ export default function AccessControlComponent(props) {
     console.log(GroupSharing)
     console.log(checkSnapShot)
 
-    const allSnapshot = [
-        ...FileSharing,
-        ...GroupSharing
-      ];
-
-    // let checkRequirement = checkReq(currentSnapshot, closestGMSnapshots, requirements, email, domain, driveType)
-    
-    const handleCheckReq = () => {
-        let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, checkSnapShot)
-        let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, props.ACR_data, props.userData.email, props.userData.domain, props.userData.driveType )
-        console.log(checkRequirement)
-    }
 
     let ac_req = props.ACR_data.map((req) => {
         return {
@@ -78,7 +71,9 @@ export default function AccessControlComponent(props) {
             <DropDownForReq fileSharingSnapshot={FileSharing} sx = {{ float : "right"}}/>
             &emsp;&emsp;
             <b style={{color:"gray"}}>{checkSnapShot.name}</b>
-            <Button onClick = {handleCheckReq} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
+            {/* <Button onClick = {handleCheckReq} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button> */}
+            <Button onClick = {searchQueryModalOpen} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {props}/></BasicModal>
             <br></br>
             <br></br>
             <DataGrid
