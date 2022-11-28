@@ -502,7 +502,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
 
                 file.permissions.value.forEach((permission) => {
                     // Check each permission against current requirement
-                    if(permission.grantedToIdentitiesV2) {
+                    if(permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
                         // The following must be satisfied:
                         // 1) If the permission role is in
                         //    {"read"} and AR is nonempty,
