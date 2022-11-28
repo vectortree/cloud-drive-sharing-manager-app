@@ -388,6 +388,10 @@ export default function MiniDrawer({children, ...props}) {
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 {/*Here to Start flexible components*/}
+                {props.type === "analysis" ?
+                    <HomeHeader snapShotData = {props.components} userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
+                    : ""
+                }
                 {props.type === "home"?
                     <>
                         <HomeHeader snapShotData = {props.components} userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
