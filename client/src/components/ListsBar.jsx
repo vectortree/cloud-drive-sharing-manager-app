@@ -85,11 +85,11 @@ export default function ColumnMenuGrid( props) {
 
     return (
 
-        <div>
+        <div >
             <h2>{props.name}</h2>
-        <div style={{display:"inline-flex", width : "80%"}}>
+        <div style={{display:"inline-flex", width : "90%"}}>
             
-        <div style={{ height: 280, width: '100%', 'padding-right' : '10%' }}>
+        <div style={{ height: 280, width: 1000, 'padding-right' : '10%' }}>
             <DataGrid rows={props.dataSet}
                 columns={columns}
                 pageSize={5}
@@ -103,14 +103,15 @@ export default function ColumnMenuGrid( props) {
             {props.type === "AccessControlRequirement" ?
             <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Manage Access Control</Button>
             :
-            props.type === "FileSharingSnapshot" ?
-            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
-            :
-            props.type === "GroupSharingSnapshot" ?
-            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button> 
-            :
-            props.type === "SearchQuery" ?
-            <div></div> : <div></div>
+            // props.type === "FileSharingSnapshot" ?
+            // <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
+            // :
+            // props.type === "GroupSharingSnapshot" ?
+            // <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button> 
+            // :
+            // props.type === "SearchQuery" ?
+            // <div></div> : 
+            <div></div>
             }
             <BasicModal title={"Add Requirement"} open={openModal} handleClose={handleCloseModal}  >{accessDataTable}</BasicModal>
 
