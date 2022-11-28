@@ -113,6 +113,7 @@ export default function SideBarFileInfo() {
 
                     {/*Sharing: {file.shared == undefined ? "User Only": file.shared.scope}<br/>*/}
                     <b>Owner:</b>{file.owner}<br/>
+                    <b>Link : </b><a href={file.link} target="_blank">Access</a><br/>
                 </Typography>
             </CardContent>
         </Card>

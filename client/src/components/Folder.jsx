@@ -10,16 +10,18 @@ import {useRecoilState} from "recoil";
 
 export default function MultiActionAreaCard(props) {
     const [file, setFile] = useRecoilState(FileSelectedData);
-    const changeColor = (key,file) =>{
-        console.log(file);
-        setFile(file);
+    const changeColor = (event,key,data) =>{
+        setFile(data);
+        if(data == file){
+            window.open(file.link,"_blank")
+        }
     }
     return (
             props.dataList.map((data,idx) => {
                 return (
                         <Card sx={{maxWidth: 200}}
                               style={{margin:"0px", marginRight: "10px", borderColor: data.name == file.name ? "blue" : ""}}
-                              onClick={() => changeColor(idx,data)}>
+                              onClick={(e) => changeColor(e,idx,data)}>
                             <CardActionArea>
                                 {data.folder == null ? <CardMedia
                                     component="img"
