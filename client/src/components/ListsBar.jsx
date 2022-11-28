@@ -77,12 +77,14 @@ export default function ColumnMenuGrid( props) {
     console.log(props.dataSet);
 
     const deleteRequirement = (id) => {
-          props.Data_DeleteHandler(id);
+        console.log(props.type);
+        props.Data_DeleteHandler(id);
           if(props.type == "ACR"){
               removeAccessControlRequirement(id);
           }else if( props.type == "FSS"){
               removeFileSharingSnapshot(id);
           }else if( props.type == "GSS"){
+              console.log(id);
               removeGroupMembershipSnapshot(id);
           }else if (props.type == "SearchQuery"){
               removeSearchQuery(id);

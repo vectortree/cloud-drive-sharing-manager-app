@@ -12,7 +12,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 export default function HomeHeader(props) {
     return (
         <>
-            <Typography>{props.userData.driveType.toUpperCase()} DRIVE&emsp;&emsp;
+            <Typography>{props.userData.driveType == "microsoft" ? "One":"Google"}Drive&emsp;&emsp;
                 <MultipleSelectPlaceholder userData={props.userData} snapshot={props.snapShotData}/>
                 <IconButton style={{float: "right", padding: "5px", marginLeft: "30px", marginRight: "30px"}}>
                     <RestoreIcon/>
