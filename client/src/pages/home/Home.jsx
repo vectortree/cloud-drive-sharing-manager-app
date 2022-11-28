@@ -78,7 +78,7 @@ const Home = (props) =>{
         setSearchQuery(props.userData.searchQueryHistory);
     },[])
 
-    console.log(makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType));
+    console.log("files for display", makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType));
 
     console.log(selSnapshot)
     //let  current_snapshot = FileSharing.length-1

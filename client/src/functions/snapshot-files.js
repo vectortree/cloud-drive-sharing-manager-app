@@ -96,28 +96,29 @@ function partitionPermissions(snapshot, file, driveType) {
             inheritedPermissions = file.permissions.value.filter(p => parentPermissionIds.has(p.id));
         }
         for (const permission of directPermissions) {
-            if (permission.grantedToIdentitiesV2 && !permission.roles.includes("owner")) {
+            if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
                 for (const user of permission.grantedToIdentitiesV2) {
                     partitionedPermissions.direct.push({
-                        role: user.roles ? user.roles[0] : "unavailable",
+                        role: permission.roles.length > 0 ? permission.roles[0] : "unavailable",
                         type: "users",
                         value: user.siteUser.email
                     });
                 }
-            } else if (permission.grantedToV2 && !permission.roles.includes("owner")) {
+            } else if (permission.grantedToV2) {
                 partitionedPermissions.direct.push({
-                    role: permission.grantedToV2.roles ? permission.grantedToV2.roles[0] : "unavailable",
+                    role: permission.roles.length > 0 ? permission.roles[0] : "unavailable",
                     type: "users",
                     value: permission.grantedToV2.siteUser.email
                 });
             } else if (permission.link && permission.link.scope === "anonymous") {
+                console.log("anonymous checking")
                 partitionedPermissions.direct.push({
                     role: permission.link.type,
                     type: "anonymous",
                     value: "n/a"
                 });
             } else if (permission.link && permission.link.scope === "organization") {
-                let owner = file.permissions.value.find(p => p.roles.contains("owner")).grantedToV2.siteUser.email;
+                let owner = file.permissions.value.find(p => p.roles.includes("owner")).grantedToV2.siteUser.email;
                 partitionedPermissions.direct.push({
                     role: permission.link.type,
                     type: "organization",
@@ -127,22 +128,22 @@ function partitionPermissions(snapshot, file, driveType) {
         }
 
         for (const permission of inheritedPermissions) {
-            if (permission.grantedToIdentitiesV2 && !permission.roles.includes("owner")) {
+            if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
                 for (const user of permission.grantedToIdentitiesV2) {
                     partitionedPermissions.inherited.push({
-                        role: user.roles ? user.roles[0] : "unavailable",
+                        role: permission.roles.length > 0 ? permission.roles[0] : "unavailable",
                         type: "users",
                         value: user.siteUser.email
                     });
                 }
-            } else if (permission.grantedToV2 && !permission.roles.includes("owner")) {
+            } else if (permission.grantedToV2) {
                 partitionedPermissions.inherited.push({
-                    role: permission.grantedToV2.roles ? permission.grantedToV2.roles[0] : "unavailable",
+                    role: permission.roles.length > 0 ? permission.roles[0] : "unavailable",
                     type: "users",
                     value: permission.grantedToV2.siteUser.email
                 });
             } else if (permission.link && permission.link.scope === "organization") {
-                let owner = file.permissions.value.find(p => p.roles.contains("owner")).grantedToV2.siteUser.email;
+                let owner = file.permissions.value.find(p => p.roles.includes("owner")).grantedToV2.siteUser.email;
                 partitionedPermissions.inherited.push({
                     role: permission.link.type,
                     type: "organization",
