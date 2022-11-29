@@ -276,6 +276,7 @@ export default function PrimarySearchAppBar(props) {
     }
     return (
         <Box sx={{ flexGrow: 1 }}>
+
             <AppBar position="static" style={{boxShadow:"none"}}>
                 <Toolbar>
                     <img
