@@ -7,7 +7,7 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
     mostRecentFSSnapshot.filter(f => !fileIds.includes(f.id)).forEach(f => {
         updatedSnapshot.push(f);
     });*/
-    
+
     let updatedSnapshot = mostRecentFSSnapshot.slice();
     if(files.length == 0) return updatedSnapshot;
     if(driveType === "google") {
@@ -35,23 +35,23 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                     }
                     if(!present) {
                         // Note: Index must exist since files is a subset of mostRecentFSSnapshot
-                        let index = updatedSnapshot.findIndex(f => f.id === file.id);
+                        let index = updatedSnapshot.data.findIndex(f => f.id === file.id);
                         if(type === "user" || type === "group") {
-                            updatedSnapshot[index].permissions.push({
+                            updatedSnapshot.data[index].permissions.push({
                                 role: role,
                                 type: type,
                                 emailAddress: value.toLowerCase()
                             });
                         }
                         else if(type === "domain") {
-                            updatedSnapshot[index].permissions.push({
+                            updatedSnapshot.data[index].permissions.push({
                                 role: role,
                                 type: type,
                                 domain: value.toLowerCase()
                             });
                         }
                         else if(type === "anyone") {
-                            updatedSnapshot[index].permissions.push({
+                            updatedSnapshot.data[index].permissions.push({
                                 role: role,
                                 type: type
                             });
@@ -70,17 +70,17 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                 if(file.permissions) {
                     // If permission of same {type, role, value} is present in file.permissions,
                     // then remove permission for file
-                    let index = updatedSnapshot.findIndex(f => f.id === file.id);
+                    let index = updatedSnapshot.data.findIndex(f => f.id === file.id);
                     file.permissions.forEach((permission, permIndex) => {
                         if(permission.type === type && permission.role === role) {
                             if((permission.type === "user" || permission.type === "group") && permission.emailAddress.toLowerCase() === value.toLowerCase()) {
-                                updatedSnapshot[index].permissions.splice(permIndex, 1);
+                                updatedSnapshot.data[index].permissions.splice(permIndex, 1);
                             }
                             else if(permission.type === "domain" && permission.domain.toLowerCase() === value.toLowerCase()) {
-                                updatedSnapshot[index].permissions.splice(permIndex, 1);
+                                updatedSnapshot.data[index].permissions.splice(permIndex, 1);
                             }
                             else if(permission.type === "anyone") {
-                                updatedSnapshot[index].permissions.splice(permIndex, 1);
+                                updatedSnapshot.data[index].permissions.splice(permIndex, 1);
                             }
                         }
                     });
@@ -94,10 +94,10 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                 if(file.permissions) {
                     // If permission has a non-"owner" role in file.permissions (i.e., file is shared),
                     // then remove permission for file
-                    let index = updatedSnapshot.findIndex(f => f.id === file.id);
+                    let index = updatedSnapshot.data.findIndex(f => f.id === file.id);
                     file.permissions.forEach((permission, permIndex) => {
                         if(permission.role !== "owner") {
-                            updatedSnapshot[index].permissions.splice(permIndex, 1);
+                            updatedSnapshot.data[index].permissions.splice(permIndex, 1);
                         }
                     });
                 }
@@ -109,7 +109,7 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
         //    let fileClone = JSON.parse(JSON.stringify(f));
         for (const file of files) {
             // Note: Index must exist since files is a subset of mostRecentFSSnapshot
-            let index = updatedSnapshot.findIndex(f => f.id === file.id);
+            let index = updatedSnapshot.data.findIndex(f => f.id === file.id);
             if (action === "add") {
                 if (type === "users") {
                     let found = false;
@@ -128,7 +128,7 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                     }
                     
                     if (!found) {
-                        updatedSnapshot[index].permissions.value.push({
+                        updatedSnapshot.data[index].permissions.value.push({
                             roles: [role],
                             grantedToV2: {
                                 siteUser: { email: value }
@@ -138,7 +138,7 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                 }
                 else {
                     if (!file.permissions.value.find(p => p.link && p.link.scope === type && p.link.type === role)) {
-                        updatedSnapshot[index].permissions.value.push({
+                        updatedSnapshot.data[index].permissions.value.push({
                             link: {
                                 scope: type,
                                 type: role
@@ -153,23 +153,23 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                         if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && permission.roles.includes(role)) {
                             for (const user of permission.grantedToIdentitiesV2) {
                                 if (user.siteUser.email.toLowerCase() === value.toLowerCase()) {
-                                    updatedSnapshot[index].permissions.value.splice(permIndex, 1);
+                                    updatedSnapshot.data[index].permissions.value.splice(permIndex, 1);
                                     break;
                                 }
                             }
                         } else if (permission.grantedToV2 && permission.roles.includes(role)) {
                             if (permission.grantedToV2.siteUser.email.toLowerCase() === value.toLowerCase())
-                                updatedSnapshot[index].permissions.value.splice(permIndex, 1);
+                                updatedSnapshot.data[index].permissions.value.splice(permIndex, 1);
                         }
 
                     });
                 }
                 else {
-                    updatedSnapshot[index].permissions.value.filter(p => !(p.link && p.link.scope === type && p.link.type === role));
+                    updatedSnapshot.data[index].permissions.value.filter(p => !(p.link && p.link.scope === type && p.link.type === role));
                 }
 
             } else if (action === "unshare") {
-                updatedSnapshot[index].permissions.value.filter(p => p.roles.includes("owner")); 
+                updatedSnapshot.data[index].permissions.value.filter(p => p.roles.includes("owner")); 
             }
         };
     }
