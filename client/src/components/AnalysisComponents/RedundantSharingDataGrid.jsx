@@ -16,10 +16,7 @@ const bull = (
 );
 
 export default function RedundantSharingDataGrid(props) {
-    const editData = props.girdData.edited;
-    const newData = props.girdData.new;
-    console.log(editData);
-    console.log(newData);
+
     return (
         <>
             <Card sx={{ minWidth: 275 }}>
