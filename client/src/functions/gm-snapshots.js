@@ -26,10 +26,10 @@ function getClosestGMSnapshots(groupMembershipSnapshots, currentSnapshot) {
     This function returns the group-membership snapshot with the provided group address.
 */
 function getGMSnapshot(closestGMSnapshots, groupAddress) {
-    closestGMSnapshots.forEach((groupMembershipSnapshot) => {
+    for(const groupMembershipSnapshot of closestGMSnapshots) {
         if(groupMembershipSnapshot.groupAddress.toLowerCase() === groupAddress.toLowerCase())
             return groupMembershipSnapshot;
-    });
+    }
     return null;
 }
 

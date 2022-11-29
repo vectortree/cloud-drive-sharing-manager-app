@@ -228,7 +228,7 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                                 }
                             }
                         }
-                        else if(permission.type === "group" && requirement.group) {
+                        else if(permission.type === "group" && requirement.group && getGMSnapshot(closestGMSnapshots, permission.emailAddress)) {
                             // The following must be satisfied:
                             // 1) If the permission role is in
                             //    {"commenter", "reader"} and AR is nonempty,
@@ -248,7 +248,6 @@ function checkRequirements(currentSnapshot, closestGMSnapshots, requirements, em
                             let address = permission.emailAddress.toLowerCase();
                             let permDomain = address.substring(address.lastIndexOf("@") + 1);
                             // Note: This should always return a non-null group-membership snapshot.
-                            // The null case is handled in the previous branch.
                             let groupMembershipSnapshot = getGMSnapshot(closestGMSnapshots, address);
                             let members = groupMembershipSnapshot.members;
                             if(requirement.allowedReaders.length > 0 && readerRoles.includes(permission.role)) {
