@@ -23,7 +23,6 @@ import {makeFilesForDisplay} from "../functions/snapshot-files";
 import DeviantSharingDataGrid from "./AnalysisComponents/DeviantSharingDataGrid";
 import SharingChangesDataGrid from "./AnalysisComponents/SharingChangesDataGrid";
 import FileFolderSharingDifferenceDataGrid from "./AnalysisComponents/FileFolderSharingDifferenceDataGrid";
-import RedundantSharingDataGrid from "./AnalysisComponents/RedundantSharingDataGrid";
 import {useEffect} from "react";
 
 export default function AnalysisComponent(props) {
@@ -144,10 +143,7 @@ export default function AnalysisComponent(props) {
                 props.text == "Sharing Changes" ?
                     <SharingChangesDataGrid girdData={fileData}/> :
                     props.text == "File-folder Sharing Differences" ?
-                        <FileFolderSharingDifferenceDataGrid gridData={fileData}/>:
-                        props.text == "Redundant Sharing" ?
-                            <RedundantSharingDataGrid gridData={fileData}/>
-                            : ""
+                        <FileFolderSharingDifferenceDataGrid gridData={fileData}/> : ""
             }
         </>
     );
