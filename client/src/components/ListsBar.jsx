@@ -67,6 +67,8 @@ export default function ColumnMenuGrid( props) {
     };
 
     const handleInfoGMS = (e) => {
+        console.log(props)
+        console.log(e)
         if(props.type === "GroupSharingSnapshot" && e.field !== "name"){
             let aa = props.dataSet.filter(function (func) { return func.id == e.id });
             setmemberInfo(aa[0])
@@ -93,7 +95,7 @@ export default function ColumnMenuGrid( props) {
         <div style={{display:"inline"}}>
             <br/>
             {props.type === "AccessControlRequirement" ?
-            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black", fontSize: 20}}>Add Access Control Requirement</Button>
+            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Add Access Control Requirement</Button>
             :
             <div></div>
             }

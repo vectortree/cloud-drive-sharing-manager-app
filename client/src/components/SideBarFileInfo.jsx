@@ -27,7 +27,7 @@ export default function SideBarFileInfo() {
     const handleCloseInherit = () => {setOpenInherit(false);};
 
     return (
-        <Card sx={{ width: 1/4, height:1}} style={{position:"fixed",right:"0px"}}>
+        <Card sx={{ width: 1/4, height:1}} style={{position:"fixed",right:"0px", overflow: "scroll", height : "600px"}}>
             <CardMedia
                 component="img"
                 alt="green iguana"
