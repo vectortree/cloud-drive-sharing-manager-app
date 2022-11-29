@@ -58,6 +58,7 @@ export default function ViolationModal(props) {
   if(props.type=="SearchQuery"){
       closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, props.fileSet);
       checkRequirement = checkRequirements(props.fileSet, closestGMSnapShotsData, selectedRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )
+      console.log(checkRequirement);
   }else{
       closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, checkSnapShot)
       checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, selectedRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )

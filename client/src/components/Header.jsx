@@ -167,10 +167,10 @@ export default function PrimarySearchAppBar(props) {
             else
                 email = userProfile.user.data.email;
             let domain = email.substring(email.lastIndexOf("@") + 1);
-            let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, userProfile.fileSharingSnapshots[0]);
-            console.log(userProfile.fileSharingSnapshots[0]);
+            let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, selSnapshot.data);
+
             let groups = true;
-            const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
+            const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
             const id = id_generator(searchQueryHistory);
             const query ={id: id, searchQuery: parsedSQ};
             console.log(query);
@@ -180,7 +180,7 @@ export default function PrimarySearchAppBar(props) {
             api.addSearchQuery(query);
             const arrayData = Array.from(filteredFiles);
             setRawFile(arrayData);
-            setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
+            setRefinedData(makeFilesForDisplay(selSnapshot.data,arrayData,props.userData.driveType));
             navigate("/searchResult");
 
         }
@@ -259,10 +259,10 @@ export default function PrimarySearchAppBar(props) {
                     else
                         email = userProfile.user.data.email;
                     let domain = email.substring(email.lastIndexOf("@") + 1);
-                    let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, userProfile.fileSharingSnapshots[0]);
-                    console.log(userProfile.fileSharingSnapshots[0]);
+                    let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, selSnapshot.data);
+                    
                     let groups = true;
-                    const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
+                    const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
                     const id = id_generator(searchQueryHistory);
                     const query ={id: id, searchQuery: parsedSQ};
                     console.log(query);
@@ -272,7 +272,7 @@ export default function PrimarySearchAppBar(props) {
                     api.addSearchQuery(query);
                     const arrayData = Array.from(filteredFiles);
 
-                    setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
+                    setRefinedData(makeFilesForDisplay(selSnapshot.data,arrayData,props.userData.driveType));
                     navigate("/searchResult");
                 }
             }

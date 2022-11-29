@@ -41,6 +41,7 @@ export default function SearchQueryModal(props) {
         if(QueryType === "" || QueryName == ""){
             handleErrorAlertOpen();
         }else{
+
             const query = "{" +QueryType + ":" + QueryName + "} ";
             setQueryString([...queryString, query]);
             handleSuccessAlertOpen();

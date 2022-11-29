@@ -26,6 +26,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import ViolationModalTable from "./ViolationModal";
+import api from "../api/api";
 
 export default function HomeHeader(props) {
     const [sortFlag, setSortFlag] = useRecoilState(SortingFlag);
@@ -65,18 +66,26 @@ export default function HomeHeader(props) {
         for(let i = 0; i < snapshot[snapshot.length-1].data.length; i++) {
             mostRecentSnapshot.push(snapshot[snapshot.length-1].data[i]);
         }
-        // action : add, remove, unshare
-        // type : user,  group, domain, anyone
-        // role : writer, reader, commenter
+
         let newArray = [];
         for(let i = 0; i < rawFile.length; i++){
             newArray.push(rawFile[i]);
         }
-        let fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
-        console.log(fileData);
-        setFileData(fileData);
-        setOpen(false);
-        setOpenModal(true);
+        let fileData=[];
+        api.checkSnapshotConsistency().then((res) =>{
+            if(res.status== 200){
+                if(res.data.success){
+                    fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
+                    console.log(fileData);
+                    setFileData(fileData);
+                    setOpen(false);
+                    setOpenModal(true);
+                }else{
+                    alert(res.data.message);
+                }
+            }
+            console.log(res.status)
+        })
     }
     const handleSortFlag = () => {
         if(sortFlag == 0){
