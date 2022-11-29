@@ -60,15 +60,14 @@ export default function SideBarFileInfo() {
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title">
-                            {"Direct Access Permission Record"}
+                            {"Direct Permissions"}
                         </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
                                 {file.permissions.direct.map((userData) =>{
                                     return (
                                         <>
-                                            <p>Role:{userData.role} /Type:{userData.type} </p>
-                                            <p>Email:{userData.value}</p>
+                                            <p>Role: {userData.role}, Type: {userData.type}, Value: {userData.value}</p>
                                         </>
                                     )
                                 })}
@@ -76,7 +75,7 @@ export default function SideBarFileInfo() {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} autoFocus>
-                                Checked
+                                OK
                             </Button>
                         </DialogActions>
                     </Dialog>
@@ -99,14 +98,14 @@ export default function SideBarFileInfo() {
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title">
-                            {"Inherited Access Permission Record"}
+                            {"Inherited Permissions"}
                         </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
                                 {file.permissions.inherited.map((userData) =>{
                                     return (
                                         <>
-                                            <p>Role:{userData.role} Type:{userData.type}Email:{userData.value}</p>
+                                            <p>Role: {userData.role}, Type: {userData.type}, Value: {userData.value}</p>
                                         </>
                                     )
                                 })}
@@ -114,7 +113,7 @@ export default function SideBarFileInfo() {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleCloseInherit} autoFocus>
-                                Checked
+                                OK
                             </Button>
                         </DialogActions>
                     </Dialog>
@@ -122,9 +121,9 @@ export default function SideBarFileInfo() {
                     {/*Sharing: {file.shared == undefined ? "User Only": file.shared.scope}<br/>*/}
                     <b>Owner: </b>{file.owner}<br/>
                     <b>Link: </b><a href={file.link} target="_blank">Access</a><br/>
-                    <b>Created Time:</b>{file.createdTime}<br/>
+                    <b>Created Time:</b>{file?.createdTime?.toLocaleString()}<br/>
                     <b>Modified Time:</b>{file.modifiedTime}<br/>
-                    <b>Last modifying User:</b>{file.lastModifyingUser}<br/>
+                    <b>Last Modifying User:</b>{file.lastModifyingUser}<br/>
                     <b>Drive Name: </b>{file.driveName}<br/>
                     <b>Location: </b>{file.location}<br/>
                 </Typography>
