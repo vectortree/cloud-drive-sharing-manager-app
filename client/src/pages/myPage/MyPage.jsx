@@ -90,10 +90,10 @@ const MyPage = (props)=>{
 
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
-        <ColumnMenuGrid name="Recent Access Control Requirement" type= "AccessControlRequirement"dataSet = {ACR} Data_Handler={ACR_Controller} Data_DeleteHandler={ACR_DeleteController}/>,
-        <ColumnMenuGrid name="File Sharing Snapshot" dataSet = {FileSharing} type= "FileSharingSnapshot" Data_Handler={FileSharing_Controller} Data_DeleteHandler = {DeleteFileSharing_Controller}/>,
-        <ColumnMenuGrid name="Group Sharing Snapshot" dataSet = {GroupSharing} type= "GroupSharingSnapshot"Data_Handler={Group_Controller} Data_DeleteHandler={Group_DeleteController}/>,
-        <ColumnMenuGrid name="User's Recent Query" dataSet = {searchQuery_Grid} type= "SearchQuery" Data_DeleteHandler={Delete_RecentSearchQuery}/>
+        <ColumnMenuGrid name="Access Control Requirements" type= "AccessControlRequirement"dataSet = {ACR} Data_Handler={ACR_Controller} Data_DeleteHandler={ACR_DeleteController}/>,
+        <ColumnMenuGrid name="File-Sharing Snapshots" dataSet = {FileSharing} type= "FileSharingSnapshot" Data_Handler={FileSharing_Controller} Data_DeleteHandler = {DeleteFileSharing_Controller}/>,
+        <ColumnMenuGrid name="Group-Membership Snapshots" dataSet = {GroupSharing} type= "GroupSharingSnapshot"Data_Handler={Group_Controller} Data_DeleteHandler={Group_DeleteController}/>,
+        <ColumnMenuGrid name="Search Query History" dataSet = {searchQuery_Grid} type= "SearchQuery" Data_DeleteHandler={Delete_RecentSearchQuery}/>
     ];
 
     return (

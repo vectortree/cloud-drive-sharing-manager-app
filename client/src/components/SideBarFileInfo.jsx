@@ -42,8 +42,8 @@ export default function SideBarFileInfo() {
                 <Typography variant="body2" color="text.secondary">
                     {/*{file.description}<br/>*/}
                     {/*File Type : {file.folder == undefined ? "file" : "folder"}<br/>*/}
-                    <b>File Size : </b>{file.size}<br/>
-                    <b>Direct Access Permission :</b>
+                    <b>Size: </b>{file.size}<br/>
+                    <b>Direct Permissions: </b>
                     <Button variant="outlined" onClick={handleClickOpen}>
                         <AvatarGroup total={file.permissions.direct.length}>
                             {file.permissions.direct.length > 0 ?
@@ -82,7 +82,7 @@ export default function SideBarFileInfo() {
                     </Dialog>
                     <br/>
                     {/*Inherited Access Permission*/}
-                    <b>Inherited Access Permission :</b>
+                    <b>Inherited Permissions: </b>
                     <Button variant="outlined" onClick={handleClickOpenInherit}>
                         <AvatarGroup total={file.permissions.inherited.length}>
                             {file.permissions.inherited.length > 0 ?
@@ -120,13 +120,13 @@ export default function SideBarFileInfo() {
                     </Dialog>
 
                     {/*Sharing: {file.shared == undefined ? "User Only": file.shared.scope}<br/>*/}
-                    <b>Owner:</b>{file.owner}<br/>
-                    <b>Link : </b><a href={file.link} target="_blank">Access</a><br/>
-                    <b>CreatedTime Time:</b>{file.createdTime}<br/>
-                    <b>Last Modifying User:</b>{file.lastModifyingUser}<br/>
+                    <b>Owner: </b>{file.owner}<br/>
+                    <b>Link: </b><a href={file.link} target="_blank">Access</a><br/>
+                    <b>Created Time:</b>{file.createdTime}<br/>
                     <b>Modified Time:</b>{file.modifiedTime}<br/>
-                    <b>Drive Name :</b>{file.driveName}<br/>
-                    <b>Location :</b>{file.location}<br/>
+                    <b>Last modifying User:</b>{file.lastModifyingUser}<br/>
+                    <b>Drive Name: </b>{file.driveName}<br/>
+                    <b>Location: </b>{file.location}<br/>
                 </Typography>
             </CardContent>
         </Card>

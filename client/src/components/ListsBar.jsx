@@ -98,10 +98,10 @@ export default function ColumnMenuGrid( props) {
                 disableSelectionOnClick
                 experimentalFeatures={{ newEditingApi: true }} />
         </div>
-        <div style={{display:"inline-flex"}}>
+        <div style={{display:"inline"}}>
             <br/>
             {props.type === "AccessControlRequirement" ?
-            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Manage Access Control</Button>
+            <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black", fontSize: 20}}>Add Access Control Requirement</Button>
             :
             // props.type === "FileSharingSnapshot" ?
             // <Button onClick={handleOpenModal} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
