@@ -2,19 +2,12 @@ import * as React from 'react';
 import { pink } from '@mui/material/colors';
 import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import dayjs from 'dayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Stack from '@mui/material/Stack';
-import { useContext } from 'react';
-import { AuthContext } from '../auth/auth';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import CircularProgress from '@mui/material/CircularProgress';
 import api, {createFileSharingSnapshot} from '../api/api';
 import {id_generator} from "../functions/id_generator";
 import {FileSharingSnapShotData, GroupMembershipSnapshotsData} from "../recoil";
@@ -35,6 +28,7 @@ export default function ColorRadioButtons(props) {
     const [htmlFile, setHtmlFile] = React.useState('');
     const [fileSharingSnapShot,setFileSharingSnapShot ] = useRecoilState(FileSharingSnapShotData);
     const [groupMemberSnapshot, setGroupMemberSnapshot ] = useRecoilState(GroupMembershipSnapshotsData);
+    const [open, setOpen] = React.useState(false);
     const handleChange = (event) => {setSelectedValue(event.target.value);};
     const handleSnapshotName = (event) => {setSnapShotName(event.target.value);};
     const handleGroupName = (event) =>{setGroupName(event.target.value);};
@@ -58,9 +52,9 @@ export default function ColorRadioButtons(props) {
             api.createFileSharingSnapshot(obj).then(
                 (value) => {
                     setFileSharingSnapShot( value.data.profile.fileSharingSnapshots);
+                    window.location.reload();
                 }
             );
-            window.location.reload();
 
             console.log(fileSharingSnapShot);
         }else if(selectedValue == 'groupSnapshot'){
@@ -80,7 +74,7 @@ export default function ColorRadioButtons(props) {
                 const groupSnapshot = api.createGroupMembershipSnapshot(obj).then(
                     (value) =>{
                         console.log(value)
-
+                        window.location.reload();
                     }
                 ).catch((err) => {
                     if(err.status != 200) {
@@ -88,7 +82,7 @@ export default function ColorRadioButtons(props) {
                     }
                 })
                 setGroupMemberSnapshot((prev) => [...prev,obj])
-                window.location.reload();
+
             }else{
                 alert("Please Fill out all the requirement");
                 return;
@@ -97,7 +91,9 @@ export default function ColorRadioButtons(props) {
             console.error("Wrong Argument");
         }
 
-        if(props.onClick) props.onClick()
+        if(props.onClick){
+            setOpen(true);
+        }
     }
 
     const controlProps = (item) => ({
@@ -202,9 +198,16 @@ export default function ColorRadioButtons(props) {
                 }
             </Box>
             <br></br>
-            <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateSnapshot}>
-                Submit
-            </Button>
+            {open ?
+                <>
+                    <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateSnapshot}>
+                        Creating Snapshot...
+                    </Button>
+                    <CircularProgress style={{display:"hidden"}} />
+                </> :
+                <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} >
+                    Submit
+                </Button>}
         </div>
     );
 }

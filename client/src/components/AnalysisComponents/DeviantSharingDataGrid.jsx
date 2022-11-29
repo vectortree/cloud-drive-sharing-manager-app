@@ -23,6 +23,9 @@ export default function DeviantSharingDataGrid(props) {
             dataSet = [];
         }
     }
+    if(dataSet.edited){
+        dataSet = [];
+    }
 
     return (
         <>
@@ -33,18 +36,18 @@ export default function DeviantSharingDataGrid(props) {
                             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                                 DeviantSharing
                             </Typography>
-                            <Typography variant="h5" component="div">
+                            <Typography variant="body2" component="div">
                                 <b>Drive Name:</b> {data.folder.driveName} <br/>
                                 <b>Folder Name:</b> {data.folder.name} &nbsp;<b>Folder Path: </b>{data.folder.path}
                             </Typography>
-                            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                            <Typography variant="body2">
                                 <hr/>
-                                <b>majorityPermissionSet</b><br/>
+                                <b>MajorityPermissionSet</b><br/>
                                 {data.majorityPermissionSet.files.map((file) =>{
                                     return (
                                         <>
                                             File Name:{file.name}<br/>
-                                            File Path:{file.path}<br/>
+                                            File Path:{file.path}<br/><br/>
                                         </>
                                     )
                                 })}
@@ -63,7 +66,7 @@ export default function DeviantSharingDataGrid(props) {
 
                             <Typography variant="body2">
                                 <hr/>
-                                <b>majorityPermissionSet</b><br/>
+                                <b>Minority PermissionSet</b><br/>
                                 {data.minorityPermissionSets.map((minority) =>{
                                     return(
                                         <>

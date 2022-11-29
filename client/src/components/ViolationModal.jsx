@@ -15,6 +15,11 @@ import { getClosestGMSnapshots } from "../functions/gm-snapshots"
 
 const columns = [
     {
+        width: 150,
+        label: 'Req Name',
+        dataKey: 'ReqName',
+      },
+      {
         width: 270,
         label: 'File Name',
         dataKey: 'fileName',
@@ -54,9 +59,11 @@ export default function ViolationModal(props) {
   let ch_req_obj = [] 
   checkRequirement.map((req) => {
     let fileName = req.file.name;
+    let reqName = req.requirement.name;
         for(let i = 0 ;i < req.data.length; i++){
             ch_req_obj.push(
                 {
+                    ReqName : reqName,
                     fileName : fileName,
                     violationType : req.data[i].violationType,
                     message : req.data[i].message,

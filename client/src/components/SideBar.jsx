@@ -292,11 +292,6 @@ export default function MiniDrawer({children, ...props}) {
         navigate('/accessControl')
 
     };
-    const navigateRedundantSharing = () => {
-        // 👇️ navigate to /
-        navigate('/redundantSharing')
-
-    };
     const navigateDeviantSharing = () => {
         // 👇️ navigate to /
         navigate('/deviantSharing')
@@ -446,7 +441,7 @@ export default function MiniDrawer({children, ...props}) {
                         </ListItem>
                     ))}
                 <List>
-                    {['Redundant Sharing', 'Deviant Sharing', 'File-folder Sharing Differences', 'Sharing changes'].map((text, index) => (
+                    {[ 'Deviant Sharing', 'File-folder Sharing Differences', 'Sharing changes'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                                 <ListItemButton
                                     sx={{
@@ -456,8 +451,7 @@ export default function MiniDrawer({children, ...props}) {
                                     }}
 
                                     onClick=
-                                        {text === "Redundant Sharing" ? navigateRedundantSharing :
-                                            text === "Deviant Sharing" ? navigateDeviantSharing :
+                                        {text === "Deviant Sharing" ? navigateDeviantSharing :
                                                 text === "File-folder Sharing Differences" ? navigateFileFolderSharing :
                                                     navigateSharingChanges
                                         }

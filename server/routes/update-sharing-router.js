@@ -140,7 +140,7 @@ router.post('/addpermission', async (req, res) => {
             if(type === "users" && !value) return res.status(400).json({success: false, message: "Invalid data format"});
             if(type !== "users" && type !== "organization" && type !== "anonymous") return res.status(400).json({success: false, message: "Invalid type"});
             if((type === "users" && role !== "read" && role !== "write") || ((type === "organization" || type === "anonymous") && role !== "view" && role !== "review" && role !== "edit")) return res.status(400).json({success: false, message: "Invalid role"});
-            // Make sure to refresh access token before attempting to access Google Drive API
+            // Make sure to refresh access token before attempting to access Microsoft Graph API
             if(userProfile.user.tokens.refresh_token) {
                 refresh.requestNewAccessToken(
                     'microsoft',
