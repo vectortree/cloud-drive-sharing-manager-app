@@ -109,34 +109,41 @@ export default function HomeHeader(props) {
                                             <option value={"unshare"}>unsharing</option>
                                         </Select>
                                     </FormControl>
-                                    <FormControl sx={{ m: 1, minWidth: 120 }}>
-                                        <InputLabel htmlFor="demo-dialog-native">Type</InputLabel>
-                                        <Select
-                                            native
-                                            value={type}
-                                            onChange={handleTypeChange}
-                                            input={<OutlinedInput label="Type" id="demo-dialog-native" />}
-                                        >
-                                            <option value={"user"}>user</option>
-                                            <option value={"reader"}>reader</option>
-                                            <option value={"domain"}>domain</option>
-                                            <option value={"anyone"}>anyone</option>
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                    {action == "unshare" ? <></>:
+                                        <>
+                                        <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                            <InputLabel htmlFor="demo-dialog-native">Type</InputLabel>
+                                            <Select
+                                                native
+                                                value={type}
+                                                onChange={handleTypeChange}
+                                                input={<OutlinedInput label="Type" id="demo-dialog-native" />}
+                                            >
+                                                <option value={"user"}>user</option>
+                                                <option value={"reader"}>reader</option>
+                                                <option value={"domain"}>domain</option>
+                                                <option value={"anyone"}>anyone</option>
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl sx={{ m: 1, minWidth: 120 }}>
                                         <InputLabel htmlFor="demo-dialog-native">Role</InputLabel>
                                         <Select
-                                            native
-                                            value={role}
-                                            onChange={handleRoleChange}
-                                            input={<OutlinedInput label="Role" id="demo-dialog-native" />}
+                                        native
+                                        value={role}
+                                        onChange={handleRoleChange}
+                                        input={<OutlinedInput label="Role" id="demo-dialog-native" />}
                                         >
-                                            <option value={"writer"}>writer</option>
-                                            <option value={"group"}>group</option>
-                                            <option value={"commenter"}>commenter</option>
+                                        <option value={"writer"}>writer</option>
+                                            {props.userData.driveType == "microsoft" ? <></>
+                                            :
+                                                <>
+                                                <option value={"group"}>group</option>
+                                                <option value={"commenter"}>commenter</option>
+                                                </>
+                                            }
                                         </Select>
-                                    </FormControl>
-                                    <TextField
+                                        </FormControl>
+                                        <TextField
                                         fullWidth={100}
                                         required
                                         id="outlined-required"
@@ -144,7 +151,9 @@ export default function HomeHeader(props) {
                                         defaultValue=""
                                         value={email}
                                         onChange={handleEmail}
-                                    />
+                                        />
+                                        </>
+                                    }
                                 </Box>
                             </DialogContentText>
                         </DialogContent>
