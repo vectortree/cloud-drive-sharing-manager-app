@@ -88,6 +88,7 @@ export default function ColorRadioButtons(props) {
                     }
                 })
                 setGroupMemberSnapshot((prev) => [...prev,obj])
+                window.location.reload();
             }else{
                 alert("Please Fill out all the requirement");
                 return;
