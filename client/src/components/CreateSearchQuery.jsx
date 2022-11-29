@@ -20,6 +20,7 @@ import {id_generator} from "../functions/id_generator";
 export default function SearchQueryModal(props) {
     const [selectedValue, setSelectedValue] = React.useState('a');
     const [queryString,setQueryString] = React.useState([]);
+    const [queryStringRQ,setQueryStringRQ] = React.useState([]);
     const [QueryType, setQueryType] = React.useState('');
     const [QueryName, setQueryName] = React.useState('');
     const [openSuccess, setOpenSuccess] = React.useState(false);
@@ -30,15 +31,11 @@ export default function SearchQueryModal(props) {
     console.log(searchQuery);
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
     const handleRecentQuery = (event) =>{
+        console.log(queryString)
         const string = event.target.value;
-
         const txt = string.split('\"');
-        let queryStringBox = queryString;
-        for(let i = 1; i < txt.length-1; i++){
-            queryStringBox.push(txt[i]);
-        }
-
-        setQueryString([...queryString]);
+        setQueryStringRQ(txt[1]);
+        console.log(queryString)
     }
     const addingQuery = (event) => {
         if(QueryType === "" || QueryName == ""){
@@ -48,6 +45,10 @@ export default function SearchQueryModal(props) {
             setQueryString([...queryString, query]);
             handleSuccessAlertOpen();
         }
+    }
+
+    const addingQueryRQ = (event) => {
+        setQueryString([...queryString, queryStringRQ]);
     }
 
     const handleSuccessAlertOpen = () => {setOpenSuccess(true);};
@@ -64,6 +65,10 @@ export default function SearchQueryModal(props) {
     const handleChange = (event) => {
         console.log(event.target.value);
         setQueryType(event.target.value);};
+
+    const handleChangeRQ = (event) => {
+        console.log(event.target.value);
+        setQueryStringRQ(event.target.value);};
 
     const [inputValue, setInputValue] = React.useState('');
     const [chips, setChips] = React.useState([])
@@ -151,14 +156,25 @@ export default function SearchQueryModal(props) {
                         style={{ width: 600 }}
                     >
                         {searchQuery.map((data,idx)=>{
-                            const searchQueryText = JSON.stringify(data.searchQuery);
+                            const searchQueryText = JSON.stringify(data.searchQuery[0]);
                           return <MenuItem value={searchQueryText} >{searchQueryText}</MenuItem>
                         })}
                     </Select>
                 </FormControl>
-                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQuery}>
+                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQueryRQ}>
                         Add
                     </Button>
+                    <Box
+                        component="form"
+                        sx={{'& > :not(style)': { m: 1, width: '50ch' },}} noValidate autoComplete="off">
+                    <TextField
+                        id="outlined-name"
+                        label="Recent Query"
+                        value={queryStringRQ}
+                        defaultValue={queryString}
+                        onChange={handleChangeRQ}
+                    />
+                    </Box>
             </div>
             <br></br>
             <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={submit}>
