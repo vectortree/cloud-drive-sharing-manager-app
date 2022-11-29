@@ -17,7 +17,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {useRecoilState} from "recoil";
-import {rawFileData, SortingFlag} from "../recoil";
+import {GroupMembershipSnapshotsData, rawFileData, SortingFlag} from "../recoil";
 import {applyLocalUpdatesToSnapshot} from "../functions/update-sharing";
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -27,18 +27,22 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import ViolationModalTable from "./ViolationModal";
 import api from "../api/api";
+import {getClosestGMSnapshots} from "../functions/gm-snapshots";
+import {checkRequirements} from "../functions/ac-requirements";
 
 export default function HomeHeader(props) {
     const [sortFlag, setSortFlag] = useRecoilState(SortingFlag);
     const [open, setOpen] = React.useState(false);
-    const [action, setAction] = React.useState('');
-    const [type, setType] = React.useState('');
-    const [role, setRole] = React.useState('');
+    const [action, setAction] = React.useState('add');
+    const [type, setType] = React.useState('users');
+    const [role, setRole] = React.useState('read');
     const [email, setEmail] = React.useState('');
     const [rawFile, setRawFile] = useRecoilState(rawFileData);
     const [openModal, setOpenModal] = React.useState(false);
     const [selectionModel, setSelectionModel] = React.useState([]);
     const [fileData,setFileData] = React.useState("");
+    const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
+
     const handleCloseModal = () => setOpenModal(false);
     const handleClickOpen = () => {
         setOpen(true);
@@ -75,16 +79,28 @@ export default function HomeHeader(props) {
         api.checkSnapshotConsistency().then((res) =>{
             if(res.status== 200){
                 if(res.data.success){
+
                     fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
-                    console.log(fileData);
-                    setFileData(fileData);
-                    setOpen(false);
-                    setOpenModal(true);
+                    let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, fileData);
+                    let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType );
+                    if(checkRequirement > 0){
+                        alert("Requirement Violation");
+                    }else{
+                        if(action == "add"){
+                            api.addPermission({files: fileData, type: type, role: role, value: email});
+                        }else if(action =="remove"){
+                            api.removePermission({files: fileData, type: type, role: role, value: email});
+                        }else if(action == "unshare"){
+                            api.unshareFiles({files: fileData} );
+                        }
+                        setFileData(fileData);
+                        setOpen(false);
+                        console.log(checkRequirement);
+                    }
                 }else{
                     alert(res.data.message);
                 }
             }
-            console.log(res.status)
         })
     }
     const handleSortFlag = () => {

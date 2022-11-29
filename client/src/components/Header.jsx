@@ -260,7 +260,7 @@ export default function PrimarySearchAppBar(props) {
                         email = userProfile.user.data.email;
                     let domain = email.substring(email.lastIndexOf("@") + 1);
                     let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, selSnapshot.data);
-                    
+
                     let groups = true;
                     const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
                     const id = id_generator(searchQueryHistory);
