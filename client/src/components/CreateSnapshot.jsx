@@ -17,7 +17,7 @@ import FormControl from '@mui/material/FormControl';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import api, {createFileSharingSnapshot} from '../api/api';
 import {id_generator} from "../functions/id_generator";
-import {FileSharingSnapShotData} from "../recoil";
+import {FileSharingSnapShotData, GroupMembershipSnapshotsData} from "../recoil";
 import {useRecoilState} from "recoil";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -33,6 +33,8 @@ export default function ColorRadioButtons(props) {
     const [timestamp, setTimestamp] = React.useState(dayjs(today));
     const [htmlFileData, setHtmlFileData] = React.useState('');
     const [htmlFile, setHtmlFile] = React.useState('');
+    const [fileSharingSnapShot,setFileSharingSnapShot ] = useRecoilState(FileSharingSnapShotData);
+    const [groupMemberSnapshot, setGroupMemberSnapshot ] = useRecoilState(GroupMembershipSnapshotsData);
     const handleChange = (event) => {setSelectedValue(event.target.value);};
     const handleSnapshotName = (event) => {setSnapShotName(event.target.value);};
     const handleGroupName = (event) =>{setGroupName(event.target.value);};
@@ -53,7 +55,14 @@ export default function ColorRadioButtons(props) {
         if(selectedValue == 'fileSnapshot'){
             let id =id_generator(props.dataSet.fileSharingSnapshots);
             let obj = {id:id, name: snapshotName};
-            api.createFileSharingSnapshot(obj);
+            api.createFileSharingSnapshot(obj).then(
+                (value) => {
+                    setFileSharingSnapShot( value.data.profile.fileSharingSnapshots);
+                }
+            );
+
+
+            console.log(fileSharingSnapShot);
         }else if(selectedValue == 'groupSnapshot'){
             let id =id_generator(props.dataSet.groupMembershipSnapshots);
             let obj = {
@@ -67,15 +76,18 @@ export default function ColorRadioButtons(props) {
 
             if( groupName && groupEmail && htmlFileData){
                 console.log(obj);
+
                 const groupSnapshot = api.createGroupMembershipSnapshot(obj).then(
                     (value) =>{
                         console.log(value)
+
                     }
                 ).catch((err) => {
                     if(err.status != 200) {
                         alert(err.response.data.message);
                     }
                 })
+                setGroupMemberSnapshot((prev) => [...prev,obj])
             }else{
                 alert("Please Fill out all the requirement");
                 return;

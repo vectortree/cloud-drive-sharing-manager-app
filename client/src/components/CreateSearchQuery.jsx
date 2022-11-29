@@ -77,6 +77,9 @@ export default function SearchQueryModal(props) {
     const submit = () =>{
         const id = id_generator(searchQuery);
         const query = { id: id, searchQuery : queryString}
+        setSearchQuery( (prev)=>
+            [...prev,query]
+        )
         console.log(query);
         api.addSearchQuery(query);
         props.handleClose();

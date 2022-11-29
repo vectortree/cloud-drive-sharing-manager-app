@@ -26,7 +26,7 @@ const MyPage = (props)=>{
         setSearchQuery(props.userData.searchQueryHistory);
     },[]);
 
-    console.log(props.userData);
+    console.log(FileSharing);
     const FileSharing_Controller = (data) =>{
         props.FileSharing_Handler([...FileSharing,data]);
         setFileSharing(
