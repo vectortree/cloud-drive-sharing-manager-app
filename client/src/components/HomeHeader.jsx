@@ -83,7 +83,7 @@ export default function HomeHeader(props) {
                     fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
                     let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, fileData);
                     let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType );
-                    if(checkRequirement > 0){
+                    if(checkRequirement.length > 0){
                         alert("Requirement Violation");
                     }else{
                         if(action == "add"){

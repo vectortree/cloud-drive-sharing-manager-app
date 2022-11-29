@@ -23,6 +23,7 @@ router.post('/addpermission', async (req, res) => {
         if(!files || !type || !role) return res.status(400).json({success: false, message: "Invalid data format"});
         if(files.length == 0) return res.status(400).json({success: false, message: "No files specified"});
         if(userProfile.fileSharingSnapshots.length == 0) return res.status(400).json({success: false, message: "No file-sharing snapshot in user profile"});
+        console.log("Adding permission...");
         if(userProfile.user.driveType === "google") {
             if((type === "user" || type === "group" || type === "domain") && !value) return res.status(400).json({success: false, message: "Invalid data format"});
             if(type !== "user" && type !== "group" && type !== "domain" && type !== "anyone") return res.status(400).json({success: false, message: "Invalid type"});
@@ -258,6 +259,7 @@ router.post('/removepermission', async (req, res) => {
         if(!files || !type || !role) return res.status(400).json({success: false, message: "Invalid data format"});
         if(files.length == 0) return res.status(400).json({success: false, message: "No files specified"});
         if(userProfile.fileSharingSnapshots.length == 0) return res.status(400).json({success: false, message: "No file-sharing snapshot in user profile"});
+        console.log("Removing permission...");
         if(userProfile.user.driveType === "google") {
             if((type === "user" || type === "group" || type === "domain") && !value) return res.status(400).json({success: false, message: "Invalid data format"});
             if(type !== "user" && type !== "group" && type !== "domain" && type !== "anyone") return res.status(400).json({success: false, message: "Invalid type"});
@@ -460,6 +462,7 @@ router.post('/unsharefiles', async (req, res) => {
         if(!files) return res.status(400).json({success: false, message: "Invalid data format"});
         if(files.length == 0) return res.status(400).json({success: false, message: "No files specified"});
         if(userProfile.fileSharingSnapshots.length == 0) return res.status(400).json({success: false, message: "No file-sharing snapshot in user profile"});
+        console.log("Unsharing files...");
         if(userProfile.user.driveType === "google") {
             // Make sure to refresh access token before attempting to access Google Drive API
             if(userProfile.user.tokens.refresh_token) {
@@ -619,6 +622,7 @@ router.get('/checksnapshotconsistency', async (req, res) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         if(userProfile.fileSharingSnapshots.length == 0) return res.status(400).json({success: false, message: "No file-sharing snapshot in user profile"});
+        console.log("Checking snapshot consistency...");
         if(userProfile.user.driveType === "google") {
             // Make sure to refresh access token before attempting to access Google Drive API
             if(userProfile.user.tokens.refresh_token) {
@@ -665,6 +669,7 @@ router.get('/checksnapshotconsistency', async (req, res) => {
                             return res.status(200).json({success: false, message: "The most recent file-sharing snapshot is inconsistent (i.e., not up-to-date) with Google Drive! Please take a new file-sharing snapshot."});
                     }
                 }
+                console.log('Done checking snapshot consistency');
                 return res.status(200).json({success: true, message: "The most recent file-sharing snapshot is consistent (i.e., up-to-date) with Google Drive."});
             } catch(err) {
                 console.log(err);
