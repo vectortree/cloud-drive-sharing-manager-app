@@ -119,7 +119,7 @@ export default function HomeHeader(props) {
                                                 onChange={handleTypeChange}
                                                 input={<OutlinedInput label="Type" id="demo-dialog-native" />}
                                             >
-                                                {props.userData.driveType == "microsoft" ? 
+                                                {props.userData.driveType === "microsoft" ? 
                                                 <>
                                                     <option value={"users"}>users</option>
                                                     <option value={"organization"}>organization</option>
@@ -144,7 +144,7 @@ export default function HomeHeader(props) {
                                         onChange={handleRoleChange}
                                         input={<OutlinedInput label="Role" id="demo-dialog-native" />}
                                         >
-                                            {props.userData.driveType == "microsoft" ? 
+                                            {props.userData.driveType === "microsoft" ? 
                                             <>
                                                 <option value={"read"}>read</option>
                                                 <option value={"write"}>write</option>
@@ -160,7 +160,7 @@ export default function HomeHeader(props) {
                                         </FormControl>
                                         <TextField
                                         fullWidth={100}
-                                        required
+                                        disabled={(props.userData.driveType === "microsoft" && type !== "users") || (props.userData.driveType === "google" && type === "anyone")}
                                         id="outlined-required"
                                         label="Email"
                                         defaultValue=""
@@ -181,7 +181,7 @@ export default function HomeHeader(props) {
                 <MultipleSelectPlaceholder userData={props.userData} snapshot={props.snapShotData}/>
                 {props.updateAllow ?
                     <Button variant="outlined" onClick={handleClickOpen} style={{float:"right"}}>
-                        Updata Sharing
+                        Update Sharing
                     </Button>:""
                 }
                 <Button onClick={props.handleOpenModal} style={{float: "right"}}>
