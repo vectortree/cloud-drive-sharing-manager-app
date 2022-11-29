@@ -172,7 +172,7 @@ function fileFolderSharingChanges(snapshot, drive, path, driveType) {
 
                 if (permissionDifferences.length > 0)
                     fileFolderDifferences.push({
-                        folder: { name: file.name, driveName: file.driveName, path: file.path ? file.path : 'unavailable' },
+                        folder: { name: file.name, driveName: file.driveName, path: file.path ? file.path : 'unavailable', permissions: permissionsForDisplay(file.permissions, driveType) },
                         differences: permissionDifferences
                     });
             }
