@@ -109,7 +109,7 @@ router.post('/addpermission', async (req, res) => {
                             if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                                 // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
                                 // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, "google");
+                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
                                 for(const id of fileIds) {
                                     updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                     // Find file in most recent file-sharing snapshot and update its permissions
@@ -211,7 +211,7 @@ router.post('/addpermission', async (req, res) => {
                         if(file.folder && file.folder.childCount > 0) {
                             // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
                             // and update each file's permissions
-                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.parentReference.path + '/' + file.name, file.id, "microsoft");
+                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.parentReference.path + '/' + file.name, file.id, userProfile.user.driveType);
                             for(const id of fileIds) {
                                 updatedPermissions = await graph.getSharedItemPermissions(accessToken, id, file.parentReference.driveId);
                                 // Find file in most recent file-sharing snapshot and update its permissions
@@ -329,7 +329,7 @@ router.post('/removepermission', async (req, res) => {
                             if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                                 // If file is a folder, get file IDs of all files under it, make API calls to get permissions for each file,
                                 // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, "google");
+                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
                                 for(const id of fileIds) {
                                     updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                     // Find file in most recent file-sharing snapshot and update its permissions
@@ -412,7 +412,7 @@ router.post('/removepermission', async (req, res) => {
                         if(file.folder && file.folder.childCount > 0) {
                             // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
                             // and update each file's permissions
-                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.parentReference.path + '/' + file.name, file.id, "microsoft");
+                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.parentReference.path + '/' + file.name, file.id, userProfile.user.driveType);
                             for(const id of fileIds) {
                                 updatedPermissions = await graph.getSharedItemPermissions(accessToken, id, file.parentReference.driveId);
                                 // Find file in most recent file-sharing snapshot and update its permissions
@@ -509,7 +509,7 @@ router.post('/unsharefiles', async (req, res) => {
                             if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                                 // If file is a folder, get file IDs of all files under it, make API calls to get permissions for each file,
                                 // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id);
+                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
                                 for(const id of fileIds) {
                                     updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                     // Find file in most recent file-sharing snapshot and update its permissions
