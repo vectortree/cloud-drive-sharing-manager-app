@@ -36,6 +36,7 @@ import {
 } from "../recoil";
 import {checkRequirements} from "../functions/ac-requirements";
 import {makeFilesForDisplay} from "../functions/snapshot-files";
+import {id_generator} from "../functions/id_generator";
 
 // This is for the Header which is the very top of our website
 
@@ -163,8 +164,11 @@ export default function PrimarySearchAppBar(props) {
             console.log(userProfile.fileSharingSnapshots[0]);
             let groups = true;
             const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
-            api.addSearchQuery({id: 1, searchQuery: parsedSQ});
-            console.log(filteredFiles);
+            const id = id_generator(searchQuery);
+            api.addSearchQuery({id: id, searchQuery: parsedSQ});
+            const arrayData = Array.from(filteredFiles);
+            setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
+            navigate("/searchResult");
 
         }
     }
@@ -243,7 +247,8 @@ export default function PrimarySearchAppBar(props) {
                     console.log(userProfile.fileSharingSnapshots[0]);
                     let groups = true;
                     const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
-                    api.addSearchQuery({id: 1, searchQuery: parsedSQ});
+                    const id = id_generator(searchQuery);
+                    api.addSearchQuery({id: id, searchQuery: parsedSQ});
                     const arrayData = Array.from(filteredFiles);
                     setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
                     navigate("/searchResult");
