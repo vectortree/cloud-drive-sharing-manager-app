@@ -68,6 +68,7 @@ const UserProfileSchema = new Schema({
             permissionType: String,
             permissionRole: String,
             permissionValue: String,
+            timestamp: Date,
             action: {type: String, enum: ['add', 'remove', 'unshare']}
         }],
         required: false

@@ -128,6 +128,7 @@ router.post('/addpermission', async (req, res) => {
                     permissionType: type,
                     permissionRole: role,
                     permissionValue: value,
+                    timestamp: Date.now(),
                     action: 'add'
                 });
             } catch(err) {
@@ -227,6 +228,7 @@ router.post('/addpermission', async (req, res) => {
                     permissionType: type,
                     permissionRole: role,
                     permissionValue: value,
+                    timestamp: Date.now(),
                     action: 'add'
                 });
             } catch(err) {
@@ -346,6 +348,7 @@ router.post('/removepermission', async (req, res) => {
                     permissionType: type,
                     permissionRole: role,
                     permissionValue: value,
+                    timestamp: Date.now(),
                     action: 'remove'
                 });
             } catch(err) {
@@ -426,6 +429,7 @@ router.post('/removepermission', async (req, res) => {
                     permissionType: type,
                     permissionRole: role,
                     permissionValue: value,
+                    timestamp: Date.now(),
                     action: 'remove'
                 });
             } catch(err) {
@@ -524,6 +528,7 @@ router.post('/unsharefiles', async (req, res) => {
                     permissionType: 'n/a',
                     permissionRole: 'n/a',
                     permissionValue: 'n/a',
+                    timestamp: Date.now(),
                     action: 'unshare'
                 });
             } catch(err) {
@@ -586,6 +591,7 @@ router.post('/unsharefiles', async (req, res) => {
                     permissionType: 'n/a',
                     permissionRole: 'n/a',
                     permissionValue: 'n/a',
+                    timestamp: Date.now(),
                     action: 'unshare'
                 });
             } catch(err) {
