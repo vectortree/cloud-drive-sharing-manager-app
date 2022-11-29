@@ -16,29 +16,82 @@ const bull = (
 );
 
 export default function DeviantSharingDataGrid(props) {
-
+    console.log(props.gridData);
     return (
         <>
-            <Card sx={{ minWidth: 275 }}>
-                <CardContent>
-                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        DeviantSharing
-                    </Typography>
-                    <Typography variant="h5" component="div">
+            {props.gridData.map((data) =>{
+                return(
+                    <Card sx={{ minWidth: 275 }}>
+                        <CardContent>
+                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                DeviantSharing
+                            </Typography>
+                            <Typography variant="h5" component="div">
+                                <b>Drive Name:</b> {data.folder.driveName} <br/>
+                                <b>Folder Name:</b> {data.folder.name} &nbsp;<b>Folder Path: </b>{data.folder.path}
+                            </Typography>
+                            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                <hr/>
+                                <b>majorityPermissionSet</b><br/>
+                                {data.majorityPermissionSet.files.map((file) =>{
+                                    return (
+                                        <>
+                                            File Name:{file.name}<br/>
+                                            File Path:{file.path}<br/>
+                                        </>
+                                    )
+                                })}
+                                <br/>
+                                <b>Permission Set</b><br/>
+                                {data.majorityPermissionSet.permissionSet.map((permission) =>{
+                                    return (
+                                        <>
+                                            Role: {permission.role}<br/>
+                                            Type: {permission.type}<br/>
+                                            Email:{permission.value}<br/>
+                                        </>
+                                    )
+                                })}
+                            </Typography>
 
-                    </Typography>
-                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                            <Typography variant="body2">
+                                <hr/>
+                                <b>majorityPermissionSet</b><br/>
+                                {data.minorityPermissionSets.map((minority) =>{
+                                    return(
+                                        <>
+                                            {minority.files.map((file) =>{
+                                                return (
+                                                    <>
+                                                        File Name:{file.name}<br/>
+                                                        File Path:{file.path}<br/>
+                                                    </>
+                                                )
+                                            })}
+                                            <br/>
+                                            <b>Permission Set</b><br/>
+                                            {minority.permissionSet.map((permission) =>{
+                                                return (
+                                                    <>
+                                                        Role: {permission.role}<br/>
+                                                        Type: {permission.type}<br/>
+                                                        Email:{permission.value}<br/>
+                                                    </>
+                                                )
+                                            })}
+                                        </>
+                                    )
+                                })}
 
-                    </Typography>
-                    <Typography variant="body2">
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small"></Button>
+                        </CardActions>
+                    </Card>
+                )
+            })}
 
-                        <br />
-                    </Typography>
-                </CardContent>
-                <CardActions>
-                    <Button size="small"></Button>
-                </CardActions>
-            </Card>
         </>
     );
 }

@@ -16,53 +16,77 @@ const bull = (
 );
 
 export default function SharingChangesDataGrid(props) {
-    const editData = props.girdData.edited;
-    const newData = props.girdData.new;
+    let editData = props.girdData.edited;
+    let newData = props.girdData.new;
+    if(editData == undefined){
+        editData = [];
+    }
+    if(newData == undefined){
+        newData = [];
+    }
     console.log(editData);
     console.log(newData);
     return (
         <>
-        <Card sx={{ minWidth: 275 }}>
-            <CardContent>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    Edit Data
-                </Typography>
-                <Typography variant="h5" component="div">
+            {editData.map( (data) =>{
+                return (
+                    <Card sx={{ minWidth: 100 }}>
+                        <CardContent>
+                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                Edit Data
+                            </Typography>
+                            <Typography variant="h5" component="div">
 
-                </Typography>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                <b>File Info</b> <br/>
+                                Drive Name:{data.file.driveName}<br/>
+                                File Name: {data.file.name}<br/>
+                                File Path: {data.file.path}<br/>
+                                <br/>
+                                <b>Removed Permission</b> <br/>
+                                {data.removedPermissions.map((data) =>{
+                                    return( <>
+                                        Role: {data.role}<br/>
+                                        Type: {data.type}<br/>
+                                        Email: {data.value}<br/>
+                                    </>)
+                                })}
+                                <b>Added Permissions</b> <br/>
+                                {data.addedPermissions.map((data) =>{
+                                    return( <>
+                                        Role: {data.role}<br/>
+                                        Type: {data.type}<br/>
+                                        Email: {data.value}<br/>
+                                    </>)
+                                })}
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small"></Button>
+                        </CardActions>
+                    </Card>
+                )
+            })}
 
-                </Typography>
-                <Typography variant="body2">
+            {newData.map( (data) =>{
+                return (
+                    <Card sx={{ minWidth: 100 }}>
+                        <CardContent>
+                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                New Data
+                            </Typography>
+                            <Typography variant="h5" component="div">
 
-                    <br />
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button size="small"></Button>
-            </CardActions>
-        </Card>
-    <Card sx={{ minWidth: 275 }}>
-        <CardContent>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                New Data
-            </Typography>
-            <Typography variant="h5" component="div">
-
-            </Typography>
-            <Typography sx={{ mb: 1.5 }} color="text.secondary">
-
-            </Typography>
-            <Typography variant="body2">
-
-                <br />
-
-            </Typography>
-        </CardContent>
-        <CardActions>
-            <Button size="small"></Button>
-        </CardActions>
-    </Card>
+                                Drive Name:{data.file.driveName}<br/>
+                                File Name: {data.file.name}<br/>
+                                File Path: {data.file.path}<br/>
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small"></Button>
+                        </CardActions>
+                    </Card>
+                )
+            })}
     </>
     );
 }
