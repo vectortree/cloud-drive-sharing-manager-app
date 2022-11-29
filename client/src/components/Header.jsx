@@ -87,6 +87,7 @@ export default function PrimarySearchAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const [searchQueryHistory, setSearchQueryHistory] = useRecoilState(searchQueryHistoryData);
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
     const ResetACR =useResetRecoilState(AccessControlData);
     const ResetFileSharing = useResetRecoilState(FileSharingSnapShotData);
@@ -149,6 +150,10 @@ export default function PrimarySearchAppBar(props) {
     }
 
     const handleSubmitSearchQuery = () => {
+        if(props.userData.fileSharingSnapshots.length ==0){
+            alert("you must create a file snapshot first");
+            return;
+        }
         const parsedSQ = serializeSearchQuery(searchQuery.trim(), true);
         console.log(parsedSQ);
         if (!parsedSQ.error) {
@@ -164,8 +169,13 @@ export default function PrimarySearchAppBar(props) {
             console.log(userProfile.fileSharingSnapshots[0]);
             let groups = true;
             const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
-            const id = id_generator(searchQuery);
-            api.addSearchQuery({id: id, searchQuery: parsedSQ});
+            const id = id_generator(searchQueryHistory);
+            const query ={id: id, searchQuery: parsedSQ};
+            console.log(query);
+            setSearchQueryHistory( (prev)=>
+                [...prev,query]
+            )
+            api.addSearchQuery(query);
             const arrayData = Array.from(filteredFiles);
             setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
             navigate("/searchResult");
@@ -227,8 +237,11 @@ export default function PrimarySearchAppBar(props) {
         </Menu>
     );
     const sendingQuery = (event) =>{
-
         if(event.code == "Enter"){
+            if(props.userData.fileSharingSnapshots.length ==0) {
+                alert("you must create a file snapshot first");
+                return;
+            }
             if(searchQuery == ""){
                 alert("no SearchQuery")
             }else{
@@ -247,8 +260,13 @@ export default function PrimarySearchAppBar(props) {
                     console.log(userProfile.fileSharingSnapshots[0]);
                     let groups = true;
                     const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
-                    const id = id_generator(searchQuery);
-                    api.addSearchQuery({id: id, searchQuery: parsedSQ});
+                    const id = id_generator(searchQueryHistory);
+                    const query ={id: id, searchQuery: parsedSQ};
+                    console.log(query);
+                    setSearchQueryHistory( (prev)=>
+                        [...prev,query]
+                    )
+                    api.addSearchQuery(query);
                     const arrayData = Array.from(filteredFiles);
                     setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
                     navigate("/searchResult");
