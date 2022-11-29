@@ -43,6 +43,10 @@ export const SortingFlag = atom({
     key:'SortingFlag',
     default: 0,
 })
+export const GMSMember = atom({
+    key:'GMSMember',
+    default: [],
+})
 export const fileData = atom({
     key:'fileData',
     default:{
