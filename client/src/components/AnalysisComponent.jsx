@@ -41,8 +41,8 @@ export default function AnalysisComponent(props) {
     }
 
     const handleClick = () =>{
-        if(props.text === "Deviant Sharing" && threshold <= 50 ){
-            alert("Threshold should be greater than 50%");
+        if(props.text === "Deviant Sharing" && threshold <= 50 || threshold > 100){
+            alert("Threshold should be greater than 50% and smaller than 100%");
         } else if(props.text === "Deviant Sharing" && threshold > 50 ){
             let deviantSharingData = deviantSharing(selSnapshot.data, driveName, drivePath, threshold / 100, props.userData.driveType)
             console.log(deviantSharingData);
