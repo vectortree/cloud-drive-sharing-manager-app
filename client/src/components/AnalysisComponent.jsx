@@ -60,8 +60,6 @@ export default function AnalysisComponent(props) {
             let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot.data, driveName, drivePath, props.userData.driveType);
             console.log("file-folder differences: ", fileFolderSharingChange);
             setFileData(fileFolderSharingChange);
-        }else if(props.text == "Redundant Sharing"){
-
         }else{
             //console.error("Error");
         }
