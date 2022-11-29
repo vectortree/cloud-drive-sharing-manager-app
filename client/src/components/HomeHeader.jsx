@@ -82,16 +82,22 @@ export default function HomeHeader(props) {
 
                     fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
                     let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, fileData);
-                    let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType );
+                    let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.userData.email, props.userData.domain, props.userData.driveType );
                     if(checkRequirement.length > 0){
                         alert("Requirement Violation");
                     }else{
                         if(action == "add"){
-                            api.addPermission({files: fileData, type: type, role: role, value: email});
+                            api.addPermission({files: fileData, type: type, role: role, value: email}).then((res) =>{
+                                console.log(res.data.profile);
+                            })
                         }else if(action =="remove"){
-                            api.removePermission({files: fileData, type: type, role: role, value: email});
+                            api.removePermission({files: fileData, type: type, role: role, value: email}).then((res) =>{
+                                console.log(res.data.profile);
+                            })
                         }else if(action == "unshare"){
-                            api.unshareFiles({files: fileData} );
+                            api.unshareFiles({files: fileData} ).then((res) =>{
+                                console.log(res.data.profile);
+                            })
                         }
                         setFileData(fileData);
                         setOpen(false);
