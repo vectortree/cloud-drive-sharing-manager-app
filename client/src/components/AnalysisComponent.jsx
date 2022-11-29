@@ -52,7 +52,7 @@ export default function AnalysisComponent(props) {
         }else if(props.text === "Sharing Changes"){
             let sharingChange = snapshotsSharingChanges(selSnapshot.data, compSnapshot.data, props.userData.driveType);
             console.log("snapshot changes: ", sharingChange);
-
+            setFileData(sharingChange);
         }else if(props.text === "File-folder Sharing Differences"){
             let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot.data, driveName, drivePath, props.userData.driveType);
             console.log("file-folder differences: ", fileFolderSharingChange);
