@@ -26,6 +26,10 @@ export const removeAccessControlRequirement = (id) => api.delete(`/removeaccessc
 export const addSearchQuery = (payload) => api.post('/addsearchquery', payload);
 export const clearSearchQueries = () => api.delete('clearsearchqueries');
 export const removeSearchQuery = (id) => api.delete(`/removesearchquery/${id}`);
+export const addPermission = (payload) => api.post('/addpermission', payload);
+export const removePermission = (payload) => api.post('/removepermission', payload);
+export const unshareFiles = (payload) => api.post('/unsharefiles', payload);
+export const checkSnapshotConsistency = () => api.get('/checksnapshotconsistency');
 export const getUserProfile = () => api.get('/getuserprofile');
 export const logout = () => api.get('/logout');
 
@@ -43,6 +47,10 @@ const requests = {
     addSearchQuery,
     clearSearchQueries,
     removeSearchQuery,
+    addPermission,
+    removePermission,
+    unshareFiles,
+    checkSnapshotConsistency,
     getUserProfile,
     logout
 };
