@@ -530,12 +530,12 @@ export default function MiniDrawer({children, ...props}) {
                 <DrawerHeader />
                 {/*Here to Start flexible components*/}
                 {props.type === "analysis" ?
-                    <HomeHeader snapShotData = {props.components} userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
+                    <HomeHeader     snapShotData = {props.components} userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
                     : ""
                 }
                 {props.type === "home"?
                     <>
-                        <HomeHeader snapShotData = {props.components} userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
+                        <HomeHeader snapShotData = {props.components} updateAllow={props.updateAllow} userData={props.userData} handleOpenModal={handleOpenModal} handleCloseModal={handleCloseModal} openModal={openModal} handleCloseModal={handleCloseModal}/>
                     <div style={{display:"grid"}}>
                         <SideBarFileInfo/>
                         {twoD_Array.map( (file,idx) =>{

@@ -49,6 +49,9 @@ export const GMSMember = atom({
 })
 export const fileData = atom({
     key:'fileData',
-    default:[]
-    ,
+    default:[],
+})
+export const rawFileData = atom({
+    key:'rawFileData',
+    default:[],
 })

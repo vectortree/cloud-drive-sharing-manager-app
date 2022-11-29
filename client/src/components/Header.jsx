@@ -31,7 +31,7 @@ import {useRecoilState, useResetRecoilState} from "recoil";
 import {
     AccessControlData, fileData,
     FileSharingSnapShotData,
-    GroupMembershipSnapshotsData,
+    GroupMembershipSnapshotsData, rawFileData,
     searchQueryHistoryData, selectedSnapshot
 } from "../recoil";
 import {checkRequirements} from "../functions/ac-requirements";
@@ -94,6 +94,8 @@ export default function PrimarySearchAppBar(props) {
     const ResetGMS = useResetRecoilState(GroupMembershipSnapshotsData);
     const ResetSearchQuery = useResetRecoilState(searchQueryHistoryData);
     const [refinedData, setRefinedData] =useRecoilState(fileData);
+    const [rawFile, setRawFile] = useRecoilState(rawFileData);
+
     const navigate = useNavigate()
 
     const [openModal, setOpenModal] = React.useState(false);
@@ -177,6 +179,7 @@ export default function PrimarySearchAppBar(props) {
             )
             api.addSearchQuery(query);
             const arrayData = Array.from(filteredFiles);
+            setRawFile(arrayData);
             setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
             navigate("/searchResult");
 
@@ -268,6 +271,7 @@ export default function PrimarySearchAppBar(props) {
                     )
                     api.addSearchQuery(query);
                     const arrayData = Array.from(filteredFiles);
+
                     setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
                     navigate("/searchResult");
                 }

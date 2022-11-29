@@ -17,7 +17,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {useRecoilState} from "recoil";
-import {SortingFlag} from "../recoil";
+import {rawFileData, SortingFlag} from "../recoil";
 import {applyLocalUpdatesToSnapshot} from "../functions/update-sharing";
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -33,6 +33,7 @@ export default function HomeHeader(props) {
     const [type, setType] = React.useState('');
     const [role, setRole] = React.useState('');
     const [email, setEmail] = React.useState('');
+    const [rawFile, setRawFile] = useRecoilState(rawFileData);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -54,11 +55,20 @@ export default function HomeHeader(props) {
         setOpen(false);
     };
     const handleUpdate = () =>{
-        const mostRecentSnapshot = props.userData.fileSharingSnapshots[props.userData.fileSharingSnapshots.length-1];
+        let snapshot = props.userData.fileSharingSnapshots;
+        let mostRecentSnapshot = [];
+        console.log(snapshot);
+        for(let i = 0; i < snapshot[snapshot.length-1].data.length; i++) {
+            mostRecentSnapshot.push(snapshot[snapshot.length-1].data[i]);
+        }
         // action : add, remove, unshare
         // type : user,  group, domain, anyone
         // role : writer, reader, commenter
-        applyLocalUpdatesToSnapshot(mostRecentSnapshot, mostRecentSnapshot.files, action, type, role, email, props.userData.driveType)  ;
+        let newArray = [];
+        for(let i = 0; i < rawFile.length; i++){
+            newArray.push(rawFile[i]);
+        }
+        console.log(applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType));
         setOpen(false);
     }
     const handleSortFlag = () => {
@@ -145,9 +155,11 @@ export default function HomeHeader(props) {
                     </Dialog>
 
                 <MultipleSelectPlaceholder userData={props.userData} snapshot={props.snapShotData}/>
-                <Button variant="outlined" onClick={handleClickOpen} style={{float:"right"}}>
-                    Updata Sharing
-                </Button>
+                {props.updateAllow ?
+                    <Button variant="outlined" onClick={handleClickOpen} style={{float:"right"}}>
+                        Updata Sharing
+                    </Button>:""
+                }
                 <Button onClick={props.handleOpenModal} style={{float: "right"}}>
                     <PhotoCameraIcon style={{ float:"right", marginLeft:"30px", marginRight : "10px" , fontSize: "30px"}}/>
                 </Button>
