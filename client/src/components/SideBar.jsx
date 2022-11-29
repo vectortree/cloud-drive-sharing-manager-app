@@ -225,7 +225,7 @@ export default function MiniDrawer({children, ...props}) {
                 });
             }
             else if(ResetSortingData === "size"){
-                sortedArr = props.components.sort((a, b) => ((b.size != null) - (a.size != null) || a.size - b.size));
+                sortedArr = props.components.sort((a, b) => ((b.size !== 'unavailable') - (a.size !== 'unavailable') || a.size - b.size));
             }
 
         }
@@ -264,7 +264,7 @@ export default function MiniDrawer({children, ...props}) {
                 });
             }
             else if(ResetSortingData === "size"){
-                sortedArr = props.components.sort((a, b) => ((b.size != null) - (a.size != null) || b.size - a.size));
+                sortedArr = props.components.sort((a, b) => ((b.size !== 'unavailable') - (a.size !== 'unavailable') || b.size - a.size));
             }
 
         }
