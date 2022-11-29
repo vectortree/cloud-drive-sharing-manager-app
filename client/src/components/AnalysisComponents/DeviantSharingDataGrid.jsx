@@ -23,6 +23,9 @@ export default function DeviantSharingDataGrid(props) {
             dataSet = [];
         }
     }
+    if(dataSet.edited){
+        dataSet = [];
+    }
 
     return (
         <>
