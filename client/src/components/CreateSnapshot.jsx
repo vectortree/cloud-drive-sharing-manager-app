@@ -60,7 +60,7 @@ export default function ColorRadioButtons(props) {
                     setFileSharingSnapShot( value.data.profile.fileSharingSnapshots);
                 }
             );
-
+            window.location.reload();
 
             console.log(fileSharingSnapShot);
         }else if(selectedValue == 'groupSnapshot'){
@@ -88,6 +88,7 @@ export default function ColorRadioButtons(props) {
                     }
                 })
                 setGroupMemberSnapshot((prev) => [...prev,obj])
+                window.location.reload();
             }else{
                 alert("Please Fill out all the requirement");
                 return;

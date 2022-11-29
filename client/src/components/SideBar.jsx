@@ -168,9 +168,7 @@ export default function MiniDrawer({children, ...props}) {
             //OneDrive, should logout and login to google
             handleLogout();
             googleLogin();
-            
         }
-
     }
 
     const microsoftLogin = () => {
@@ -180,11 +178,8 @@ export default function MiniDrawer({children, ...props}) {
         if (props.userData.driveType !== "microsoft"){
             //OneDrive, should logout and login to google
             handleLogout();
-            microsoftLogin();
-            
-            
-        }
-        
+            microsoftLogin();            
+        }   
     }
 
     let twoD_Array = new Array(0);

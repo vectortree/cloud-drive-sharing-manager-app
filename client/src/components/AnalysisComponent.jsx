@@ -44,6 +44,7 @@ export default function AnalysisComponent(props) {
         } else if(props.text === "Deviant Sharing" && threshold > 50 ){
             let deviantSharingData = deviantSharing(selSnapshot.data, driveName, drivePath, threshold / 100, props.userData.driveType)
             console.log(deviantSharingData);
+            setFileData(deviantSharingData);
             if(deviantSharingData.length != 0){
                 const refinedData = makeFilesForDisplay(deviantSharingData.data,deviantSharingData.data,props.userData.driveType);
                 console.log("deviant sharing: ", refinedData);
@@ -52,7 +53,7 @@ export default function AnalysisComponent(props) {
         }else if(props.text === "Sharing Changes"){
             let sharingChange = snapshotsSharingChanges(selSnapshot.data, compSnapshot.data, props.userData.driveType);
             console.log("snapshot changes: ", sharingChange);
-
+            setFileData(sharingChange);
         }else if(props.text === "File-folder Sharing Differences"){
             let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot.data, driveName, drivePath, props.userData.driveType);
             console.log("file-folder differences: ", fileFolderSharingChange);
