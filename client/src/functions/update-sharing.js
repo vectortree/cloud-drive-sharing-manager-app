@@ -1,14 +1,108 @@
 function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, role, value, driveType) {
     // Note: This function manually updates the permissions of each file and returns a snapshot object
     // that can be used for checking requirements
-    let updatedSnapshot = [];
+
+    /*let updatedSnapshot = [];
     let fileIds = files.map(f => f.id);
     mostRecentFSSnapshot.filter(f => !fileIds.includes(f.id)).forEach(f => {
         updatedSnapshot.push(f);
-    });
-    //TODO
+    });*/
+    
+    let updatedSnapshot = mostRecentFSSnapshot.slice();
+    if(files.length == 0) return updatedSnapshot;
     if(driveType === "google") {
+        if(action === "add") {
+            if((type === "user" || type === "group" || type === "domain") && !value) return updatedSnapshot;
+            if(type !== "user" && type !== "group" && type !== "domain" && type !== "anyone") return updatedSnapshot;
+            if(role !== "writer" && role !== "reader" && role !== "commenter") return updatedSnapshot;
 
+            for(const file of files) {
+                // A user should only update permissions for files that include a permissions array
+                if(file.permissions) {
+                    // If permission of same {type, role, value} is not present in file.permissions,
+                    // then add new permission for file
+                    let present = false;
+                    for(const permission of file.permissions) {
+                        if(permission.type === type && permission.role === role) {
+                            if((permission.type === "user" || permission.type === "group") && permission.emailAddress.toLowerCase() === value.toLowerCase()) {
+                                present = true;
+                            }
+                            else if(permission.type === "domain" && permission.domain.toLowerCase() === value.toLowerCase()) {
+                                present = true;
+                            }
+                            else if(permission.type === "anyone") present = true;
+                        }
+                    }
+                    if(!present) {
+                        // Note: Index must exist since files is a subset of mostRecentFSSnapshot
+                        let index = updatedSnapshot.findIndex(f => f.id === file.id);
+                        if(type === "user" || type === "group") {
+                            updatedSnapshot[index].permissions.push({
+                                role: role,
+                                type: type,
+                                emailAddress: value.toLowerCase()
+                            });
+                        }
+                        else if(type === "domain") {
+                            updatedSnapshot[index].permissions.push({
+                                role: role,
+                                type: type,
+                                domain: value.toLowerCase()
+                            });
+                        }
+                        else if(type === "anyone") {
+                            updatedSnapshot[index].permissions.push({
+                                role: role,
+                                type: type
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        else if(action === "remove") {
+            if((type === "user" || type === "group" || type === "domain") && !value) return updatedSnapshot;
+            if(type !== "user" && type !== "group" && type !== "domain" && type !== "anyone") return updatedSnapshot;
+            if(role !== "writer" && role !== "reader" && role !== "commenter") return updatedSnapshot;
+
+            for(const file of files) {
+                // A user should only update permissions for files that include a permissions array
+                if(file.permissions) {
+                    // If permission of same {type, role, value} is present in file.permissions,
+                    // then remove permission for file
+                    let index = updatedSnapshot.findIndex(f => f.id === file.id);
+                    file.permissions.forEach((permission, permIndex) => {
+                        if(permission.type === type && permission.role === role) {
+                            if((permission.type === "user" || permission.type === "group") && permission.emailAddress.toLowerCase() === value.toLowerCase()) {
+                                updatedSnapshot[index].permissions.splice(permIndex, 1);
+                            }
+                            else if(permission.type === "domain" && permission.domain.toLowerCase() === value.toLowerCase()) {
+                                updatedSnapshot[index].permissions.splice(permIndex, 1);
+                            }
+                            else if(permission.type === "anyone") {
+                                updatedSnapshot[index].permissions.splice(permIndex, 1);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        // Note: Should only be for files in MyDrive
+        else if(action === "unshare") {
+            for(const file of files) {
+                // A user should only update permissions for files that include a permissions array
+                if(file.permissions) {
+                    // If permission has a non-"owner" role in file.permissions (i.e., file is shared),
+                    // then remove permission for file
+                    let index = updatedSnapshot.findIndex(f => f.id === file.id);
+                    file.permissions.forEach((permission, permIndex) => {
+                        if(permission.role !== "owner") {
+                            updatedSnapshot[index].permissions.splice(permIndex, 1);
+                        }
+                    });
+                }
+            }
+        }
     }
     else if(driveType === "microsoft") {
         let updatedFiles = mostRecentFSSnapshot.filter(f => fileIds.includes(f.id)).map(f => {
