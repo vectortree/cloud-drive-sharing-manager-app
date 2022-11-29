@@ -73,7 +73,7 @@ export default function ColumnMenuGrid( props) {
             handleOpenModalGMS()
         }
     }
-
+    const timestampTo = new Date(memberInfo.timestamp).toUTCString()
     return (
 
         <div >
@@ -103,7 +103,7 @@ export default function ColumnMenuGrid( props) {
                     <b>Snapshot Name : </b>{memberInfo.name}<br/>
                     <b>Group Name : </b>{memberInfo.groupName}<br/>
                     <b>Group Email : </b>{memberInfo.groupAddress}<br/>
-                    <b>TimeStamp : </b>{memberInfo.timestamp}<br/>
+                    <b>TimeStamp : </b>{timestampTo}<br/>
                     <br></br>
                 </div>
                     <GMSInfomation memberInfo = {memberInfo} handleClose={handleCloseModalGMS}/></BasicModal>
