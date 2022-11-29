@@ -29,12 +29,13 @@ import { serializeSearchQuery, deserializeSearchQuery, filterSnapshotBySearchQue
 import { getClosestGMSnapshots } from "../functions/gm-snapshots"
 import {useRecoilState, useResetRecoilState} from "recoil";
 import {
-    AccessControlData,
+    AccessControlData, fileData,
     FileSharingSnapShotData,
     GroupMembershipSnapshotsData,
     searchQueryHistoryData, selectedSnapshot
 } from "../recoil";
 import {checkRequirements} from "../functions/ac-requirements";
+import {makeFilesForDisplay} from "../functions/snapshot-files";
 
 // This is for the Header which is the very top of our website
 
@@ -76,7 +77,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         transition: theme.transitions.create('width'),
         width: '100%',
         [theme.breakpoints.up('md')]: {
-            width: '20ch',
+            width: '80ch',
         },
     },
 }));
@@ -90,7 +91,7 @@ export default function PrimarySearchAppBar(props) {
     const ResetFileSharing = useResetRecoilState(FileSharingSnapShotData);
     const ResetGMS = useResetRecoilState(GroupMembershipSnapshotsData);
     const ResetSearchQuery = useResetRecoilState(searchQueryHistoryData);
-
+    const [refinedData, setRefinedData] =useRecoilState(fileData);
     const navigate = useNavigate()
 
     const [openModal, setOpenModal] = React.useState(false);
@@ -164,6 +165,7 @@ export default function PrimarySearchAppBar(props) {
             const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
             api.addSearchQuery({id: 1, searchQuery: parsedSQ});
             console.log(filteredFiles);
+
         }
     }
 
@@ -221,18 +223,31 @@ export default function PrimarySearchAppBar(props) {
         </Menu>
     );
     const sendingQuery = (event) =>{
+
         if(event.code == "Enter"){
             if(searchQuery == ""){
                 alert("no SearchQuery")
             }else{
-                const query = searchQuery;
-                let sq = serializeSearchQuery(query, true);
-                if(sq.error) alert(sq.error);
-                else {
-                    setSearchQuery(query);
+                const parsedSQ = serializeSearchQuery(searchQuery.trim(), true);
+                console.log(parsedSQ);
+                if (!parsedSQ.error) {
+                    const unparsedSQ = deserializeSearchQuery(parsedSQ);
+                    console.log(unparsedSQ);
+                    let email;
+                    if (userProfile.user.driveType === "microsoft")
+                        email = userProfile.user.data.mail;
+                    else
+                        email = userProfile.user.data.email;
+                    let domain = email.substring(email.lastIndexOf("@") + 1);
+                    let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, userProfile.fileSharingSnapshots[0]);
+                    console.log(userProfile.fileSharingSnapshots[0]);
+                    let groups = true;
+                    const filteredFiles = filterSnapshotBySearchQuery(userProfile.fileSharingSnapshots[0].data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
+                    api.addSearchQuery({id: 1, searchQuery: parsedSQ});
+                    const arrayData = Array.from(filteredFiles);
+                    setRefinedData(makeFilesForDisplay(arrayData,arrayData,props.userData.driveType));
+                    navigate("/searchResult");
                 }
-                let closestGMSnapShots = getClosestGMSnapshots(props.userData.groupMembershipSnapshots, selSnapshot);
-                console.log( filterSnapshotBySearchQuery(props.userData.fileSharingSnapshots, sq, props.userData.email, props.userData.domain, props.userData.driveType, closestGMSnapShots, props.userData.groupMembershipSnapshots));
             }
         }
     }

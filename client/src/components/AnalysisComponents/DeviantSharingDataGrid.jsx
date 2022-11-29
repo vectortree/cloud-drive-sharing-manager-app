@@ -85,7 +85,7 @@ export default function DeviantSharingDataGrid(props) {
                                                     <>
                                                         Role: {permission.role}<br/>
                                                         Type: {permission.type}<br/>
-                                                        Email:{permission.value}<br/>
+                                                        Email:{permission.value}<br/><br/>
                                                     </>
                                                 )
                                             })}
