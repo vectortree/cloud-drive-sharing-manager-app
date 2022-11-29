@@ -42,6 +42,21 @@ module.exports = {
         const permissions = await client.api(`/drives/${driveId}/items/${itemId}/permissions`).get();
 
         return permissions;
+    },
+
+    createSharingLink: async function(accessToken, itemId, driveId, permission) {
+        const client = getAuthenticatedClient(accessToken);
+        await client.api(`/drives/${driveId}/items/${itemId}/createLink`).post(permission);
+    },
+
+    addPermission: async function(accessToken, itemId, driveId, permission) {
+        const client = getAuthenticatedClient(accessToken);
+        await client.api(`/drives/${driveId}/items/${itemId}/invite`).post(permission);
+    },
+
+    deletePermission: async function(accessToken, itemId, driveId, permissionId) {
+        const client = getAuthenticatedClient(accessToken);
+        await client.api(`/drives/${driveId}/items/${itemId}/permissions/${permissionId}`).delete();
     }
 }
 
