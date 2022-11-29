@@ -228,12 +228,13 @@ export default function AddRequirement(props) {
             }
             console.log(DataState);
             const query = QueryName;
-            const group = query["groups"] ? true : false;
+            const parsedSQ = serializeSearchQuery(query, true);
+            const group = parsedSQ["groups"] ? true : false;
             let id =id_generator(props.opdataSet);
             const accessControlData = {
                 id: id,
                 name: requirementName,
-                searchQuery: serializeSearchQuery(query, true),
+                searchQuery: parsedSQ,
                 group: group,
                 allowedReaders:allowedReaderArray,
                 allowedWriters: allowedWriter,

@@ -22,7 +22,7 @@ const SearchResult = (props) =>{
 
     return (
         <Grid>
-            <MiniDrawer components={flexibleData} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={flexibleData} type = "home" updateAllow={true} userData = {props.userData}/>
         </Grid>
     )
 }

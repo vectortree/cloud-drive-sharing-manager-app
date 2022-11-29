@@ -26,7 +26,6 @@ const MyPage = (props)=>{
         setSearchQuery(props.userData.searchQueryHistory);
     },[]);
 
-    console.log(FileSharing);
     const FileSharing_Controller = (data) =>{
         props.FileSharing_Handler([...FileSharing,data]);
         setFileSharing(
@@ -69,17 +68,27 @@ const MyPage = (props)=>{
         props.SearchQuery_Handler(SearchQueryData);
         setSearchQuery(SearchQueryData)
     }
-    console.log(SearchQuery);
+
 
     let searchQuery_Grid = [];
 
-
+    console.log(SearchQuery);
     for(let i = 0; i < SearchQuery.length; i++){
-        let queryString="";
-        for(let j = 0; j < SearchQuery[i].searchQuery.length; j++){
-            queryString += SearchQuery[i].searchQuery[j]
+        let queryString="{";
+        if(SearchQuery[i].searchQuery.argument){
+            queryString += SearchQuery[i].searchQuery.operator + ":"+SearchQuery[i].searchQuery.argument+"}"
+        }else if(SearchQuery[i].searchQuery.children){
+            const childrenLength = SearchQuery[i].searchQuery.children.length
+            console.log(childrenLength);
+            for(let j = 0; j < childrenLength   -1; j++){
+
+                queryString += SearchQuery[i].searchQuery.children[j].operator + ":"+SearchQuery[i].searchQuery.children[j].argument+" "+ SearchQuery[i].searchQuery.logicalOp+ " ";
+            }
+            console.log(queryString);
+            queryString += SearchQuery[i].searchQuery.children[childrenLength-1].operator + ":"+SearchQuery[i].searchQuery.children[childrenLength-1].argument+"}";
+
+            console.log(queryString);
         }
-        console.log(queryString);
         searchQuery_Grid.push(
             {
                 id: SearchQuery[i].id,
@@ -87,7 +96,7 @@ const MyPage = (props)=>{
             })
     }
     console.log(searchQuery_Grid);
-
+    console.log(SearchQuery);
     const sharingInfo= [
         <Profile userData = {props.userData}/>,
         <ColumnMenuGrid name="Access Control Requirements" type= "AccessControlRequirement"dataSet = {ACR} Data_Handler={ACR_Controller} Data_DeleteHandler={ACR_DeleteController}/>,

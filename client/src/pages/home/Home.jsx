@@ -34,7 +34,7 @@ const Home = (props) =>{
     console.log(fileData);
     return (
         <Grid>
-            <MiniDrawer components={fileData} type = "home" userData = {props.userData}/>
+            <MiniDrawer components={fileData} type = "home" updateAllow={false} userData = {props.userData}/>
         </Grid>
     )
 }
