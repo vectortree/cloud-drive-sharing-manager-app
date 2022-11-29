@@ -369,13 +369,73 @@ router.post('/unsharefiles', async (req, res) => {
         }
         return sendUserProfile(res, userProfile);
     });
-
 });
 
-// TODO
-router.post('/checksnapshotconsistency', async (req, res) => {
+router.get('/checksnapshotconsistency', async (req, res) => {
     // Check consistency of files and permissions between
     // cloud drive and most recent file-sharing snapshot
+    if(!req.user) return res.status(401).json({success: false, message: "Error"});
+
+    UserProfile.findById(req.user._id, async (err, userProfile) => {
+        if(err) console.log(err);
+        if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
+        if(userProfile.fileSharingSnapshots.length == 0) return res.status(400).json({success: false, message: "No file-sharing snapshot in user profile"});
+        if(userProfile.user.driveType === "google") {
+            // Make sure to refresh access token before attempting to access Google Drive API
+            if(userProfile.user.tokens.refresh_token) {
+                refresh.requestNewAccessToken(
+                    'google',
+                    userProfile.user.tokens.refresh_token,
+                    function (err, accessToken, refreshToken) {
+                        // Store new tokens in database
+                        userProfile.user.tokens.access_token = accessToken;
+                        userProfile.user.tokens.refresh_token = refreshToken;
+                        userProfile.save();
+                    },
+                );
+            }
+            const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
+                process.env.GOOGLE_CLIENT_SECRET, process.env.CLIENT_URL);
+            
+            oAuth2Client.setCredentials(userProfile.user.tokens);
+            // Create Google Drive object to call API
+            const googleDrive = google.drive({
+                version: 'v3',
+                auth: oAuth2Client
+            });
+            try {
+                // Check whether files in the most recent file-sharing snapshot exist in Google Drive
+                for(const file of userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data) {
+                    await googleDrive.files.get({
+                        fileId: file.id,
+                        supportsAllDrives: true
+                    });
+                }
+            } catch(err) {
+                console.log(err);
+                return res.status(200).json({success: false, message: "The most recent file-sharing snapshot is inconsistent (i.e., not up-to-date) with Google Drive! Please take a new file-sharing snapshot."});
+            }
+            try {
+                // Check whether file permissions match the permissions in Google Drive
+                for(const file of userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data) {
+                    if(file.permissions) {
+                        let drivePermissions = await getPermissionsGoogle(googleDrive, file.id);
+                        let drivePermissionsIds = new Set(drivePermissions.map(p => p.id));
+                        let snapshotPermissionIds = new Set(file.permissions.map(p => p.id));
+                        if(!setsEqual(drivePermissionsIds, snapshotPermissionIds))
+                            return res.status(200).json({success: false, message: "The most recent file-sharing snapshot is inconsistent (i.e., not up-to-date) with Google Drive! Please take a new file-sharing snapshot."});
+                    }
+                }
+                return res.status(200).json({success: true, message: "The most recent file-sharing snapshot is consistent (i.e., up-to-date) with Google Drive."});
+            } catch(err) {
+                console.log(err);
+                return res.status(500).json({success: false, message: "Error"});
+            }
+        }
+        // TODO
+        else if(userProfile.user.driveType === "microsoft") {
+        }
+    });
 });
 
 function getFilesIdsUnderFolder(snapshot, path, id) {
@@ -416,7 +476,7 @@ async function getPermissionsGoogle(googleDrive, id) {
     // Map each permission to its associated metadata (by making an API call per permission)
     updatedPermissions = await Promise.all(permissionsList.map(async (permission) => {
         let resp = await googleDrive.permissions.get({
-            fileId: file.id,
+            fileId: id,
             permissionId: permission.id,
             supportsAllDrives: true,
             fields: "*"
@@ -424,6 +484,14 @@ async function getPermissionsGoogle(googleDrive, id) {
         return resp.data;
     }));
     return updatedPermissions;
+}
+
+function setsEqual(s1, s2) {
+    if (s1.size != s2.size) return false;
+    for (const element of s1) {
+        if (!s2.has(element)) return false;
+    }
+    return true;
 }
 
 module.exports = router;
