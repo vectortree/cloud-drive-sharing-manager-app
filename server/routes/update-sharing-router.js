@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { google } = require('googleapis');
+const graph = require('../graph.js');
 const UserProfile = require('../models/UserProfile');
 const refresh = require('passport-oauth2-refresh');
 
@@ -108,7 +109,7 @@ router.post('/addpermission', async (req, res) => {
                             if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                                 // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
                                 // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id);
+                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, "google");
                                 for(const id of fileIds) {
                                     updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                     // Find file in most recent file-sharing snapshot and update its permissions
@@ -134,8 +135,106 @@ router.post('/addpermission', async (req, res) => {
                 return res.status(500).json({success: false, message: "Error"});
             }
         }
-        // TODO
+
         else if(userProfile.user.driveType === "microsoft") {
+            if(type === "users" && !value) return res.status(400).json({success: false, message: "Invalid data format"});
+            if(type !== "users" && type !== "organization" && type !== "anonymous") return res.status(400).json({success: false, message: "Invalid type"});
+            if((type === "users" && role !== "read" && role !== "write") || ((type === "organization" || type === "anonymous") && role !== "view" && role !== "review" && role !== "edit")) return res.status(400).json({success: false, message: "Invalid role"});
+            // Make sure to refresh access token before attempting to access Google Drive API
+            if(userProfile.user.tokens.refresh_token) {
+                refresh.requestNewAccessToken(
+                    'microsoft',
+                    userProfile.user.tokens.refresh_token,
+                    function (err, accessToken, refreshToken) {
+                        // Store new tokens in database
+                        userProfile.user.tokens.access_token = accessToken;
+                        userProfile.user.tokens.refresh_token = refreshToken;
+                        userProfile.save();
+                    }
+                );
+            }
+
+            const accessToken = userProfile.user.tokens.access_token;
+
+            try {
+                for(const file of files) {
+                    // If permission of same {type, role, value} is not present in file.permissions,
+                    // then make an API call to add new permission for file
+                    let present = false;
+                    for(const permission of file.permissions.value) {
+                        if ((type === "organization" || type === "anonymous") && permission.link && permission.link.scope === type && permission.link.type === role) {
+                            present = true
+                        }
+                        else if (type === "users" && permission.roles.includes(role)) {
+                            if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
+                                for (const user of permission.grantedToIdentitiesV2) {
+                                    if (user.siteUser.email.toLowerCase() === value.toLowerCase())
+                                        present = true;
+                                }
+                            } else if (permission.grantedToV2) {
+                                if (permission.grantedToV2.siteUser.email.toLowerCase() === value.toLowerCase())
+                                    present = true;
+                            }
+                        }
+                    }
+                    if(!present) {
+                        if(type === "users") {
+                            await graph.addPermission(
+                                accessToken, 
+                                file.id, 
+                                file.parentReference.driveId, 
+                                {
+                                    recipients: [
+                                        { email: value }
+                                    ],
+                                    roles: [ role ]
+                                }
+                            );
+                        }
+                        else {
+                            await graph.createSharingLink(
+                                accessToken, 
+                                file.id, 
+                                file.parentReference.driveId, 
+                                {
+                                    type: role,
+                                    scope: type
+                                }
+                            );
+                        }
+                        let updatedPermissions = await graph.getSharedItemPermissions(accessToken, file.id, file.parentReference.driveId);
+                        // Find file in most recent file-sharing snapshot and update its permissions
+                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                            if(f.id === file.id)
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                        });
+                        if(file.folder && file.folder.childCount > 0) {
+                            // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
+                            // and update each file's permissions
+                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.parentReference.path + '/' + file.name, file.id, "microsoft");
+                            for(const id of fileIds) {
+                                updatedPermissions = await graph.getSharedItemPermissions(accessToken, id, file.parentReference.driveId);
+                                // Find file in most recent file-sharing snapshot and update its permissions
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                                    if(f.id === id)
+                                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                                });
+                            }
+                        }
+                    }
+                }
+                // Log sharing changes
+                userProfile.sharingChangesLog.push({
+                    files: files,
+                    permissionType: type,
+                    permissionRole: role,
+                    permissionValue: value,
+                    action: 'add'
+                });
+            } catch(err) {
+                console.log(err);
+                return res.status(500).json({success: false, message: "Error"});
+            }
         }
         // Save to database
         try {
@@ -230,7 +329,7 @@ router.post('/removepermission', async (req, res) => {
                             if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                                 // If file is a folder, get file IDs of all files under it, make API calls to get permissions for each file,
                                 // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id);
+                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, "google");
                                 for(const id of fileIds) {
                                     updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                     // Find file in most recent file-sharing snapshot and update its permissions
@@ -256,8 +355,87 @@ router.post('/removepermission', async (req, res) => {
                 return res.status(500).json({success: false, message: "Error"});
             }
         }
-        // TODO
+
         else if(userProfile.user.driveType === "microsoft") {
+            if(type === "users" && !value) return res.status(400).json({success: false, message: "Invalid data format"});
+            if(type !== "users" && type !== "organization" && type !== "anonymous") return res.status(400).json({success: false, message: "Invalid type"});
+            if((type === "users" && role !== "read" && role !== "write") || ((type === "organization" || type === "anonymous") && role !== "view" && role !== "review" && role !== "edit")) return res.status(400).json({success: false, message: "Invalid role"});
+            // Make sure to refresh access token before attempting to access Google Drive API
+            if(userProfile.user.tokens.refresh_token) {
+                refresh.requestNewAccessToken(
+                    'microsoft',
+                    userProfile.user.tokens.refresh_token,
+                    function (err, accessToken, refreshToken) {
+                        // Store new tokens in database
+                        userProfile.user.tokens.access_token = accessToken;
+                        userProfile.user.tokens.refresh_token = refreshToken;
+                        userProfile.save();
+                    }
+                );
+            }
+
+            const accessToken = userProfile.user.tokens.access_token;
+
+            try {
+                for(const file of files) {
+                    // If permission of same {type, role, value} is not present in file.permissions,
+                    // then make an API call to add new permission for file
+                    let present = false;
+                    for(const permission of file.permissions.value) {
+                        if ((type === "organization" || type === "anonymous") && permission.link && permission.link.scope === type && permission.link.type === role) {
+                            await graph.deletePermission(accessToken, file.id, file.parentReference.driveId, permission.id);
+                            present = true;
+                        }
+                        else if (type === "users" && permission.roles.includes(role)) {
+                            if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
+                                for (const user of permission.grantedToIdentitiesV2) {
+                                    if (user.siteUser.email.toLowerCase() === value.toLowerCase()) {
+                                        await graph.deletePermission(accessToken, file.id, file.parentReference.driveId, permission.id);
+                                        present = true;
+                                    }
+                                }
+                            } else if (permission.grantedToV2) {
+                                if (permission.grantedToV2.siteUser.email.toLowerCase() === value.toLowerCase()) {
+                                    await graph.deletePermission(accessToken, file.id, file.parentReference.driveId, permission.id);
+                                    present = true;
+                                }
+                            }
+                        }
+                    }
+                    if(present) {
+                        let updatedPermissions = await graph.getSharedItemPermissions(accessToken, file.id, file.parentReference.driveId);
+                        // Find file in most recent file-sharing snapshot and update its permissions
+                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                            if(f.id === file.id)
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                        });
+                        if(file.folder && file.folder.childCount > 0) {
+                            // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
+                            // and update each file's permissions
+                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.parentReference.path + '/' + file.name, file.id, "microsoft");
+                            for(const id of fileIds) {
+                                updatedPermissions = await graph.getSharedItemPermissions(accessToken, id, file.parentReference.driveId);
+                                // Find file in most recent file-sharing snapshot and update its permissions
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                                    if(f.id === id)
+                                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                                });
+                            }
+                        }
+                    }
+                }
+                // Log sharing changes
+                userProfile.sharingChangesLog.push({
+                    files: files,
+                    permissionType: type,
+                    permissionRole: role,
+                    permissionValue: value,
+                    action: 'add'
+                });
+            } catch(err) {
+                console.log(err);
+                return res.status(500).json({success: false, message: "Error"});
+            }
         }
         // Save to database
         try {
@@ -282,12 +460,21 @@ router.post('/checksnapshotconsistency', async (req, res) => {
     // cloud drive and most recent file-sharing snapshot
 });
 
-function getFilesIdsUnderFolder(snapshot, path, id) {
+function getFilesIdsUnderFolder(snapshot, path, id, driveType) {
     let fileIds = [];
-    if(!path) return fileIds;
-    for(const file of snapshot) {
-        if(file.path && file.path.startsWith(path) && file.id !== id) {
-            fileIds.push(file.id);
+    if (driveType === "google") {
+        if(!path) return fileIds;
+        for(const file of snapshot) {
+            if(file.path && file.path.startsWith(path) && file.id !== id) {
+                fileIds.push(file.id);
+            }
+        }
+    }
+    else if (driveType === "microsoft") {
+        for(const file of snapshot) {
+            if(file.parentReference.path.startsWith(path) && file.id !== id) {
+                fileIds.push(file.id);
+            }
         }
     }
     return fileIds;
