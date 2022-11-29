@@ -106,7 +106,7 @@ export default function HomeHeader(props) {
                                         >
                                             <option value={"add"}>add</option>
                                             <option value={"remove"}>remove</option>
-                                            <option value={"unshare"}>unsharing</option>
+                                            <option value={"unshare"}>unshare</option>
                                         </Select>
                                     </FormControl>
                                     {action == "unshare" ? <></>:
@@ -120,7 +120,10 @@ export default function HomeHeader(props) {
                                                 input={<OutlinedInput label="Type" id="demo-dialog-native" />}
                                             >
                                                 <option value={"user"}>user</option>
-                                                <option value={"reader"}>reader</option>
+                                                {props.userData.driveType == "microsoft" ? <></>
+                                                :
+                                                <option value={"group"}>group</option>
+                                                }
                                                 <option value={"domain"}>domain</option>
                                                 <option value={"anyone"}>anyone</option>
                                             </Select>
@@ -134,12 +137,10 @@ export default function HomeHeader(props) {
                                         input={<OutlinedInput label="Role" id="demo-dialog-native" />}
                                         >
                                         <option value={"writer"}>writer</option>
+                                        <option value={"reader"}>reader</option>
                                             {props.userData.driveType == "microsoft" ? <></>
                                             :
-                                                <>
-                                                <option value={"group"}>group</option>
-                                                <option value={"commenter"}>commenter</option>
-                                                </>
+                                            <option value={"commenter"}>commenter</option>
                                             }
                                         </Select>
                                         </FormControl>
