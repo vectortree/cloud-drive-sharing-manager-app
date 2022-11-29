@@ -53,9 +53,10 @@ BootstrapDialogTitle.propTypes = {
 
 export default function FileFolderSharingDifferenceDataGrid(props) {
     const [open, setOpen] = React.useState(false);
-
-    const handleClickOpen = () => {
+    const [openIndex, setOpenIndex] = React.useState(0);
+    const handleClickOpen = (id) => {
         setOpen(true);
+        setOpenIndex(id);
     };
     const handleClose = () => {
         setOpen(false);
@@ -92,6 +93,7 @@ export default function FileFolderSharingDifferenceDataGrid(props) {
             width: 250,
         },
         {
+            headerName: 'Differences',
             width: 250,
             renderCell: (params) => (
                 <strong>
@@ -148,12 +150,11 @@ export default function FileFolderSharingDifferenceDataGrid(props) {
             </BootstrapDialogTitle>
             <DialogContent dividers>
                 <Typography gutterBottom>
-                    {formatedData.map((ele) =>{
-                        return ( ele.permissions.map((val)=>{
-                                    return <p>Role:{val.role} / Type:{val.type} / Email: {val.value}</p>
-                                })
-                        )
-                    })}
+                    {formatedData[openIndex] == undefined ?
+                    "": formatedData[openIndex].permissions.map((val)=>{
+                                return <p>Role:{val.role} / Type:{val.type} / Email: {val.value}</p>})
+
+                    }
 
                 </Typography>
             </DialogContent>
