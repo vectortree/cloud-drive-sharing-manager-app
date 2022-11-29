@@ -31,7 +31,7 @@ const Home = (props) =>{
     },[])
 
     const fileData = makeFilesForDisplay(selSnapshot.data,selSnapshot.data,props.userData.driveType);
-
+    console.log(fileData);
     return (
         <Grid>
             <MiniDrawer components={fileData} type = "home" userData = {props.userData}/>

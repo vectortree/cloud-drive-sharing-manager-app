@@ -49,12 +49,6 @@ export const GMSMember = atom({
 })
 export const fileData = atom({
     key:'fileData',
-    default:{
-        shared:{scope:""},
-        type:"",
-        size:0,
-        createdBy:{user:{displayName:""}},
-        permission:{value: [],direct:[],inherited:[]},
-        permissions:{value: [], direct:[],inherited:[]}
-    },
+    default:[]
+    ,
 })

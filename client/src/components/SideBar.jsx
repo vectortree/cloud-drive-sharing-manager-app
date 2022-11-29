@@ -191,6 +191,7 @@ export default function MiniDrawer({children, ...props}) {
 
         if(sortFlag === 0){
             if(ResetSortingData === "owner"){
+                console.log(props.components);
                 sortedArr = props.components.sort(function (a, b) {
                     let x = a.owner.toLowerCase();
                     let y = b.owner.toLowerCase();
