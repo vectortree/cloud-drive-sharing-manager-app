@@ -17,9 +17,16 @@ const bull = (
 
 export default function DeviantSharingDataGrid(props) {
     console.log(props.gridData);
+    let dataSet = props.gridData;
+    if(dataSet[0]){
+        if(dataSet[0].differences){
+            dataSet = [];
+        }
+    }
+
     return (
         <>
-            {props.gridData.map((data) =>{
+            {dataSet.map((data) =>{
                 return(
                     <Card sx={{ minWidth: 275 }}>
                         <CardContent>

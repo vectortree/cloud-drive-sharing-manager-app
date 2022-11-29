@@ -52,6 +52,13 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function FileFolderSharingDifferenceDataGrid(props) {
+    console.log(props.gridData);
+    let dataSet = props.gridData;
+    if(dataSet[0]){
+        if(dataSet[0].minorityPermissionSets){
+            dataSet = [];
+        }
+    }
     const [open, setOpen] = React.useState(false);
     const [openIndex, setOpenIndex] = React.useState(0);
     const handleClickOpen = (id) => {
@@ -113,16 +120,16 @@ export default function FileFolderSharingDifferenceDataGrid(props) {
 
     let formatedData =[];
     let index = 1;
-    for(let i = 0; i < props.gridData.length; i++){
-        for(let j = 0; j < props.gridData[i].differences.length; j++){
+    for(let i = 0; i < dataSet.length; i++){
+        for(let j = 0; j < dataSet[i].differences.length; j++){
             let obj ={}
             obj.id = index++;
-            obj.folderName = props.gridData[i].folder.name;
-            obj.driveName = props.gridData[i].folder.driveName;
-            obj.folderPath = props.gridData[i].folder.path;
-            obj.fileName = props.gridData[i].differences[j].file.name;
-            obj.filePath = props.gridData[i].differences[j].file.path;
-            obj.permissions = props.gridData[i].differences[j].permissions;
+            obj.folderName = dataSet[i].folder.name;
+            obj.driveName = dataSet[i].folder.driveName;
+            obj.folderPath = dataSet[i].folder.path;
+            obj.fileName = dataSet[i].differences[j].file.name;
+            obj.filePath = dataSet[i].differences[j].file.path;
+            obj.permissions = dataSet[i].differences[j].permissions;
             formatedData.push(obj);
         }
     }
