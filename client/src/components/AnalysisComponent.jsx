@@ -24,6 +24,7 @@ import DeviantSharingDataGrid from "./AnalysisComponents/DeviantSharingDataGrid"
 import SharingChangesDataGrid from "./AnalysisComponents/SharingChangesDataGrid";
 import FileFolderSharingDifferenceDataGrid from "./AnalysisComponents/FileFolderSharingDifferenceDataGrid";
 import RedundantSharingDataGrid from "./AnalysisComponents/RedundantSharingDataGrid";
+import {useEffect} from "react";
 
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
@@ -33,7 +34,9 @@ export default function AnalysisComponent(props) {
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
 
     const [fileData, setFileData] = React.useState([]);
-
+    useEffect(() => {
+        setFileData([]);
+    },[])
     const handleThreshold = (event) =>{
         setThreshold(event.target.value);
     }
