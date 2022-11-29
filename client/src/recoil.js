@@ -37,7 +37,7 @@ export const selectedCheckSnapshot = atom({
 })
 export const fileSortingData = atom({
     key:'fileSortingData',
-    default:"Owner",
+    default:"owner",
 })
 export const SortingFlag = atom({
     key:'SortingFlag',
