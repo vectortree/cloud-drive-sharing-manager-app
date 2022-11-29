@@ -20,7 +20,8 @@ export default function SharingChangesDataGrid(props) {
     let newData = props.girdData.new;
     if(editData == undefined){
         editData = [];
-    }else if(newData == undefined){
+    }
+    if(newData == undefined){
         newData = [];
     }
     console.log(editData);
