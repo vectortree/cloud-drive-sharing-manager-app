@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import {useRecoilState} from "recoil";
 import {selectedSnapshot} from "../recoil";
 
-const ITEM_HEIGHT = 48;
+const ITEM_HEIGHT = 46;
 const ITEM_PADDING_TOP = 0;
 const MenuProps = {
     PaperProps: {

@@ -34,7 +34,7 @@ import {
     AccessControlData,
     FileSharingSnapShotData,
     GroupMembershipSnapshotsData,
-    searchQueryHistoryData, selectedSnapshot
+    searchQueryHistoryData, fileSortingData
 } from "../recoil";
 
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -51,6 +51,8 @@ import HomeHeader from "./HomeHeader";
 import MultiActionAreaCard from "./Folder";
 import SideBarFileInfo from "./SideBarFileInfo";
 import { AuthContext } from '../auth/auth';
+
+import {SortingFlag} from "../recoil";
 
 
 //This is for the left side bar
@@ -137,7 +139,10 @@ export default function MiniDrawer({children, ...props}) {
     const ResetFileSharing = useResetRecoilState(FileSharingSnapShotData);
     const ResetGMS = useResetRecoilState(GroupMembershipSnapshotsData);
     const ResetSearchQuery = useResetRecoilState(searchQueryHistoryData);
+    const [ResetSortingData, setResetSortingData] = useRecoilState(fileSortingData);
     const { userProfile, setUserProfile } = useContext(AuthContext);
+
+    const [sortFlag, setSortFlag] = useRecoilState(SortingFlag);
 
     const handleLogout = () => {
         if(userProfile) {
@@ -187,13 +192,94 @@ export default function MiniDrawer({children, ...props}) {
         twoD_Array.push([]);
     }
     if(props.type === "home"){
-        console.log(props.components);
-        for(let i =0; i < props.components.length; i+=4){
+        let sortedArr = []
+
+        if(sortFlag === 0){
+            if(ResetSortingData === "owner"){
+                sortedArr = props.components.sort(function (a, b) {
+                    let x = a.owner.toLowerCase();
+                    let y = b.owner.toLowerCase();
+                    if (x < y) { return -1;}
+                    if (x > y) { return 1; }
+                    return 0;
+                });
+            }
+            else if(ResetSortingData === "createdTime"){
+                sortedArr = props.components.sort((a, b) => new Date(a.createdTime) - new Date(b.createdTime));
+            }
+            else if(ResetSortingData === "modifiedTime"){
+                sortedArr = props.components.sort((a, b) => new Date(a.modifiedTime) - new Date(b.modifiedTime));
+                }
+            else if(ResetSortingData === "name"){
+                sortedArr = props.components.sort(function (a, b) {
+                    let x = a.name.toLowerCase();
+                    let y = b.name.toLowerCase();
+                    if (x < y) { return -1;}
+                    if (x > y) { return 1; }
+                    return 0;
+                });     
+            }
+            else if(ResetSortingData === "driveName"){          
+                sortedArr = props.components.sort(function (a, b) {
+                    let x = a.driveName.toLowerCase();
+                    let y = b.driveName.toLowerCase();
+                    if (x < y) { return -1;}
+                    if (x > y) { return 1; }
+                    return 0;
+                });
+            }
+            else if(ResetSortingData === "size"){
+                sortedArr = props.components.sort((a, b) => a.size - b.size);
+            }
+
+        }
+        else if(sortFlag === 1){
+            if(ResetSortingData === "owner"){
+                sortedArr = props.components.sort(function (a, b) {
+                    let x = a.owner.toLowerCase();
+                    let y = b.owner.toLowerCase();
+                    if (x < y) { return 1;}
+                    if (x > y) { return -1; }
+                    return 0;
+                });
+            }
+            else if(ResetSortingData === "createdTime"){
+                sortedArr = props.components.sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime));
+            }
+            else if(ResetSortingData === "modifiedTime"){
+                sortedArr = props.components.sort((a, b) => new Date(b.modifiedTime) - new Date(a.modifiedTime));
+                }
+            else if(ResetSortingData === "name"){
+                sortedArr = props.components.sort(function (a, b) {
+                    let x = a.name.toLowerCase();
+                    let y = b.name.toLowerCase();
+                    if (x < y) { return 1;}
+                    if (x > y) { return -1; }
+                    return 0;
+                });     
+            }
+            else if(ResetSortingData === "driveName"){          
+                sortedArr = props.components.sort(function (a, b) {
+                    let x = a.driveName.toLowerCase();
+                    let y = b.driveName.toLowerCase();
+                    if (x < y) { return 1;}
+                    if (x > y) { return -1; }
+                    return 0;
+                });
+            }
+            else if(ResetSortingData === "size"){
+                sortedArr = props.components.sort((a, b) => b.size - a.size);
+            }
+
+        }
+        
+
+        for(let i =0; i < sortedArr.length; i+=4){
             for(let j = 0; j < 4; j++){
-                if(props.components[i+j] === undefined){
+                if(sortedArr[i+j] === undefined){
                     break;
                 }else{
-                    twoD_Array[i/4][j] = props.components[i+j];
+                    twoD_Array[i/4][j] = sortedArr[i+j];
                 }
             }
         }
