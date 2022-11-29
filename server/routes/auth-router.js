@@ -26,6 +26,7 @@ router.get('/getuserprofile', async (req, res) => {
 });
 
 router.get('/logout', async (req, res) => {
+    
     if(req.user) {
         req.logout(function(err) {
             if(err) return next(err);
