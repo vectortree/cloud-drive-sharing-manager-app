@@ -25,6 +25,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import ViolationModalTable from "./ViolationModal";
 
 export default function HomeHeader(props) {
     const [sortFlag, setSortFlag] = useRecoilState(SortingFlag);
@@ -34,7 +35,10 @@ export default function HomeHeader(props) {
     const [role, setRole] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [rawFile, setRawFile] = useRecoilState(rawFileData);
-
+    const [openModal, setOpenModal] = React.useState(false);
+    const [selectionModel, setSelectionModel] = React.useState([]);
+    const [fileData,setFileData] = React.useState("");
+    const handleCloseModal = () => setOpenModal(false);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -68,8 +72,11 @@ export default function HomeHeader(props) {
         for(let i = 0; i < rawFile.length; i++){
             newArray.push(rawFile[i]);
         }
-        console.log(applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType));
+        let fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
+        console.log(fileData);
+        setFileData(fileData);
         setOpen(false);
+        setOpenModal(true);
     }
     const handleSortFlag = () => {
         if(sortFlag == 0){
@@ -79,6 +86,7 @@ export default function HomeHeader(props) {
             setSortFlag(0)
         }
     }
+    const acr_for_violation ={ACR_data: props.userData.accessControlRequirements, userData:props.userData, size:700}
 
     return (
         <>
@@ -177,7 +185,7 @@ export default function HomeHeader(props) {
                             <Button onClick={handleUpdate}>UPDATE</Button>
                         </DialogActions>
                     </Dialog>
-
+                <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {acr_for_violation} type="SearchQuery" fileSet={fileData}selectionModel = {selectionModel}/></BasicModal>
                 <MultipleSelectPlaceholder userData={props.userData} snapshot={props.snapShotData}/>
                 {props.updateAllow ?
                     <Button variant="outlined" onClick={handleClickOpen} style={{float:"right"}}>

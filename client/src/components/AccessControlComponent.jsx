@@ -74,7 +74,7 @@ export default function AccessControlComponent(props) {
             &emsp;&emsp;
             <b style={{color:"gray"}}>{checkSnapShot.name}</b>
             <Button onClick = {searchQueryModalOpen} style={{float:"right", border:1,borderStyle:"solid", borderBlockColor:"black"}}>Check Requirement</Button>
-            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {props} selectionModel = {selectionModel}/></BasicModal>
+            <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} type="ACR" components = {props} selectionModel = {selectionModel}/></BasicModal>
             <br></br>
             <br></br>
             <DataGrid

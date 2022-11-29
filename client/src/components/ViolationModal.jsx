@@ -40,8 +40,9 @@ const columns = [
 
 
 export default function ViolationModal(props) {
-    console.log(props.selectionModel)
+    console.log(props.fileSet);
     let selectedRequirements = []
+    console.log(props.components);
     props.selectionModel.map((idx) => {
         selectedRequirements.push(props.components.ACR_data[idx])
         console.log(idx)        
@@ -52,9 +53,15 @@ export default function ViolationModal(props) {
 
   const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
   const [checkSnapShot, setCheckSnapShot] = useRecoilState(selectedCheckSnapshot);
-
-  let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, checkSnapShot)
-  let checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, selectedRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )
+  let checkRequirement=[];
+  let closestGMSnapShotsData =[];
+  if(props.type=="SearchQuery"){
+      closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, props.fileSet);
+      checkRequirement = checkRequirements(props.fileSet, closestGMSnapShotsData, selectedRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )
+  }else{
+      closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, checkSnapShot)
+      checkRequirement = checkRequirements(checkSnapShot, closestGMSnapShotsData, selectedRequirements, props.components.userData.email, props.components.userData.domain, props.components.userData.driveType )
+  }
 
   let ch_req_obj = [] 
   checkRequirement.map((req) => {
