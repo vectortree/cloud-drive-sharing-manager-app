@@ -27,15 +27,15 @@ function deviantSharing(snapshot, drive, path, threshold, driveType) {
                     const filePermissionIds = f.permissions.value.map(p => p.id);
                     let perms = permissionsFreq.find(p => setsEqual(new Set(p.permissionSet.map(p1 => p1.id)), new Set(filePermissionIds)));
                     if (perms)
-                        perms["files"].push(f);
+                        perms["files"].push({ name: f.name, driveName: f.driveName, path: f.parentReference.path });
                     else
-                        permissionsFreq.push({ permissionSet: f.permissions.value, files: [f] });
+                        permissionsFreq.push({ permissionSet: permissionsForDisplay(f.permissions.value), files: [{ name: f.name, driveName: f.driveName, path: f.parentReference.path }] });
                 }
 
                 permissionsFreq.sort((p1, p2) => p2.files.length - p1.files.length);
                 if (permissionsFreq.length > 1 && permissionsFreq[0].files.length / filesInFolder.length >= threshold) {
                     fileDeviations.push({
-                        folder: file,
+                        folder: { name: file.name, driveName: file.driveName, path: file.parentReference.path },
                         majorityPermissionSet: permissionsFreq[0],
                         minorityPermissionSets: permissionsFreq.slice(1)
                     });
@@ -120,14 +120,14 @@ function fileFolderSharingChanges(snapshot, drive, path, driveType) {
                     const filePermissionIds = f.permissions.value.map(p => p.id);
                     if (!setsEqual(new Set(filePermissionIds), new Set(folderPermissionIds)))
                         permissionDifferences.push({
-                            file: f,
-                            permissions: new Set(f.permissions.value)
+                            file: { name: f.name, driveName: f.driveName, path: f.parentReference.path },
+                            permissions: permissionsForDisplay(f.permissions.value)
                         });
                 }
 
                 if (permissionDifferences.length > 0)
                     fileFolderDifferences.push({
-                        folder: file,
+                        folder: { name: file.name, driveName: file.driveName, path: file.parentReference.path },
                         differences: permissionDifferences
                     });
             }
@@ -193,14 +193,18 @@ function snapshotsSharingChanges(snapshot1, snapshot2, driveType) {
 
                 let addedPermissionIds = file2PermissionIds.filter(id => !file1PermissionIds.includes(id));
                 let addedPermissions = file2.permissions.value.filter(p => addedPermissionIds.includes(p.id));
+                let addedPermsForDisplay = permissionsForDisplay(addedPermissions);
 
                 let removedPermissionIds = file1PermissionIds.filter(id => !file2PermissionIds.includes(id));
                 let removedPermissions = file1.permissions.value.filter(p => removedPermissionIds.includes(p.id));
+                let removedPermsForDisplay = permissionsForDisplay(removedPermissions);
 
                 if (addedPermissions.length > 0 || removedPermissions.length > 0)
-                    editedFiles.push({ file: file2, addedPermissions: addedPermissions, removedPermissions: removedPermissions });
+                    editedFiles.push({ file: { name: file2.name, driveName: file2.driveName, path: file2.parentReference.path }, addedPermissions: addedPermsForDisplay, removedPermissions: removedPermsForDisplay });
                 return false;
             }
+        }).map(f => {
+            return { name: f.name, driveName: f.driveName, path: f.parentReference.path };
         });
     }
 
@@ -228,6 +232,43 @@ function snapshotsSharingChanges(snapshot1, snapshot2, driveType) {
     }
 
     return { new: newFiles, edited: editedFiles };
+}
+
+function permissionsForDisplay(permissions) {
+    let permsForDisplay = [];
+    for (const permission of permissions) {
+        if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0) {
+            permsForDisplay.push({
+                id: permission.id,
+                role: permission.roles.length > 0 ? permission.roles[0] : "unavailable",
+                type: "users",
+                value: permission.grantedToIdentitiesV2.map(user => user.siteUser.email)
+            });
+        } else if (permission.grantedToV2) {
+            permsForDisplay.push({
+                id: permission.id,
+                role: permission.roles.length > 0 ? permission.roles[0] : "unavailable",
+                type: "users",
+                value: permission.grantedToV2.siteUser.email
+            });
+        } else if (permission.link && permission.link.scope === "anonymous") {
+            permsForDisplay.push({
+                id: permission.id,
+                role: permission.link.type,
+                type: "anonymous",
+                value: "n/a"
+            });
+        } else if (permission.link && permission.link.scope === "organization") {
+            let owner = permissions.find(p => p.roles.includes("owner")).grantedToV2.siteUser.email;
+            permsForDisplay.push({
+                id: permission.id,
+                role: permission.link.type,
+                type: "organization",
+                value: owner.substring(owner.lastIndexOf("@") + 1)
+            });
+        }
+    }
+    return permsForDisplay;
 }
 
 function setsEqual(s1, s2) {
