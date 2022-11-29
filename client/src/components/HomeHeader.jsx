@@ -119,13 +119,21 @@ export default function HomeHeader(props) {
                                                 onChange={handleTypeChange}
                                                 input={<OutlinedInput label="Type" id="demo-dialog-native" />}
                                             >
-                                                <option value={"user"}>user</option>
-                                                {props.userData.driveType == "microsoft" ? <></>
+                                                {props.userData.driveType == "microsoft" ? 
+                                                <>
+                                                    <option value={"users"}>users</option>
+                                                    <option value={"organization"}>organization</option>
+                                                    <option value={"anonymous"}>anonymous</option>
+                                                </>
                                                 :
-                                                <option value={"group"}>group</option>
+                                                <>
+                                                    <option value={"user"}>user</option>
+                                                    <option value={"group"}>group</option>
+                                                    <option value={"domain"}>domain</option>
+                                                    <option value={"anyone"}>anyone</option>
+                                                </>
                                                 }
-                                                <option value={"domain"}>domain</option>
-                                                <option value={"anyone"}>anyone</option>
+                                                
                                             </Select>
                                         </FormControl>
                                         <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -136,11 +144,17 @@ export default function HomeHeader(props) {
                                         onChange={handleRoleChange}
                                         input={<OutlinedInput label="Role" id="demo-dialog-native" />}
                                         >
-                                        <option value={"writer"}>writer</option>
-                                        <option value={"reader"}>reader</option>
-                                            {props.userData.driveType == "microsoft" ? <></>
+                                            {props.userData.driveType == "microsoft" ? 
+                                            <>
+                                                <option value={"read"}>read</option>
+                                                <option value={"write"}>write</option>
+                                            </>
                                             :
-                                            <option value={"commenter"}>commenter</option>
+                                            <>
+                                                <option value={"reader"}>reader</option>
+                                                <option value={"writer"}>writer</option>
+                                                <option value={"commenter"}>commenter</option>
+                                            </>
                                             }
                                         </Select>
                                         </FormControl>
