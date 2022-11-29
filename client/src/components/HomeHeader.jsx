@@ -91,7 +91,7 @@ export default function HomeHeader(props) {
     return (
         <>
             <Typography>
-                {props.userData.driveType == "microsoft" ? "One":"Google"}Drive &emsp;&emsp;
+                {props.userData.driveType == "microsoft" ? "Microsoft OneDrive" : "Google Drive" } &emsp;&emsp;
             <>
             <Button onClick={handleSortFlag} sx = {{fontSize : "20px", fontWeight: "700" , lineHeight: "1.5"}}>
                     Sorting
