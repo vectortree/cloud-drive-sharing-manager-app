@@ -67,12 +67,14 @@ function deviantSharing(snapshot, drive, path, threshold, driveType) {
                 // Determine the frequency of each possible set of permissions in the set of files
                 let permissionsFreq = [];
                 for (const f of filesInFolder) {
-                    const filePermissionIds = f.permissions.map(p => p.id);
-                    let perms = permissionsFreq.find(p => setsEqual(new Set(p.permissionSet.map(p1 => p1.id)), new Set(filePermissionIds)));
-                    if (perms)
-                        perms["files"].push(f);
-                    else
-                        permissionsFreq.push({ permissionSet: f.permissions, files: [f] });
+                    if (f.permissions) {
+                        const filePermissionIds = f.permissions.map(p => p.id);
+                        let perms = permissionsFreq.find(p => setsEqual(new Set(p.permissionSet.map(p1 => p1.id)), new Set(filePermissionIds)));
+                        if (perms)
+                            perms["files"].push(f);
+                        else
+                            permissionsFreq.push({ permissionSet: f.permissions, files: [f] });
+                    }
                 }
 
                 permissionsFreq.sort((p1, p2) => p2.files.length - p1.files.length);
@@ -148,7 +150,7 @@ function fileFolderSharingChanges(snapshot, drive, path, driveType) {
             files = snapshot;
 
         files.forEach(file => {
-            if (file.mimeType === 'application/vnd.google-apps.folder') {
+            if (file.mimeType === 'application/vnd.google-apps.folder' && file.permissions) {
                 // Retrieve all files in the folder
                 let filesInFolder = files.filter(f => {
                     return f.parents && f.parents.length > 0 && f.parents[0] === file.id;
@@ -158,12 +160,14 @@ function fileFolderSharingChanges(snapshot, drive, path, driveType) {
                 let permissionDifferences = [];
                 const folderPermissionIds = file.permissions.map(p => p.id);
                 for (const f of filesInFolder) {
-                    const filePermissionIds = f.permissions.map(p => p.id);
-                    if (!setsEqual(new Set(filePermissionIds), new Set(folderPermissionIds)))
-                        permissionDifferences.push({
-                            file: f,
-                            permissions: new Set(f.permissions)
-                        });
+                    if (f.permissions) {
+                        const filePermissionIds = f.permissions.map(p => p.id);
+                        if (!setsEqual(new Set(filePermissionIds), new Set(folderPermissionIds)))
+                            permissionDifferences.push({
+                                file: f,
+                                permissions: new Set(f.permissions)
+                            });
+                    }
                 }
 
                 if (permissionDifferences.length > 0)
@@ -215,17 +219,19 @@ function snapshotsSharingChanges(snapshot1, snapshot2, driveType) {
             if (!file1) {
                 return true;
             } else {
-                let file1PermissionIds = file1.permissions.map(p => p.id);
-                let file2PermissionIds = file2.permissions.map(p => p.id);
+                if(file1.permissions && file2.permissions) {
+                    let file1PermissionIds = file1.permissions.map(p => p.id);
+                    let file2PermissionIds = file2.permissions.map(p => p.id);
 
-                let addedPermissionIds = file2PermissionIds.filter(id => !file1PermissionIds.includes(id));
-                let addedPermissions = file2.permissions.filter(p => addedPermissionIds.includes(p.id));
+                    let addedPermissionIds = file2PermissionIds.filter(id => !file1PermissionIds.includes(id));
+                    let addedPermissions = file2.permissions.filter(p => addedPermissionIds.includes(p.id));
 
-                let removedPermissionIds = file1PermissionIds.filter(id => !file2PermissionIds.includes(id));
-                let removedPermissions = file1.permissions.filter(p => removedPermissionIds.includes(p.id));
+                    let removedPermissionIds = file1PermissionIds.filter(id => !file2PermissionIds.includes(id));
+                    let removedPermissions = file1.permissions.filter(p => removedPermissionIds.includes(p.id));
 
-                if (addedPermissions.length > 0 || removedPermissions.length > 0)
-                    editedFiles.push({ file: file2, addedPermissions: addedPermissions, removedPermissions: removedPermissions });
+                    if (addedPermissions.length > 0 || removedPermissions.length > 0)
+                        editedFiles.push({ file: file2, addedPermissions: addedPermissions, removedPermissions: removedPermissions });
+                }
                 return false;
             }
         });
