@@ -205,7 +205,7 @@ export default function ColorRadioButtons(props) {
                     </Button>
                     <CircularProgress style={{display:"hidden"}} />
                 </> :
-                <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} >
+                <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={handleCreateSnapshot}>
                     Submit
                 </Button>}
         </div>
