@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useDemoData } from '@mui/x-data-grid-generator';
+
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -16,7 +16,14 @@ import {selectedSnapshot} from "../recoil";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 
+
+
 import Select from '@mui/material/Select';
+import {makeFilesForDisplay} from "../functions/snapshot-files";
+import DeviantSharingDataGrid from "./AnalysisComponents/DeviantSharingDataGrid";
+import SharingChangesDataGrid from "./AnalysisComponents/SharingChangesDataGrid";
+import FileFolderSharingDifferenceDataGrid from "./AnalysisComponents/FileFolderSharingDifferenceDataGrid";
+import RedundantSharingDataGrid from "./AnalysisComponents/RedundantSharingDataGrid";
 
 export default function AnalysisComponent(props) {
     const [ threshold,setThreshold ] = React.useState(0);
@@ -25,28 +32,31 @@ export default function AnalysisComponent(props) {
     const [ compSnapshot, setcompSnapshot] = React.useState();
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
 
-    const { data, loading } = useDemoData({
-        dataSet: 'Commodity',
-        rowLength: 100,
-        maxColumns: 10,
-    });
+    const [fileData, setFileData] = React.useState([]);
+
     const handleThreshold = (event) =>{
         setThreshold(event.target.value);
     }
 
     const handleClick = () =>{
-        console.log(selSnapshot);
         if(props.text === "Deviant Sharing" && threshold <= 50 ){
             alert("Threshold should be greater than 50%");
         } else if(props.text === "Deviant Sharing" && threshold > 50 ){
             let deviantSharingData = deviantSharing(selSnapshot.data, driveName, drivePath, threshold / 100, props.userData.driveType)
-            console.log("deviant sharing: ", deviantSharingData);
+            console.log(deviantSharingData);
+            if(deviantSharingData.length != 0){
+                const refinedData = makeFilesForDisplay(deviantSharingData.data,deviantSharingData.data,props.userData.driveType);
+                console.log("deviant sharing: ", refinedData);
+                setFileData(refinedData.data);
+            }
         }else if(props.text === "Sharing Changes"){
             let sharingChange = snapshotsSharingChanges(selSnapshot.data, compSnapshot.data, props.userData.driveType);
             console.log("snapshot changes: ", sharingChange);
+
         }else if(props.text === "File-folder Sharing Differences"){
             let fileFolderSharingChange = fileFolderSharingChanges(selSnapshot.data, driveName, drivePath, props.userData.driveType);
             console.log("file-folder differences: ", fileFolderSharingChange);
+            setFileData(fileFolderSharingChange);
         }else if(props.text == "Redundant Sharing"){
 
         }else{
@@ -63,15 +73,6 @@ export default function AnalysisComponent(props) {
         console.log(e.target.value);
         setcompSnapshot(e.target.value);
     }
-    const columns = [
-        {field: 'Title', headerName: 'Title', width: 400,editable: true,sortable: true,},
-        {field: 'Date', headerName: 'Date', width: 300,sortable: true,editable: true,},
-        {field: 'Owner', headerName: 'Owner', width: 250 ,editable: true,sortable: true,},
-        {field: 'Status', headerName: 'Status', width: 130 ,type:"boolean",editable: true,sortable: true,},
-        {field: 'Permission', headerName: 'Permission', width: 130 ,editable: true,sortable: true,},
-    ];
-
-
     return (
         <>
             <h3>
@@ -133,25 +134,17 @@ export default function AnalysisComponent(props) {
                 <Button variant="contained" value={props.text} endIcon={<SendIcon />} style={{color:"gray"}} onClick={handleClick} >
                     Analyze
                 </Button>
-
             </h3>
-        <div style={{ height: 600, width: '100%' }}>
-            <DataGrid
-                {...data}
-                columns={columns}
-                initialState={{
-                    ...data.initialState,
-                    filter: {
-                        filterModel: {
-                            items: [{ columnField: 'quantity', operatorValue: '>', value: 10000 }],
-                        },
-                    },
-                    sorting: {
-                        sortModel: [{ field: 'desk', sort: 'asc' }],
-                    },
-                }}
-            />
-        </div>
+            {props.text == "Deviant Sharing" ?
+                <DeviantSharingDataGrid gridData={fileData}/> :
+                props.text == "Sharing Changes" ?
+                    <SharingChangesDataGrid girdData={fileData}/> :
+                    props.text == "File-folder Sharing Differences" ?
+                        <FileFolderSharingDifferenceDataGrid gridData={fileData}/>:
+                        props.text == "Redundant Sharing" ?
+                            <RedundantSharingDataGrid gridData={fileData}/>
+                            : ""
+            }
         </>
     );
 }

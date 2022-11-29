@@ -23,7 +23,6 @@ function makeFilesForDisplay(snapshot, files, driveType) {
     else if (driveType === "microsoft") {
 
         files.forEach((file) => {
-            console.log(file.permissions);
             filesForDisplay.push({
                 name: file.name,
                 mimeType: file.file ? file.file.mimeType : "application/folder",
@@ -88,12 +87,9 @@ function partitionPermissions(snapshot, file, driveType) {
     }
 
     else if(driveType === "microsoft") {
-        console.log(file);
         let directPermissions = file.permissions.value;
         let inheritedPermissions = [];
-        console.log(snapshot);
         let parent = snapshot == undefined || snapshot == {} ? false : snapshot.find(f => {
-            console.log(f.id);
             if(f.id != undefined){
                 return f.id === file.parentReference.id
             }else{
