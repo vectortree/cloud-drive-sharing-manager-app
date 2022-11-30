@@ -170,8 +170,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                             // Store new tokens in database
                             userProfile.user.tokens.access_token = accessToken;
                             userProfile.user.tokens.refresh_token = refreshToken;
-                            userProfile.save();
-                        },
+                        }
                     );
                 }
 
@@ -192,8 +191,7 @@ router.post('/createfilesharingsnapshot', async (req, res) => {
                             // Store new tokens in database
                             userProfile.user.tokens.access_token = accessToken;
                             userProfile.user.tokens.refresh_token = refreshToken;
-                            userProfile.save();
-                        },
+                        }
                     );
                 }
                 const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,

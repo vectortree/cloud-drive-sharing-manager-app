@@ -37,8 +37,7 @@ router.post('/addpermission', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
-                    },
+                    }
                 );
             }
             const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
@@ -51,24 +50,25 @@ router.post('/addpermission', async (req, res) => {
                 auth: oAuth2Client
             });
             try {
+                let present = {};
                 for(const file of files) {
                     // A user is only authorized to make permission requests for files that include a permissions array
                     if(file.permissions) {
                         // If permission of same {type, role, value} is not present in file.permissions,
                         // then make an API call to add new permission for file
-                        let present = false;
+                        present[file.id] = false;
                         for(const permission of file.permissions) {
                             if(permission.type === type && permission.role === role) {
                                 if((permission.type === "user" || permission.type === "group") && permission.emailAddress.toLowerCase() === value.toLowerCase()) {
-                                    present = true;
+                                    present[file.id] = true;
                                 }
                                 else if(permission.type === "domain" && permission.domain.toLowerCase() === value.toLowerCase()) {
-                                    present = true;
+                                    present[file.id] = true;
                                 }
-                                else if(permission.type === "anyone") present = true;
+                                else if(permission.type === "anyone") present[file.id] = true;
                             }
                         }
-                        if(!present) {
+                        if(!present[file.id]) {
                             if(type === "user" || type === "group") {
                                 await googleDrive.permissions.create({
                                     fileId: file.id,
@@ -101,24 +101,28 @@ router.post('/addpermission', async (req, res) => {
                                     }
                                 });
                             }
-                            let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
-                            // Find file in most recent file-sharing snapshot and update its permissions
-                            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                if(f.id === file.id)
-                                    userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                            });
-                            if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
-                                // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
-                                // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
-                                for(const id of fileIds) {
-                                    updatedPermissions = await getPermissionsGoogle(googleDrive, id);
-                                    // Find file in most recent file-sharing snapshot and update its permissions
-                                    userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                        if(f.id === id)
-                                            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                    });
-                                }
+                        }
+                    }
+                }
+                for(const file of files) {
+                    if(!present[file.id]) {
+                        let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
+                        // Find file in most recent file-sharing snapshot and update its permissions
+                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                            if(f.id === file.id)
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                        });
+                        if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
+                            // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
+                            // and update each file's permissions
+                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
+                            for(const id of fileIds) {
+                                updatedPermissions = await getPermissionsGoogle(googleDrive, id);
+                                // Find file in most recent file-sharing snapshot and update its permissions
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                                    if(f.id === id)
+                                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                                });
                             }
                         }
                     }
@@ -151,7 +155,6 @@ router.post('/addpermission', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
                     }
                 );
             }
@@ -274,8 +277,7 @@ router.post('/removepermission', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
-                    },
+                    }
                 );
             }
             const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
@@ -288,12 +290,13 @@ router.post('/removepermission', async (req, res) => {
                 auth: oAuth2Client
             });
             try {
+                let present = {};
                 for(const file of files) {
                     // A user is only authorized to make permission requests for files that include a permissions array
                     if(file.permissions) {
                         // If permission of same {type, role, value} is present in file.permissions,
                         // then make an API call to remove permission for file
-                        let present = false;
+                        present[file.id] = false;
                         for(const permission of file.permissions) {
                             if(permission.type === type && permission.role === role) {
                                 if((permission.type === "user" || permission.type === "group") && permission.emailAddress.toLowerCase() === value.toLowerCase()) {
@@ -301,46 +304,48 @@ router.post('/removepermission', async (req, res) => {
                                         fileId: file.id,
                                         permissionId: permission.id,
                                         supportsAllDrives: true
-                                    });
-                                    present = true;
+                                    }).catch(() => null);
+                                    present[file.id] = true;
                                 }
                                 else if(permission.type === "domain" && permission.domain.toLowerCase() === value.toLowerCase()) {
                                     await googleDrive.permissions.delete({
                                         fileId: file.id,
                                         permissionId: permission.id,
                                         supportsAllDrives: true
-                                    });
-                                    present = true;
+                                    }).catch(() => null);
+                                    present[file.id] = true;
                                 }
                                 else if(permission.type === "anyone") {
                                     await googleDrive.permissions.delete({
                                         fileId: file.id,
                                         permissionId: permission.id,
                                         supportsAllDrives: true
-                                    });
-                                    present = true;
+                                    }).catch(() => null);
+                                    present[file.id] = true;
                                 }
                             }
                         }
-                        if(present) {
-                            let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
-                            // Find file in most recent file-sharing snapshot and update its permissions
-                            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                if(f.id === file.id)
-                                    userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                            });
-                            if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
-                                // If file is a folder, get file IDs of all files under it, make API calls to get permissions for each file,
-                                // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
-                                for(const id of fileIds) {
-                                    updatedPermissions = await getPermissionsGoogle(googleDrive, id);
-                                    // Find file in most recent file-sharing snapshot and update its permissions
-                                    userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                        if(f.id === id)
-                                            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                    });
-                                }
+                    }
+                }
+                for(const file of files) {
+                    if(present[file.id]) {
+                        let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
+                        // Find file in most recent file-sharing snapshot and update its permissions
+                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                            if(f.id === file.id)
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                        });
+                        if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
+                            // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
+                            // and update each file's permissions
+                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
+                            for(const id of fileIds) {
+                                updatedPermissions = await getPermissionsGoogle(googleDrive, id);
+                                // Find file in most recent file-sharing snapshot and update its permissions
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                                    if(f.id === id)
+                                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                                });
                             }
                         }
                     }
@@ -373,7 +378,6 @@ router.post('/removepermission', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
                     }
                 );
             }
@@ -447,6 +451,7 @@ router.post('/removepermission', async (req, res) => {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
         }
+        console.log('Permission removed');
         return sendUserProfile(res, userProfile);
     });
 });
@@ -474,8 +479,7 @@ router.post('/unsharefiles', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
-                    },
+                    }
                 );
             }
             const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
@@ -488,40 +492,43 @@ router.post('/unsharefiles', async (req, res) => {
                 auth: oAuth2Client
             });
             try {
+                let shared = {};
                 for(const file of files) {
                     // A user is only authorized to make permission requests for files that include a permissions array
                     if(file.permissions) {
                         // If permission has a non-"owner" role in file.permissions (i.e., file is shared),
                         // then make an API call to remove permission for file
-                        let shared = false;
+                        shared[file.id] = false;
                         for(const permission of file.permissions) {
                             if(permission.role !== "owner") {
                                 await googleDrive.permissions.delete({
                                     fileId: file.id,
                                     permissionId: permission.id
-                                });
-                                shared = true;
+                                }).catch(() => null);
+                                shared[file.id] = true;
                             }
                         }
-                        if(shared) {
-                            let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
-                            // Find file in most recent file-sharing snapshot and update its permissions
-                            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                if(f.id === file.id)
-                                    userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                            });
-                            if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
-                                // If file is a folder, get file IDs of all files under it, make API calls to get permissions for each file,
-                                // and update each file's permissions
-                                let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
-                                for(const id of fileIds) {
-                                    updatedPermissions = await getPermissionsGoogle(googleDrive, id);
-                                    // Find file in most recent file-sharing snapshot and update its permissions
-                                    userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                        if(f.id === id)
-                                            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                    });
-                                }
+                    }
+                }
+                for(const file of files) {
+                    if(shared[file.id]) {
+                        let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
+                        // Find file in most recent file-sharing snapshot and update its permissions
+                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                            if(f.id === file.id)
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                        });
+                        if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
+                            // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
+                            // and update each file's permissions
+                            let fileIds = getFilesIdsUnderFolder(userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data, file.path + '/' + file.name, file.id, userProfile.user.driveType);
+                            for(const id of fileIds) {
+                                updatedPermissions = await getPermissionsGoogle(googleDrive, id);
+                                // Find file in most recent file-sharing snapshot and update its permissions
+                                userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
+                                    if(f.id === id)
+                                        userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
+                                });
                             }
                         }
                     }
@@ -551,7 +558,6 @@ router.post('/unsharefiles', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
                     }
                 );
             }
@@ -610,6 +616,7 @@ router.post('/unsharefiles', async (req, res) => {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
         }
+        console.log('Unshared files');
         return sendUserProfile(res, userProfile);
     });
 });
@@ -634,8 +641,7 @@ router.get('/checksnapshotconsistency', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
-                    },
+                    }
                 );
             }
             const oAuth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID,
@@ -688,7 +694,6 @@ router.get('/checksnapshotconsistency', async (req, res) => {
                         // Store new tokens in database
                         userProfile.user.tokens.access_token = accessToken;
                         userProfile.user.tokens.refresh_token = refreshToken;
-                        userProfile.save();
                     }
                 );
             }

@@ -69,6 +69,9 @@ function partitionPermissions(snapshot, file, driveType) {
                     partitionedPermissions.inherited = inheritedPermissions;
                 }
             }
+            else {
+                partitionedPermissions.direct = file.permissions;
+            }
             partitionedPermissions.direct = partitionedPermissions.direct.map(p => {
                 return {
                     role: p.role,
