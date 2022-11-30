@@ -19,7 +19,7 @@ router.post('/addpermission', async (req, res) => {
         if(err) console.log(err);
         if(err || !userProfile) return res.status(500).json({success: false, message: "Error"});
         const { files, type, role, value } = req.body;
-
+        console.log(req.body);
         if(!files || !type || !role) return res.status(400).json({success: false, message: "Invalid data format"});
         if(files.length == 0) return res.status(400).json({success: false, message: "No files specified"});
         if(userProfile.fileSharingSnapshots.length == 0) return res.status(400).json({success: false, message: "No file-sharing snapshot in user profile"});
@@ -244,6 +244,7 @@ router.post('/addpermission', async (req, res) => {
             console.log(err);
             return res.status(500).json({success: false, message: "Error"});
         }
+        console.log('Permission added');
         return sendUserProfile(res, userProfile);
     });
 });

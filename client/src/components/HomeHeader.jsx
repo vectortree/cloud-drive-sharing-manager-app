@@ -34,8 +34,8 @@ export default function HomeHeader(props) {
     const [sortFlag, setSortFlag] = useRecoilState(SortingFlag);
     const [open, setOpen] = React.useState(false);
     const [action, setAction] = React.useState('add');
-    const [type, setType] = React.useState('users');
-    const [role, setRole] = React.useState('read');
+    const [type, setType] = React.useState('user');
+    const [role, setRole] = React.useState('reader');
     const [email, setEmail] = React.useState('');
     const [rawFile, setRawFile] = useRecoilState(rawFileData);
     const [openModal, setOpenModal] = React.useState(false);
