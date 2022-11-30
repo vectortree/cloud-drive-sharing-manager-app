@@ -77,7 +77,7 @@ export default function HomeHeader(props) {
         }
         let fileData=[];
         let unshareError = false;
-        if(action == "unshare") {
+        if(action === "unshare") {
             for(const f of newArray) {
                 if((props.userData.driveType === "google" && f.driveName !== "MyDrive") || (props.userData.driveType === "microsoft" && f.driveName !== "OneDrive")) {
                     unshareError = true;
@@ -103,14 +103,15 @@ export default function HomeHeader(props) {
                             alert("Requirement Violation");
                         }else{
                             console.log('updating...');
-                            console.log({files: newArray, type: type, role: role, value: email});
+                            let apiRole = props.userData.driveType === "microsoft" && type !== "users" ? (role === "read" ? "view" : "edit") : role;
+                            console.log({files: newArray, type: type, role: apiRole, value: email});
                             if(action == "add"){
-                                api.addPermission({files: newArray, type: type, role: role, value: email}).then((res) =>{
+                                api.addPermission({files: newArray, type: type, role: apiRole, value: email}).then((res) =>{
                                     console.log(res.data.profile);
                                     setOpen(false);
                                 })
                             }else if(action =="remove"){
-                                api.removePermission({files: newArray, type: type, role: role, value: email}).then((res) =>{
+                                api.removePermission({files: newArray, type: type, role: apiRole, value: email}).then((res) =>{
                                     console.log(res.data.profile);
                                     setOpen(false);
                                 })
