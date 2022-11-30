@@ -201,6 +201,7 @@ function snapshotsSharingChanges(snapshot1, snapshot2, driveType) {
 
                 let removedPermissionIds = file1PermissionIds.filter(id => !file2PermissionIds.includes(id));
                 let removedPermissions = file1.permissions.value.filter(p => removedPermissionIds.includes(p.id));
+                console.log(file1);
                 let removedPermsForDisplay = permissionsForDisplay(removedPermissions, driveType);
 
                 if (addedPermissions.length > 0 || removedPermissions.length > 0)
@@ -270,12 +271,13 @@ function permissionsForDisplay(permissions, driveType) {
                     value: "n/a"
                 });
             } else if (permission.link && permission.link.scope === "organization") {
-                let owner = permissions.find(p => p.roles.includes("owner")).grantedToV2.siteUser.email;
+                console.log(permissions);
+                let owner = permissions.find(p => p.roles.includes("owner"))?.grantedToV2.siteUser.email;
                 permsForDisplay.push({
                     id: permission.id,
                     role: permission.link.type,
                     type: "organization",
-                    value: owner.substring(owner.lastIndexOf("@") + 1)
+                    value: owner ? owner.substring(owner.lastIndexOf("@") + 1) : "n/a"
                 });
             }
         }

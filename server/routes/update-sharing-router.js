@@ -190,6 +190,8 @@ router.post('/addpermission', async (req, res) => {
                                     recipients: [
                                         { email: value }
                                     ],
+                                    requireSignIn: true,
+                                    sendInvitation: true,
                                     roles: [ role ]
                                 }
                             );

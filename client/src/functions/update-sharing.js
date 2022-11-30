@@ -296,10 +296,6 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                 }
 
             } else if (action === "unshare") {
-                if(type === "users" && !value) return updatedSnapshot;
-                if(type !== "users" && type !== "organization" && type !== "anonymous") return updatedSnapshot;
-                if(role !== "read" && role !== "write") return updatedSnapshot;
-
                 updatedSnapshot.data[index].permissions.value = updatedSnapshot.data[index].permissions.value.filter(p => p.roles.includes("owner")); 
 
                 if(file.folder && file.folder.childCount > 0) {
