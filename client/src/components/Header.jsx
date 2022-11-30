@@ -177,7 +177,9 @@ export default function PrimarySearchAppBar(props) {
             setSearchQueryHistory( (prev)=>
                 [...prev,query]
             )
-            api.addSearchQuery(query);
+            api.addSearchQuery(query).then((res) => {
+                setUserProfile(res.data.profile);
+            });
             const arrayData = Array.from(filteredFiles);
             setRawFile(arrayData);
             setRefinedData(makeFilesForDisplay(selSnapshot.data,arrayData,props.userData.driveType));
