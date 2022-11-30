@@ -55,3 +55,7 @@ export const rawFileData = atom({
     key:'rawFileData',
     default:[],
 })
+export const searchHistoryDisplay = atom({
+    key:"searchHistoryDisplay",
+    default:[]
+})
