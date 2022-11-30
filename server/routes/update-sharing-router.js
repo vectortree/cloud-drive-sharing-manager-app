@@ -244,6 +244,7 @@ router.post('/addpermission', async (req, res) => {
         }
         // Save to database
         try {
+            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].updatedAt = Date.now();
             await userProfile.save();
         } catch(err) {
             console.log(err);
@@ -448,6 +449,7 @@ router.post('/removepermission', async (req, res) => {
         }
         // Save to database
         try {
+            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].updatedAt = Date.now();
             await userProfile.save();
         } catch(err) {
             console.log(err);
@@ -613,6 +615,7 @@ router.post('/unsharefiles', async (req, res) => {
         }
         // Save to database
         try {
+            userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].updatedAt = Date.now();
             await userProfile.save();
         } catch(err) {
             console.log(err);

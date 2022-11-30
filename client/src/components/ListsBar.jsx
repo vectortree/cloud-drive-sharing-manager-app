@@ -59,7 +59,6 @@ export default function ColumnMenuGrid( props) {
               console.log(id);
               removeGroupMembershipSnapshot(id);
           }else if (props.type == "SearchQuery"){
-              console.log("Remove SearchQuery");
               removeSearchQuery(id);
           }else{
               console.error("Error: No matched Name");
@@ -76,6 +75,7 @@ export default function ColumnMenuGrid( props) {
         }
     }
     const timestampTo = new Date(memberInfo.timestamp).toUTCString()
+    console.log(props.dataSet);
     return (
 
         <div >

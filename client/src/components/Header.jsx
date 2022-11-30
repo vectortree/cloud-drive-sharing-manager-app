@@ -274,7 +274,7 @@ export default function PrimarySearchAppBar(props) {
                     )
                     api.addSearchQuery(query);
                     const arrayData = Array.from(filteredFiles);
-
+                    setRawFile(arrayData);
                     setRefinedData(makeFilesForDisplay(selSnapshot.data,arrayData,props.userData.driveType));
                     navigate("/searchResult");
                 }

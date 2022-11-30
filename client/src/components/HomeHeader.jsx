@@ -71,6 +71,7 @@ export default function HomeHeader(props) {
         console.log(mostRecentSnapshot);
 
         let newArray = [];
+        console.log(rawFile);
         for(let i = 0; i < rawFile.length; i++){
             newArray.push(rawFile[i]);
         }
@@ -91,7 +92,6 @@ export default function HomeHeader(props) {
             api.checkSnapshotConsistency().then((res) =>{
                 if(res.status== 200){
                     if(res.data.success){
-                        console.log('here');
                         console.log(mostRecentSnapshot);
                         fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
                         console.log('applied local updates');
