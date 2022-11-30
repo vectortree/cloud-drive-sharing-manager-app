@@ -727,7 +727,8 @@ function getFilesIdsUnderFolder(snapshot, path, id, driveType) {
     if (driveType === "google") {
         if(!path) return fileIds;
         for(const file of snapshot) {
-            if(file.path && file.path.startsWith(path) && file.id !== id) {
+            // Only consider files with permissions array!
+            if(file.permissions && file.path && file.path.startsWith(path) && file.id !== id) {
                 fileIds.push(file.id);
             }
         }

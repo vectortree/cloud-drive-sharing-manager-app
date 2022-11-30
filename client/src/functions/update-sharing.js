@@ -56,6 +56,32 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                                 type: type
                             });
                         }
+                        if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
+                            let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.path + '/' + file.name, file.id, driveType);
+                            for(const id of fileIds) {
+                                index = updatedSnapshot.data.findIndex(f => f.id === id);
+                                if(type === "user" || type === "group") {
+                                    updatedSnapshot.data[index].permissions.push({
+                                        role: role,
+                                        type: type,
+                                        emailAddress: value.toLowerCase()
+                                    });
+                                }
+                                else if(type === "domain") {
+                                    updatedSnapshot.data[index].permissions.push({
+                                        role: role,
+                                        type: type,
+                                        domain: value.toLowerCase()
+                                    });
+                                }
+                                else if(type === "anyone") {
+                                    updatedSnapshot.data[index].permissions.push({
+                                        role: role,
+                                        type: type
+                                    });
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -84,6 +110,26 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                             }
                         }
                     });
+                    if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
+                        let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.path + '/' + file.name, file.id, driveType);
+                        for(const id of fileIds) {
+                            index = updatedSnapshot.data.findIndex(f => f.id === id);
+                            let fileObj = JSON.parse(JSON.stringify(updatedSnapshot.data[index]));
+                            fileObj.permissions.forEach((permission, permIndex) => {
+                                if(permission.type === type && permission.role === role) {
+                                    if((permission.type === "user" || permission.type === "group") && permission.emailAddress.toLowerCase() === value.toLowerCase()) {
+                                        updatedSnapshot.data[index].permissions.splice(permIndex, 1);
+                                    }
+                                    else if(permission.type === "domain" && permission.domain.toLowerCase() === value.toLowerCase()) {
+                                        updatedSnapshot.data[index].permissions.splice(permIndex, 1);
+                                    }
+                                    else if(permission.type === "anyone") {
+                                        updatedSnapshot.data[index].permissions.splice(permIndex, 1);
+                                    }
+                                }
+                            });
+                        }
+                    }
                 }
             }
         }
@@ -100,6 +146,18 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                             updatedSnapshot.data[index].permissions.splice(permIndex, 1);
                         }
                     });
+                    if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
+                        let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.path + '/' + file.name, file.id, driveType);
+                        for(const id of fileIds) {
+                            index = updatedSnapshot.data.findIndex(f => f.id === id);
+                            let fileObj = JSON.parse(JSON.stringify(updatedSnapshot.data[index]));
+                            fileObj.permissions.forEach((permission, permIndex) => {
+                                if(permission.role !== "owner") {
+                                    updatedSnapshot.data[index].permissions.splice(permIndex, 1);
+                                }
+                            });
+                        }
+                    }
                 }
             }
         }
@@ -175,6 +233,27 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
     }
 
     return updatedSnapshot;
+}
+
+function getFilesIdsUnderFolder(snapshot, path, id, driveType) {
+    let fileIds = [];
+    if (driveType === "google") {
+        if(!path) return fileIds;
+        for(const file of snapshot) {
+            // Only consider files with permissions array!
+            if(file.permissions && file.path && file.path.startsWith(path) && file.id !== id) {
+                fileIds.push(file.id);
+            }
+        }
+    }
+    else if (driveType === "microsoft") {
+        for(const file of snapshot) {
+            if(file.parentReference.path.startsWith(path) && file.id !== id) {
+                fileIds.push(file.id);
+            }
+        }
+    }
+    return fileIds;
 }
 
 export { applyLocalUpdatesToSnapshot };
