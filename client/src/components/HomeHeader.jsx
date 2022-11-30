@@ -109,22 +109,35 @@ export default function HomeHeader(props) {
                                 api.addPermission({files: newArray, type: type, role: apiRole, value: email}).then((res) =>{
                                     console.log(res.data.profile);
                                     setOpen(false);
-                                })
+                                }).catch((err) => {
+                                    console.log(err);
+                                    setOpen(false);
+                                    alert("Error: Could not successfully update permission!");
+                                });
                             }else if(action =="remove"){
                                 api.removePermission({files: newArray, type: type, role: apiRole, value: email}).then((res) =>{
                                     console.log(res.data.profile);
                                     setOpen(false);
-                                })
+                                }).catch((err) => {
+                                    console.log(err);
+                                    setOpen(false);
+                                    alert("Error: Could not successfully update permission!");
+                                });
                             }else if(action == "unshare"){
                                 api.unshareFiles({files: newArray} ).then((res) =>{
                                     console.log(res.data.profile);
                                     setOpen(false);
-                                })
+                                }).catch((err) => {
+                                    console.log(err);
+                                    setOpen(false);
+                                    alert("Error: Could not successfully update permission!");
+                                });
                             }
                             setFileData(fileData);
                             console.log(checkRequirement);
                         }
                     }else{
+                        setOpen(false);
                         alert(res.data.message);
                     }
                 }
@@ -223,7 +236,7 @@ export default function HomeHeader(props) {
                                         fullWidth={100}
                                         disabled={(props.userData.driveType === "microsoft" && type !== "users") || (props.userData.driveType === "google" && type === "anyone")}
                                         id="outlined-required"
-                                        label="Email"
+                                        label={((type === "user" || type === "group" || type === "users") ? "Email" : (type === "domain" || type === "organization") ? "Domain" : "N/A")}
                                         defaultValue=""
                                         value={email}
                                         onChange={handleEmail}
