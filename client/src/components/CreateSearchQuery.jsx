@@ -12,13 +12,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {useRecoilState} from "recoil";
-import {fileData, rawFileData, searchQueryHistoryData, selectedSnapshot} from "../recoil";
+import {fileData, rawFileData, searchHistoryDisplay, searchQueryHistoryData, selectedSnapshot} from "../recoil";
 import {id_generator} from "../functions/id_generator";
 import CircularProgress from "@mui/material/CircularProgress";
 import {deserializeSearchQuery, filterSnapshotBySearchQuery, serializeSearchQuery} from "../functions/query";
 import {getClosestGMSnapshots} from "../functions/gm-snapshots";
 import {makeFilesForDisplay} from "../functions/snapshot-files";
 import {useNavigate} from "react-router-dom";
+import {dataRefining} from "../functions/dataRefining";
 //import { MuiChipsInput } from 'mui-chips-input'
 //import Chip from "@material-ui/core/Chip";
 
@@ -34,7 +35,7 @@ export default function SearchQueryModal(props) {
     const [searchQuery, setSearchQuery] = useRecoilState(searchQueryHistoryData);
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
     const [refinedData, setRefinedData] =useRecoilState(fileData);
-
+    const [searchHistory,setSearchHistory] = useRecoilState(searchHistoryDisplay);
 
     console.log(searchQuery);
     const navigate = useNavigate()
@@ -120,9 +121,15 @@ export default function SearchQueryModal(props) {
                 const id = id_generator(searchQuery);
                 const query ={id: id, searchQuery: parsedSQ};
                 console.log(query);
-                setSearchQuery( (prev)=>
-                    [...prev,query]
-                )
+                setSearchQuery( (prev)=>{
+                    console.log(prev);
+                    return [...prev,query]
+                })
+                const dataArray = dataRefining([query]);
+                console.log(dataArray[0]);
+                setSearchHistory( (prev) =>{
+                    return [...prev,dataArray[0]]
+                })
                 api.addSearchQuery(query);
                 const arrayData = Array.from(filteredFiles);
 

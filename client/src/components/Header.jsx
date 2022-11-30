@@ -31,7 +31,7 @@ import {useRecoilState, useResetRecoilState} from "recoil";
 import {
     AccessControlData, fileData,
     FileSharingSnapShotData,
-    GroupMembershipSnapshotsData, rawFileData,
+    GroupMembershipSnapshotsData, rawFileData, searchHistoryDisplay,
     searchQueryHistoryData, selectedSnapshot
 } from "../recoil";
 import {checkRequirements} from "../functions/ac-requirements";
@@ -39,6 +39,7 @@ import {makeFilesForDisplay} from "../functions/snapshot-files";
 import {id_generator} from "../functions/id_generator";
 import AdbIcon from '@mui/icons-material/Adb';
 import LogsModalView from "./LogsModal";
+import {dataRefining} from "../functions/dataRefining";
 
 // This is for the Header which is the very top of our website
 
@@ -91,6 +92,8 @@ export default function PrimarySearchAppBar(props) {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [searchQueryHistory, setSearchQueryHistory] = useRecoilState(searchQueryHistoryData);
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
+    const [searchHistory,setSearchHistory] =useRecoilState(searchHistoryDisplay)
+
     const ResetACR =useResetRecoilState(AccessControlData);
     const ResetFileSharing = useResetRecoilState(FileSharingSnapShotData);
     const ResetGMS = useResetRecoilState(GroupMembershipSnapshotsData);
@@ -179,9 +182,15 @@ export default function PrimarySearchAppBar(props) {
             const id = id_generator(searchQueryHistory);
             const query ={id: id, searchQuery: parsedSQ};
             console.log(query);
-            setSearchQueryHistory( (prev)=>
-                [...prev,query]
-            )
+            setSearchQueryHistory( (prev)=>{
+                console.log(prev);
+             return [...prev,query];
+            })
+            const dataArray = dataRefining([query]);
+            console.log(dataArray[0]);
+            setSearchHistory( (prev) =>{
+                return [...prev,dataArray[0]]
+            })
             api.addSearchQuery(query).then((res) => {
                 setUserProfile(res.data.profile);
             });
@@ -274,9 +283,15 @@ export default function PrimarySearchAppBar(props) {
                     const id = id_generator(searchQueryHistory);
                     const query ={id: id, searchQuery: parsedSQ};
                     console.log(query);
-                    setSearchQueryHistory( (prev)=>
-                        [...prev,query]
-                    )
+                    setSearchQueryHistory( (prev)=>{
+                        console.log(prev);
+                        return [...prev,query]
+                    })
+                    const dataArray = dataRefining([query]);
+                    console.log(dataArray[0]);
+                    setSearchHistory( (prev) =>{
+                        return [...prev,dataArray[0]]
+                    })
                     api.addSearchQuery(query);
                     const arrayData = Array.from(filteredFiles);
                     setRawFile(arrayData);
