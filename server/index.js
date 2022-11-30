@@ -29,7 +29,7 @@ app.use(session({
         uri: process.env.ATLAS_URI,
         ttl: 60 * 60 * 24
     }),
-    cookie: { maxAge: 60 * 60 * 24 * 1000 }
+    cookie: { secure: 'auto', sameSite: 'None', maxAge: 60 * 60 * 24 * 1000 }
 }));
 
 app.use(passport.initialize());
