@@ -14,6 +14,7 @@ import Select from '@mui/material/Select';
 import {useRecoilState} from "recoil";
 import {searchQueryHistoryData} from "../recoil";
 import {id_generator} from "../functions/id_generator";
+import CircularProgress from "@mui/material/CircularProgress";
 //import { MuiChipsInput } from 'mui-chips-input'
 //import Chip from "@material-ui/core/Chip";
 
@@ -27,7 +28,6 @@ export default function SearchQueryModal(props) {
     const [openError, setOpenError] = React.useState(false);
     const queryArray = ["Drive","Owner","Creator","From","To","Readable","Writable","Sharable","name","inFolder","folder","path","sharing"];
     const [searchQuery, setSearchQuery] = useRecoilState(searchQueryHistoryData);
-
     console.log(searchQuery);
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
     const handleRecentQuery = (event) =>{
@@ -185,6 +185,7 @@ export default function SearchQueryModal(props) {
             <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={submit}>
                 Submit
             </Button>
+
         </div>
     );
 }
