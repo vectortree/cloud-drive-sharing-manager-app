@@ -12,15 +12,19 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {useRecoilState} from "recoil";
-import {searchQueryHistoryData} from "../recoil";
+import {fileData, rawFileData, searchQueryHistoryData, selectedSnapshot} from "../recoil";
 import {id_generator} from "../functions/id_generator";
 import CircularProgress from "@mui/material/CircularProgress";
+import {deserializeSearchQuery, filterSnapshotBySearchQuery, serializeSearchQuery} from "../functions/query";
+import {getClosestGMSnapshots} from "../functions/gm-snapshots";
+import {makeFilesForDisplay} from "../functions/snapshot-files";
+import {useNavigate} from "react-router-dom";
 //import { MuiChipsInput } from 'mui-chips-input'
 //import Chip from "@material-ui/core/Chip";
 
 export default function SearchQueryModal(props) {
     const [selectedValue, setSelectedValue] = React.useState('a');
-    const [queryString,setQueryString] = React.useState([]);
+    const [queryString,setQueryString] = React.useState("");
     const [queryStringRQ,setQueryStringRQ] = React.useState([]);
     const [QueryType, setQueryType] = React.useState('');
     const [QueryName, setQueryName] = React.useState('');
@@ -28,22 +32,27 @@ export default function SearchQueryModal(props) {
     const [openError, setOpenError] = React.useState(false);
     const queryArray = ["Drive","Owner","Creator","From","To","Readable","Writable","Sharable","name","inFolder","folder","path","sharing"];
     const [searchQuery, setSearchQuery] = useRecoilState(searchQueryHistoryData);
+    const [searchQueryHistory, setSearchQueryHistory] = useRecoilState(searchQueryHistoryData);
+    const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
+    const [refinedData, setRefinedData] =useRecoilState(fileData);
+    const [rawFile, setRawFile] = useRecoilState(rawFileData);
+
     console.log(searchQuery);
+    const navigate = useNavigate()
     const handleQueryName = (event) =>{setQueryName(event.target.value);}
     const handleRecentQuery = (event) =>{
-        console.log(queryString)
-        const string = event.target.value;
-        const txt = string.split('\"');
-        setQueryStringRQ(txt[1]);
+
+        setQueryStringRQ(event.target.value);
         console.log(queryString)
     }
     const addingQuery = (event) => {
         if(QueryType === "" || QueryName == ""){
             handleErrorAlertOpen();
         }else{
-
-            const query = "{" +QueryType + ":" + QueryName + "} ";
+            const query = QueryType + ":" + QueryName;
+            setQueryStringRQ(query);
             setQueryString([...queryString, query]);
+            //setQueryString(query);
             handleSuccessAlertOpen();
         }
     }
@@ -84,15 +93,48 @@ export default function SearchQueryModal(props) {
         if(props.userData.fileSharingSnapshots.length ==0){
             alert("you must create a file snapshot first");
         }else{
-            const id = id_generator(searchQuery);
-            const query = { id: id, searchQuery : queryString}
-            setSearchQuery( (prev)=>
-                [...prev,query]
-            )
-            console.log(query);
-            api.addSearchQuery(query);
+            let queryStringText =""
+
+            queryString.map((data) =>{
+                queryStringText += data;
+                return queryStringText;
+            })
+
+            console.log(queryStringText);
+            const parsedSQ = serializeSearchQuery(queryStringText.trim(), true);
+            console.log(parsedSQ);
+            if (!parsedSQ.error) {
+                const unparsedSQ = deserializeSearchQuery(parsedSQ);
+                console.log(unparsedSQ);
+                console.log(props.userData);
+                let email;
+                if (props.userData.driveType === "microsoft")
+                    email = props.userData.email;
+                else
+                    email = props.userData.email;
+                let domain = email.substring(email.lastIndexOf("@") + 1);
+                let closestGMSnapshots = getClosestGMSnapshots(props.userData.groupMembershipSnapshots, selSnapshot.data);
+                let groups = true;
+                console.log(selSnapshot);
+                const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, props.userData.driveType, closestGMSnapshots, groups);
+                console.log(filteredFiles);
+                const id = id_generator(searchQueryHistory);
+                const query ={id: id, searchQuery: parsedSQ};
+                console.log(query);
+                setSearchQueryHistory( (prev)=>
+                    [...prev,query]
+                )
+                api.addSearchQuery(query);
+                const arrayData = Array.from(filteredFiles);
+
+                setRefinedData(makeFilesForDisplay(selSnapshot.data,arrayData,props.userData.driveType));
+                navigate("/searchResult");
+                props.handleClose();
+                return;
+            }
         }
         props.handleClose();
+
     }
     return (
         <div>
@@ -117,14 +159,14 @@ export default function SearchQueryModal(props) {
                         label="QueryType"
                         onChange={handleChange}
                     >
-                        <MenuItem value={"Drive"}>drive</MenuItem>
-                        <MenuItem value={"Owner"}>owner</MenuItem>
-                        <MenuItem value={"Creator"}>creator</MenuItem>
-                        <MenuItem value={"From"}>from</MenuItem>
-                        <MenuItem value={"To"}>to</MenuItem>
-                        <MenuItem value={"Readable"}>readable</MenuItem>
-                        <MenuItem value={"Writable"}>writable</MenuItem>
-                        <MenuItem value={"Sharable"}>sharable</MenuItem>
+                        <MenuItem value={"drive"}>drive</MenuItem>
+                        <MenuItem value={"owner"}>owner</MenuItem>
+                        <MenuItem value={"creator"}>creator</MenuItem>
+                        <MenuItem value={"from"}>from</MenuItem>
+                        <MenuItem value={"to"}>to</MenuItem>
+                        <MenuItem value={"readable"}>readable</MenuItem>
+                        <MenuItem value={"writable"}>writable</MenuItem>
+                        <MenuItem value={"sharable"}>sharable</MenuItem>
                         <MenuItem value={"name"}>name</MenuItem>
                         <MenuItem value={"inFolder"}>inFolder</MenuItem>
                         <MenuItem value={"folder"}>folder</MenuItem>
@@ -155,13 +197,18 @@ export default function SearchQueryModal(props) {
                         required
                         labelId="demo-select-small"
                         id="demo-select-small"
-                        value={QueryType}
+                        value={queryStringRQ}
                         label="Recent Query"
                         onChange={handleRecentQuery}
                         style={{ width: 600 }}
                     >
+                        {console.log(searchQuery)}
                         {searchQuery.map((data,idx)=>{
-                            const searchQueryText = JSON.stringify(data.searchQuery[0]);
+                            let searchQueryText;
+                            if(data.searchQuery.argument){
+                                searchQueryText = data.searchQuery.operator + ":" + data.searchQuery.argument;
+                            }
+                            console.log(searchQueryText);
                           return <MenuItem value={searchQueryText} >{searchQueryText}</MenuItem>
                         })}
                     </Select>
@@ -169,17 +216,24 @@ export default function SearchQueryModal(props) {
                     <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQueryRQ}>
                         Add
                     </Button>
-                    <Box
-                        component="form"
-                        sx={{'& > :not(style)': { m: 1, width: '50ch' },}} noValidate autoComplete="off">
-                    <TextField
-                        id="outlined-name"
-                        label="Recent Query"
-                        value={queryStringRQ}
-                        defaultValue={queryString}
-                        onChange={handleChangeRQ}
-                    />
-                    </Box>
+                    <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
+                        <InputLabel id="demo-select-small">Operator</InputLabel>
+                        <Select
+                            required
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            value={queryStringRQ}
+                            label="Operator"
+                            onChange={handleRecentQuery}
+                            style={{ width: 600 }}
+                        >
+                            <MenuItem value={" and "}>and</MenuItem>
+                            <MenuItem value={" or "}>or</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button variant="contained" color="success" style={{marginLeft:"10px"}} onClick={addingQueryRQ}>
+                        Add
+                    </Button>
             </div>
             <br></br>
             <Button name="submit"variant="contained" color="success" style={{marginLeft:"10px"}} onClick={submit}>

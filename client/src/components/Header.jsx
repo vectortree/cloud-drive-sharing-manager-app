@@ -250,6 +250,7 @@ export default function PrimarySearchAppBar(props) {
             if(searchQuery == ""){
                 alert("no SearchQuery")
             }else{
+                console.log(searchQuery);
                 const parsedSQ = serializeSearchQuery(searchQuery.trim(), true);
                 console.log(parsedSQ);
                 if (!parsedSQ.error) {
@@ -282,7 +283,6 @@ export default function PrimarySearchAppBar(props) {
     }
     return (
         <Box sx={{ flexGrow: 1 }}>
-
             <AppBar position="static" style={{boxShadow:"none"}}>
                 <Toolbar>
                     <img
