@@ -707,7 +707,7 @@ router.get('/checksnapshotconsistency', async (req, res) => {
                 // Check whether file permissions match the permissions in Microsoft OneDrive
                 for(const file of userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data) {
                     let drivePermissions = await graph.getSharedItemPermissions(accessToken, file.id, file.parentReference.driveId);
-                    let drivePermissionsIds = new Set(drivePermissions.map(p => p.id));
+                    let drivePermissionsIds = new Set(drivePermissions.value.map(p => p.id));
                     let snapshotPermissionIds = new Set(file.permissions.value.map(p => p.id));
                     if(!setsEqual(drivePermissionsIds, snapshotPermissionIds))
                         return res.status(200).json({success: false, message: "The most recent file-sharing snapshot is inconsistent (i.e., not up-to-date) with Microsoft OneDrive! Please take a new file-sharing snapshot."});
