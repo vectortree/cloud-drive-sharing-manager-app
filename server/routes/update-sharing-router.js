@@ -109,10 +109,8 @@ router.post('/addpermission', async (req, res) => {
                         let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
                         // Find file in most recent file-sharing snapshot and update its permissions
                         userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                            if(f.id === file.id) {
+                            if(f.id === file.id)
                                 userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                userProfile.markModified('fileSharingSnapshots');
-                            }
                         });
                         if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                             // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
@@ -122,10 +120,8 @@ router.post('/addpermission', async (req, res) => {
                                 updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                 // Find file in most recent file-sharing snapshot and update its permissions
                                 userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                    if(f.id === file.id) {
+                                    if(f.id === id)
                                         userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                        userProfile.markModified('fileSharingSnapshots');
-                                    }
                                 });
                             }
                         }
@@ -194,8 +190,6 @@ router.post('/addpermission', async (req, res) => {
                                     recipients: [
                                         { email: value }
                                     ],
-                                    requireSignIn: true,
-                                    sendInvitation: true,
                                     roles: [ role ]
                                 }
                             );
@@ -249,6 +243,7 @@ router.post('/addpermission', async (req, res) => {
         // Save to database
         try {
             userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].updatedAt = Date.now();
+            userProfile.markModified('fileSharingSnapshots');
             await userProfile.save();
         } catch(err) {
             console.log(err);
@@ -339,10 +334,8 @@ router.post('/removepermission', async (req, res) => {
                         let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
                         // Find file in most recent file-sharing snapshot and update its permissions
                         userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                            if(f.id === file.id) {
+                            if(f.id === file.id)
                                 userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                userProfile.markModified('fileSharingSnapshots');
-                            }
                         });
                         if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                             // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
@@ -352,10 +345,8 @@ router.post('/removepermission', async (req, res) => {
                                 updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                 // Find file in most recent file-sharing snapshot and update its permissions
                                 userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                    if(f.id === file.id) {
+                                    if(f.id === id)
                                         userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                        userProfile.markModified('fileSharingSnapshots');
-                                    }
                                 });
                             }
                         }
@@ -458,6 +449,7 @@ router.post('/removepermission', async (req, res) => {
         // Save to database
         try {
             userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].updatedAt = Date.now();
+            userProfile.markModified('fileSharingSnapshots');
             await userProfile.save();
         } catch(err) {
             console.log(err);
@@ -527,10 +519,8 @@ router.post('/unsharefiles', async (req, res) => {
                         let updatedPermissions = await getPermissionsGoogle(googleDrive, file.id);
                         // Find file in most recent file-sharing snapshot and update its permissions
                         userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                            if(f.id === file.id) {
+                            if(f.id === file.id)
                                 userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                userProfile.markModified('fileSharingSnapshots');
-                            }
                         });
                         if(file.mimeType === 'application/vnd.google-apps.folder' && file.path) {
                             // If file is a folder, get IDs of all files under it, make API calls to get permissions for each file,
@@ -540,10 +530,8 @@ router.post('/unsharefiles', async (req, res) => {
                                 updatedPermissions = await getPermissionsGoogle(googleDrive, id);
                                 // Find file in most recent file-sharing snapshot and update its permissions
                                 userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data.forEach((f, index) => {
-                                    if(f.id === file.id) {
+                                    if(f.id === id)
                                         userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].data[index].permissions = updatedPermissions;
-                                        userProfile.markModified('fileSharingSnapshots');
-                                    }
                                 });
                             }
                         }
@@ -628,6 +616,7 @@ router.post('/unsharefiles', async (req, res) => {
         // Save to database
         try {
             userProfile.fileSharingSnapshots[userProfile.fileSharingSnapshots.length - 1].updatedAt = Date.now();
+            userProfile.markModified('fileSharingSnapshots');
             await userProfile.save();
         } catch(err) {
             console.log(err);
