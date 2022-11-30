@@ -29,6 +29,7 @@ import ViolationModalTable from "./ViolationModal";
 import api from "../api/api";
 import {getClosestGMSnapshots} from "../functions/gm-snapshots";
 import {checkRequirements} from "../functions/ac-requirements";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function HomeHeader(props) {
     const [sortFlag, setSortFlag] = useRecoilState(SortingFlag);
@@ -42,7 +43,7 @@ export default function HomeHeader(props) {
     const [selectionModel, setSelectionModel] = React.useState([]);
     const [fileData,setFileData] = React.useState("");
     const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
-
+    const [openProgress, setOpenProgress] = React.useState(false);
     const handleCloseModal = () => setOpenModal(false);
     const handleClickOpen = () => {
         setOpen(true);
@@ -64,12 +65,10 @@ export default function HomeHeader(props) {
         setOpen(false);
     };
     const handleUpdate = () =>{
+        setOpenProgress(true);
         let snapshot = props.userData.fileSharingSnapshots;
-        let mostRecentSnapshot = [];
-        console.log(snapshot);
-        for(let i = 0; i < snapshot[snapshot.length-1].data.length; i++) {
-            mostRecentSnapshot.push(snapshot[snapshot.length-1].data[i]);
-        }
+        let mostRecentSnapshot = snapshot[snapshot.length-1];
+        console.log(mostRecentSnapshot);
 
         let newArray = [];
         for(let i = 0; i < rawFile.length; i++){
@@ -215,6 +214,9 @@ export default function HomeHeader(props) {
                         <DialogActions>
                             <Button onClick={handleClose}>Cancel</Button>
                             <Button onClick={handleUpdate}>UPDATE</Button>
+                            {openProgress?<CircularProgress style={{display:"hidden"}} />
+                                :""
+                            }
                         </DialogActions>
                     </Dialog>
                 <BasicModal open={openModal} handleClose={handleCloseModal} title={"Violation Report"} ><ViolationModalTable handleClose={handleCloseModal} components = {acr_for_violation} type="SearchQuery" fileSet={fileData}selectionModel = {selectionModel}/></BasicModal>
