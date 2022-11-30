@@ -32,10 +32,9 @@ export default function SearchQueryModal(props) {
     const [openError, setOpenError] = React.useState(false);
     const queryArray = ["Drive","Owner","Creator","From","To","Readable","Writable","Sharable","name","inFolder","folder","path","sharing"];
     const [searchQuery, setSearchQuery] = useRecoilState(searchQueryHistoryData);
-    const [searchQueryHistory, setSearchQueryHistory] = useRecoilState(searchQueryHistoryData);
     const [selSnapshot, setSelSnapshot] = useRecoilState(selectedSnapshot);
     const [refinedData, setRefinedData] =useRecoilState(fileData);
-    const [rawFile, setRawFile] = useRecoilState(rawFileData);
+
 
     console.log(searchQuery);
     const navigate = useNavigate()
@@ -118,10 +117,10 @@ export default function SearchQueryModal(props) {
                 console.log(selSnapshot);
                 const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, props.userData.driveType, closestGMSnapshots, groups);
                 console.log(filteredFiles);
-                const id = id_generator(searchQueryHistory);
+                const id = id_generator(searchQuery);
                 const query ={id: id, searchQuery: parsedSQ};
                 console.log(query);
-                setSearchQueryHistory( (prev)=>
+                setSearchQuery( (prev)=>
                     [...prev,query]
                 )
                 api.addSearchQuery(query);
