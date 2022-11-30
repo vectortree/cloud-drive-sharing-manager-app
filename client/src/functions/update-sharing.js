@@ -8,7 +8,7 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
         updatedSnapshot.push(f);
     });*/
 
-    let updatedSnapshot = mostRecentFSSnapshot.slice();
+    let updatedSnapshot = JSON.parse(JSON.stringify(mostRecentFSSnapshot));
     if(files.length == 0) return updatedSnapshot;
     if(driveType === "google") {
         if(action === "add") {

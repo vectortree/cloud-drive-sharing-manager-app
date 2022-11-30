@@ -79,7 +79,8 @@ export default function HomeHeader(props) {
         api.checkSnapshotConsistency().then((res) =>{
             if(res.status== 200){
                 if(res.data.success){
-
+                    console.log('here');
+                    console.log(mostRecentSnapshot);
                     fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
                     let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, fileData);
                     let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.userData.email, props.userData.domain, props.userData.driveType );
