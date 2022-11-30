@@ -75,39 +75,55 @@ export default function HomeHeader(props) {
             newArray.push(rawFile[i]);
         }
         let fileData=[];
-        api.checkSnapshotConsistency().then((res) =>{
-            if(res.status== 200){
-                if(res.data.success){
-                    console.log('here');
-                    console.log(mostRecentSnapshot);
-                    fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
-                    let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, fileData);
-                    let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.userData.email, props.userData.domain, props.userData.driveType );
-                    if(checkRequirement.length > 0){
-                        alert("Requirement Violation");
-                    }else{
-                        if(action == "add"){
-                            api.addPermission({files: fileData, type: type, role: role, value: email}).then((res) =>{
-                                console.log(res.data.profile);
-                            })
-                        }else if(action =="remove"){
-                            api.removePermission({files: fileData, type: type, role: role, value: email}).then((res) =>{
-                                console.log(res.data.profile);
-                            })
-                        }else if(action == "unshare"){
-                            api.unshareFiles({files: fileData} ).then((res) =>{
-                                console.log(res.data.profile);
-                            })
-                        }
-                        setFileData(fileData);
-                        setOpen(false);
-                        console.log(checkRequirement);
-                    }
-                }else{
-                    alert(res.data.message);
+        let unshareError = false;
+        if(action == "unshare") {
+            for(const f of newArray) {
+                if((props.userData.driveType === "google" && f.driveName !== "MyDrive") || (props.userData.driveType === "microsoft" && f.driveName !== "OneDrive")) {
+                    unshareError = true;
                 }
             }
-        })
+        }
+        if(unshareError) {
+            if(props.userData.driveType === "google") alert("Error: Only files in drive \"MyDrive\" can be unshared!");
+            else alert("Error: Only files in drive \"OneDrive\" can be unshared!");
+        }
+        else {
+            api.checkSnapshotConsistency().then((res) =>{
+                if(res.status== 200){
+                    if(res.data.success){
+                        console.log('here');
+                        console.log(mostRecentSnapshot);
+                        fileData = applyLocalUpdatesToSnapshot(mostRecentSnapshot, newArray, action, type, role, email, props.userData.driveType);
+                        console.log('applied local updates');
+                        console.log(fileData);
+                        let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, fileData);
+                        let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.userData.email, props.userData.domain, props.userData.driveType );
+                        if(checkRequirement.length > 0){
+                            alert("Requirement Violation");
+                        }else{
+                            if(action == "add"){
+                                api.addPermission({files: newArray, type: type, role: role, value: email}).then((res) =>{
+                                    console.log(res.data.profile);
+                                })
+                            }else if(action =="remove"){
+                                api.removePermission({files: newArray, type: type, role: role, value: email}).then((res) =>{
+                                    console.log(res.data.profile);
+                                })
+                            }else if(action == "unshare"){
+                                api.unshareFiles({files: newArray} ).then((res) =>{
+                                    console.log(res.data.profile);
+                                })
+                            }
+                            setFileData(fileData);
+                            setOpen(false);
+                            console.log(checkRequirement);
+                        }
+                    }else{
+                        alert(res.data.message);
+                    }
+                }
+            })
+        }
     }
     const handleSortFlag = () => {
         if(sortFlag == 0){
