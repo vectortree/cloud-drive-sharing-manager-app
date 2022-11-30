@@ -14,6 +14,7 @@ import AccessControlPage from "./pages/accessControlPage/AccessControlPage";
 import Anaylysis from "./pages/AnalysisPages/AnalysisPage";
 import {dataFiltering} from "./functions/datafilter";
 import SearchResult from "./pages/home/SearchResult";
+import {dataRefining} from "./functions/dataRefining";
 
 
 const Layout = () =>{
@@ -38,12 +39,18 @@ function App() {
     const SearchQuery_Handler = (data) =>{
         userData.searchQueryHistory = data;
     }
+    const QueryHistory_Handler =(data) =>{
+        userData.QueryHistoryForDisplay = data;
+    }
+    if(userData.searchQueryHistory != undefined){
+        userData.QueryHistoryForDisplay = dataRefining(userData.searchQueryHistory);
+    }
       return (
           <BrowserRouter>
               <Routes>
                   {userProfile && (
                       <Route path={"/"} element={<Layout/>}>
-                          <Route index element={<MyPage userData = {userData} SearchQuery_Handler = {SearchQuery_Handler} GroupSharing_Handler = {GroupSnapshot_Handler} ACR_Handler={ACR_Handler} FileSharing_Handler={FileSharing_Handler}/>}/>
+                          <Route index element={<MyPage userData = {userData} QueryHistory_Handler={QueryHistory_Handler} SearchQuery_Handler = {SearchQuery_Handler} GroupSharing_Handler = {GroupSnapshot_Handler} ACR_Handler={ACR_Handler} FileSharing_Handler={FileSharing_Handler}/>}/>
                           <Route path="home" element={<Home userData = {userData}/>}/>
                           <Route path="searchResult" element={<SearchResult  userData = {userData}/>}/>
                           <Route path="accessControl" element={<AccessControlPage userData = {userData}/>}/>

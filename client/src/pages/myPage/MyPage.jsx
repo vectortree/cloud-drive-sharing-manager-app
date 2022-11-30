@@ -14,6 +14,7 @@ import {AuthContext} from "../../auth/auth";
 import {useEffect, useContext, useState, useRef} from "react"
 import List from "../../components/QueryHistoryList";
 import QueryHistoryList from "../../components/QueryHistoryList";
+import {dataRefining} from "../../functions/dataRefining";
 
 const MyPage = (props)=>{
     const [ACR, setACR]=useRecoilState(AccessControlData);
@@ -21,34 +22,18 @@ const MyPage = (props)=>{
     const [GroupSharing,setGroupSharing] = useRecoilState(GroupMembershipSnapshotsData);
     const [SearchQuery,setSearchQuery] = useRecoilState(searchQueryHistoryData);
     const [searchHistory,setSearchHistory] =useRecoilState(searchHistoryDisplay)
-    console.log(SearchQuery);
-    console.log(searchHistory);
+
     useEffect(() => {
         setACR(props.userData.accessControlRequirements);
         setFileSharing(props.userData.fileSharingSnapshots);
         setGroupSharing(props.userData.groupMembershipSnapshots);
-        setSearchQuery(props.userData.searchQueryHistory);
-        let searchQuery_Grid = [];
-
-        for(let i = 0; i < SearchQuery.length; i++){
-            let queryString="{";
-            if(SearchQuery[i].searchQuery.argument){
-                queryString += SearchQuery[i].searchQuery.operator + ":"+SearchQuery[i].searchQuery.argument+"}"
-            }else if(SearchQuery[i].searchQuery.children){
-                const childrenLength = SearchQuery[i].searchQuery.children.length
-                for(let j = 0; j < childrenLength   -1; j++){
-
-                    queryString += SearchQuery[i].searchQuery.children[j].operator + ":"+SearchQuery[i].searchQuery.children[j].argument+" "+ SearchQuery[i].searchQuery.logicalOp+ " ";
-                }
-                queryString += SearchQuery[i].searchQuery.children[childrenLength-1].operator + ":"+SearchQuery[i].searchQuery.children[childrenLength-1].argument+"}";
-            }
-            searchQuery_Grid.push(
-                {
-                    id: SearchQuery[i].id,
-                    name: queryString
-                })
+        if(SearchQuery.length == 0){
+            setSearchQuery(props.userData.searchQueryHistory);
+            setSearchHistory(props.userData.QueryHistoryForDisplay);
+        }else{
+            props.SearchQuery_Handler(SearchQuery);
+            props.QueryHistory_Handler(dataRefining(SearchQuery));
         }
-        setSearchHistory(searchQuery_Grid);
     },[]);
 
     const FileSharing_Controller = (data) =>{
@@ -91,7 +76,9 @@ const MyPage = (props)=>{
         let variable = [...SearchQuery];
         let SearchQueryData = variable.filter((row) => row.id !== id)
         props.SearchQuery_Handler(SearchQueryData);
+        props.QueryHistory_Handler(dataRefining(SearchQueryData));
         setSearchQuery(SearchQueryData)
+        setSearchHistory(dataRefining(SearchQueryData))
     }
 
 
@@ -101,7 +88,6 @@ const MyPage = (props)=>{
         <ColumnMenuGrid name="File-Sharing Snapshots" dataSet = {FileSharing} type= "FileSharingSnapshot" Data_Handler={FileSharing_Controller} Data_DeleteHandler = {DeleteFileSharing_Controller}/>,
         <ColumnMenuGrid name="Group-Membership Snapshots" dataSet = {GroupSharing} type= "GroupSharingSnapshot"Data_Handler={Group_Controller} Data_DeleteHandler={Group_DeleteController}/>,
         <ColumnMenuGrid name="Search Query History" dataSet = {searchHistory} type= "SearchQuery" Data_DeleteHandler={Delete_RecentSearchQuery}/>,
-        <QueryHistoryList dataSet = {SearchQuery}/>
     ];
 
     return (
