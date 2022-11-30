@@ -98,24 +98,29 @@ export default function HomeHeader(props) {
                         console.log(fileData);
                         let closestGMSnapShotsData = getClosestGMSnapshots(GroupSharing, fileData);
                         let checkRequirement = checkRequirements(fileData, closestGMSnapShotsData, props.userData.accessControlRequirements, props.userData.email, props.userData.domain, props.userData.driveType );
+                        console.log('done checking requirements');
                         if(checkRequirement.length > 0){
                             alert("Requirement Violation");
                         }else{
+                            console.log('updating...');
+                            console.log({files: newArray, type: type, role: role, value: email});
                             if(action == "add"){
                                 api.addPermission({files: newArray, type: type, role: role, value: email}).then((res) =>{
                                     console.log(res.data.profile);
+                                    setOpen(false);
                                 })
                             }else if(action =="remove"){
                                 api.removePermission({files: newArray, type: type, role: role, value: email}).then((res) =>{
                                     console.log(res.data.profile);
+                                    setOpen(false);
                                 })
                             }else if(action == "unshare"){
                                 api.unshareFiles({files: newArray} ).then((res) =>{
                                     console.log(res.data.profile);
+                                    setOpen(false);
                                 })
                             }
                             setFileData(fileData);
-                            setOpen(false);
                             console.log(checkRequirement);
                         }
                     }else{
