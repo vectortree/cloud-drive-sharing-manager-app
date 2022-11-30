@@ -37,6 +37,8 @@ import {
 import {checkRequirements} from "../functions/ac-requirements";
 import {makeFilesForDisplay} from "../functions/snapshot-files";
 import {id_generator} from "../functions/id_generator";
+import AdbIcon from '@mui/icons-material/Adb';
+import LogsModalView from "./LogsModal";
 
 // This is for the Header which is the very top of our website
 
@@ -99,8 +101,11 @@ export default function PrimarySearchAppBar(props) {
     const navigate = useNavigate()
 
     const [openModal, setOpenModal] = React.useState(false);
+    const [openModalLog, setOpenModalLog] = React.useState(false);
     const searchQueryModalOpen = () => setOpenModal(true);
+    const logsModalOpen = () => setOpenModalLog(true);
     const handleCloseModal = () => setOpenModal(false);
+    const handleCloseModalLogs = () => setOpenModalLog(false);
 
     const navigateHome = () => {
         // 👇️ navigate to /
@@ -324,7 +329,20 @@ export default function PrimarySearchAppBar(props) {
                             <AlignVerticalCenterIcon style = {{marginRight : "8px", marginBottom : "7px"}}></AlignVerticalCenterIcon>
                         </Button>
                     </Search>
-                    <Box sx={{ flexGrow: 1 }} />
+                    <Box sx={{ flexGrow: 1 }} > 
+                    <IconButton
+                            size="large"
+                            edge="end"
+                            aria-label="account of current user"
+                            aria-controls={menuId}
+                            aria-haspopup="true"
+                            onClick={logsModalOpen}
+                            color="black"
+                        >
+                            <AdbIcon sx = {{float : 'right'}} ></AdbIcon>
+                            <BasicModal open={openModalLog} handleClose={handleCloseModalLogs} title={"View Logs"} ><LogsModalView handleClose={handleCloseModalLogs} /></BasicModal>
+                        </IconButton>
+                    </Box>
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
                             size="large"

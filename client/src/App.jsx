@@ -26,6 +26,7 @@ const Layout = () =>{
 function App() {
     const {userProfile} = useContext(AuthContext);
     let userData = dataFiltering(userProfile)
+    console.log(userProfile)
     const ACR_Handler = (data) =>{
         userData.accessControlRequirements = data;
     }
