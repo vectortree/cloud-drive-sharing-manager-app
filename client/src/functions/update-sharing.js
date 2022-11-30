@@ -111,6 +111,10 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
             // Note: Index must exist since files is a subset of mostRecentFSSnapshot
             let index = updatedSnapshot.data.findIndex(f => f.id === file.id);
             if (action === "add") {
+                if(type === "users" && !value) return updatedSnapshot;
+                if(type !== "users" && type !== "organization" && type !== "anonymous") return updatedSnapshot;
+                if((type === "users" && role !== "read" && role !== "write") || ((type === "organization" || type === "anonymous") && role !== "view" && role !== "review" && role !== "edit")) return updatedSnapshot;
+                
                 if (type === "users") {
                     let found = false;
                     for (const permission of file.permissions.value) {
@@ -148,6 +152,10 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                 }
 
             } else if (action === "remove") {
+                if(type === "users" && !value) return updatedSnapshot;
+                if(type !== "users" && type !== "organization" && type !== "anonymous") return updatedSnapshot;
+                if((type === "users" && role !== "read" && role !== "write") || ((type === "organization" || type === "anonymous") && role !== "view" && role !== "review" && role !== "edit")) return updatedSnapshot;
+                
                 if (type === "users") {
                     file.permissions.forEach((permission, permIndex) => {
                         if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && permission.roles.includes(role)) {
@@ -165,11 +173,11 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                     });
                 }
                 else {
-                    updatedSnapshot.data[index].permissions.value.filter(p => !(p.link && p.link.scope === type && p.link.type === role));
+                    updatedSnapshot.data[index].permissions.value = updatedSnapshot.data[index].permissions.value.filter(p => !(p.link && p.link.scope === type && p.link.type === role));
                 }
 
             } else if (action === "unshare") {
-                updatedSnapshot.data[index].permissions.value.filter(p => p.roles.includes("owner")); 
+                updatedSnapshot.data[index].permissions.value = updatedSnapshot.data[index].permissions.value.filter(p => p.roles.includes("owner")); 
             }
         };
     }
