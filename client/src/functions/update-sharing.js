@@ -171,7 +171,7 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
             if (action === "add") {
                 if(type === "users" && !value) return updatedSnapshot;
                 if(type !== "users" && type !== "organization" && type !== "anonymous") return updatedSnapshot;
-                if((type === "users" && role !== "read" && role !== "write") || ((type === "organization" || type === "anonymous") && role !== "view" && role !== "review" && role !== "edit")) return updatedSnapshot;
+                if(role !== "read" && role !== "write") return updatedSnapshot;
                 
                 if (type === "users") {
                     let found = false;
@@ -196,26 +196,53 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                                 siteUser: { email: value }
                             }
                         });
+
+                        if(file.folder && file.folder.childCount > 0) {
+                            let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.parentReference.path + '/' + file.name, file.id, driveType);
+                            for(const id of fileIds) {
+                                let fileIndex = updatedSnapshot.data.findIndex(f => f.id === id);
+                                updatedSnapshot.data[fileIndex].permissions.value.push({
+                                    roles: [role],
+                                    grantedToV2: {
+                                        siteUser: { email: value }
+                                    }
+                                });
+                            }
+                        }
                     }
                 }
                 else {
-                    if (!file.permissions.value.find(p => p.link && p.link.scope === type && p.link.type === role)) {
+                    if (!file.permissions.value.find(p => p.link && p.link.scope === type && p.link.type === (role === "read" ? "view" : "edit"))) {
                         updatedSnapshot.data[index].permissions.value.push({
                             link: {
                                 scope: type,
-                                type: role
+                                type: role === "read" ? "view" : "edit"
                             }
                         });
+
+                        if(file.folder && file.folder.childCount > 0) {
+                            let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.parentReference.path + '/' + file.name, file.id, driveType);
+                            for(const id of fileIds) {
+                                let fileIndex = updatedSnapshot.data.findIndex(f => f.id === id);
+                                updatedSnapshot.data[fileIndex].permissions.value.push({
+                                    link: {
+                                        scope: type,
+                                        type: role === "read" ? "view" : "edit"
+                                    }
+                                });
+                            }
+                        }
+
                     }
                 }
 
             } else if (action === "remove") {
                 if(type === "users" && !value) return updatedSnapshot;
                 if(type !== "users" && type !== "organization" && type !== "anonymous") return updatedSnapshot;
-                if((type === "users" && role !== "read" && role !== "write") || ((type === "organization" || type === "anonymous") && role !== "view" && role !== "review" && role !== "edit")) return updatedSnapshot;
+                if(role !== "read" && role !== "write") return updatedSnapshot;
                 
                 if (type === "users") {
-                    file.permissions.forEach((permission, permIndex) => {
+                    file.permissions.value.forEach((permission, permIndex) => {
                         if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && permission.roles.includes(role)) {
                             for (const user of permission.grantedToIdentitiesV2) {
                                 if (user.siteUser.email.toLowerCase() === value.toLowerCase()) {
@@ -229,13 +256,62 @@ function applyLocalUpdatesToSnapshot(mostRecentFSSnapshot, files, action, type, 
                         }
 
                     });
+
+                    if(file.folder && file.folder.childCount > 0) {
+                        let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.parentReference.path + '/' + file.name, file.id, driveType);
+                        for(const id of fileIds) {
+                            let fileIndex = updatedSnapshot.data.findIndex(f => f.id === id);
+                            let fileObj = JSON.parse(JSON.stringify(updatedSnapshot.data[fileIndex]));
+                            fileObj.permissions.value.forEach((permission, permIndex) => {
+                                if (permission.grantedToIdentitiesV2 && permission.grantedToIdentitiesV2.length > 0 && permission.roles.includes(role)) {
+                                    for (const user of permission.grantedToIdentitiesV2) {
+                                        if (user.siteUser.email.toLowerCase() === value.toLowerCase()) {
+                                            updatedSnapshot.data[fileIndex].permissions.value.splice(permIndex, 1);
+                                            break;
+                                        }
+                                    }
+                                } else if (permission.grantedToV2 && permission.roles.includes(role)) {
+                                    if (permission.grantedToV2.siteUser.email.toLowerCase() === value.toLowerCase())
+                                        updatedSnapshot.data[fileIndex].permissions.value.splice(permIndex, 1);
+                                }
+                            });
+                        }
+
+
+                    }
                 }
                 else {
-                    updatedSnapshot.data[index].permissions.value = updatedSnapshot.data[index].permissions.value.filter(p => !(p.link && p.link.scope === type && p.link.type === role));
+                    updatedSnapshot.data[index].permissions.value = updatedSnapshot.data[index].permissions.value.filter(p => !(p.link && p.link.scope === type && p.link.type === (role === "read" ? "view" : "edit")));
+
+                    if(file.folder && file.folder.childCount > 0) {
+                        let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.parentReference.path + '/' + file.name, file.id, driveType);
+                        for(const id of fileIds) {
+                            let fileIndex = updatedSnapshot.data.findIndex(f => f.id === id);
+                            let fileObj = JSON.parse(JSON.stringify(updatedSnapshot.data[fileIndex]));
+                            fileObj.permissions.value.forEach((permission, permIndex) => {
+                                updatedSnapshot.data[fileIndex].permissions.value = updatedSnapshot.data[fileIndex].permissions.value.filter(p => !(p.link && p.link.scope === type && p.link.type === (role === "read" ? "view" : "edit")));
+                            });
+                        }
+                    }
                 }
 
             } else if (action === "unshare") {
+                if(type === "users" && !value) return updatedSnapshot;
+                if(type !== "users" && type !== "organization" && type !== "anonymous") return updatedSnapshot;
+                if(role !== "read" && role !== "write") return updatedSnapshot;
+
                 updatedSnapshot.data[index].permissions.value = updatedSnapshot.data[index].permissions.value.filter(p => p.roles.includes("owner")); 
+
+                if(file.folder && file.folder.childCount > 0) {
+                    let fileIds = getFilesIdsUnderFolder(updatedSnapshot.data, file.parentReference.path + '/' + file.name, file.id, driveType);
+                    for(const id of fileIds) {
+                        let fileIndex = updatedSnapshot.data.findIndex(f => f.id === id);
+                        let fileObj = JSON.parse(JSON.stringify(updatedSnapshot.data[fileIndex]));
+                        fileObj.permissions.value.forEach((permission, permIndex) => {
+                            updatedSnapshot.data[fileIndex].permissions.value = updatedSnapshot.data[fileIndex].permissions.value.filter(p => p.roles.includes("owner"));
+                        });
+                    }
+                }
             }
         };
     }
