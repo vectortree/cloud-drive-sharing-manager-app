@@ -14,9 +14,13 @@ import {FileSharingSnapShotData, GroupMembershipSnapshotsData} from "../recoil";
 import {useRecoilState} from "recoil";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useContext } from "react";
+import { AuthContext } from '../auth/auth';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 export default function ColorRadioButtons(props) {
+    const { userProfile, setUserProfile } = useContext(AuthContext);
+
     const date = new Date();
     let today = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes();
     const [selectedValue, setSelectedValue] = React.useState('fileSnapshot');
@@ -49,12 +53,11 @@ export default function ColorRadioButtons(props) {
         if(selectedValue == 'fileSnapshot'){
             let id =id_generator(props.dataSet.fileSharingSnapshots);
             let obj = {id:id, name: snapshotName};
-            api.createFileSharingSnapshot(obj).then(
-                (value) => {
-                    setFileSharingSnapShot( value.data.profile.fileSharingSnapshots);
-                    window.location.reload();
-                }
-            );
+            api.createFileSharingSnapshot(obj).then((res) => {
+                setFileSharingSnapShot(res.data.profile.fileSharingSnapshots);
+                setUserProfile(res.data.profile);
+                window.location.reload();
+            });
 
             console.log(fileSharingSnapShot);
         }else if(selectedValue == 'groupSnapshot'){
