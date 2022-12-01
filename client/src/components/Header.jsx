@@ -177,7 +177,8 @@ export default function PrimarySearchAppBar(props) {
             let domain = email.substring(email.lastIndexOf("@") + 1);
             let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, selSnapshot.data);
 
-            let groups = true;
+            let groups = parsedSQ["groups"] ? true : false;
+            console.log(groups);
             const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
             const id = id_generator(searchQueryHistory);
             const query ={id: id, searchQuery: parsedSQ};
@@ -278,7 +279,8 @@ export default function PrimarySearchAppBar(props) {
                     let domain = email.substring(email.lastIndexOf("@") + 1);
                     let closestGMSnapshots = getClosestGMSnapshots(userProfile.groupMembershipSnapshots, selSnapshot.data);
 
-                    let groups = true;
+                    let groups = parsedSQ["groups"] ? true : false;
+                    console.log(groups);
                     const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, userProfile.user.driveType, closestGMSnapshots, groups);
                     const id = id_generator(searchQueryHistory);
                     const query ={id: id, searchQuery: parsedSQ};

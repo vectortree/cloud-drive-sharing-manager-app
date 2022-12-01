@@ -114,7 +114,8 @@ export default function SearchQueryModal(props) {
                     email = props.userData.email;
                 let domain = email.substring(email.lastIndexOf("@") + 1);
                 let closestGMSnapshots = getClosestGMSnapshots(props.userData.groupMembershipSnapshots, selSnapshot.data);
-                let groups = true;
+                let groups = parsedSQ["groups"] ? true : false;
+                console.log(groups);
                 console.log(selSnapshot);
                 const filteredFiles = filterSnapshotBySearchQuery(selSnapshot.data, parsedSQ, email, domain, props.userData.driveType, closestGMSnapshots, groups);
                 console.log(filteredFiles);
