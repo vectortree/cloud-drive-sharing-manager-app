@@ -11,7 +11,7 @@ require('./passport/passport-google');
 require('./passport/passport-microsoft');
 
 const port = process.env.PORT || 5001;
-app.enable('trust proxy')
+app.enable('trust proxy');
 app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 
@@ -23,14 +23,14 @@ app.use(cors({
 app.use(session({
     name: "session",
     secret: "session secret",
-    saveUninitialized: true,
-    proxy: true,
+    saveUninitialized: false,
     resave: false,
+    proxy: true,
     store: new MongoStore({
         uri: process.env.ATLAS_URI,
         ttl: 60 * 60 * 24
     }),
-    cookie: {  httpOnly: false, secure: 'true', sameSite: 'None', maxAge: 60 * 60 * 24 * 1000 }
+    cookie: { secure: 'auto', sameSite: 'none', maxAge: 60 * 60 * 24 * 1000 }
 }));
 
 app.use(passport.initialize());
