@@ -25,11 +25,12 @@ app.use(session({
     secret: "session secret",
     saveUninitialized: false,
     resave: false,
+    proxy: true,
     store: new MongoStore({
         uri: process.env.ATLAS_URI,
         ttl: 60 * 60 * 24
     }),
-    cookie: { secure: 'auto', sameSite: 'None', maxAge: 60 * 60 * 24 * 1000 }
+    cookie: { secure: 'auto', sameSite: 'none', maxAge: 60 * 60 * 24 * 1000 }
 }));
 
 app.use(passport.initialize());

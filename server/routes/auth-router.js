@@ -22,7 +22,7 @@ router.get('/getuserprofile', async (req, res) => {
       userProfile.user.tokens = undefined;
       return res.status(200).json({success: true, profile: userProfile});
     }
-    return res.status(401).json({success: true, profile: null});
+    return res.status(401).json({success: false, profile: null});
 });
 
 router.get('/logout', async (req, res) => {
