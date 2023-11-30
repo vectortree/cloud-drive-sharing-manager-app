@@ -24,7 +24,7 @@ This system supports two cloud drive services, Google Drive and Microsoft OneDri
 ### Main Login Page
 <center><img src = "https://user-images.githubusercontent.com/78739450/194716972-8448549f-ec45-4ae0-b359-28d198063134.png" width = "60%" height = "60%"/></center>
 
-_This page is the first page of our website for login, and users can see the app logo and the login button for each of the cloud drive services (i.e., Google Cloud Drive and Microsoft OneDrive)._
+_This page is the first page of our website for login, and users can see the app logo and the login button for each of the cloud drive services (i.e., Google Drive and Microsoft OneDrive)._
    
 ### User Profile
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717092-a4c90817-86ce-414f-9030-5bb697cd0d17.png" width = "60%" height = "60%"/></center>
@@ -61,8 +61,7 @@ _When the user clicks the little icon at the end of the search bar, the query bu
 ### Create Snapshot
 <center><img src = "https://user-images.githubusercontent.com/78739450/194720332-6f24cbdd-e6ba-47a5-86b2-4820bcdb3572.PNG" width = "60%" height = "60%"/></center>
 
-_When the user clicks the camera icon, the pop-up for creating a snapshot will appear, and the user can select either to create a file-sharing snapshot or group-membership snapshot.
-They can create a name for the snapshot, and if they select the group-membership snapshot, they can find the group and add it in this snapshot.
+_When the user clicks the camera icon, the pop-up for creating a snapshot will appear, and the user can select either to create a file-sharing snapshot or group-membership snapshot. They can create a name for the snapshot, and if they select the group-membership snapshot, they can find the group and add it in this snapshot._
    
 ### Edit Snapshot
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717020-01514b33-6413-4061-b4f8-d34592972147.png" width = "60%" height = "60%"/></center>
@@ -72,25 +71,22 @@ _To change the snapshot, if the user clicks the E icon next to the camera icon, 
 ### Folder Information
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717018-568fb92c-8eee-4842-b968-d7648077aa29.png" width = "60%" height = "60%"/></center>
 
-_To see file metadata, the user can click the file or folder once, and a right sidebar will be shown to the user.
-It will include access information and sharing option. 
-And they can also update or add a user account in this page._   
+_To see file metadata, the user can click the file or folder once, and a right sidebar will be shown to the user. It will include access information and sharing option. And they can also update or add a user account in this page._   
    
 ### Update Sharing
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717017-43e802b8-f387-4695-b800-240f083e9cd1.png" width = "60%" height = "60%"/></center>
 
-To update sharing information for multiple files at once, the user can select multiple files in the main screen, and click "Change sharing"._   
-
+_To update sharing information for multiple files at once, the user can select multiple files in the main screen, and click "Change sharing"._   
 
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717016-7c4fa81b-5b50-4c85-9838-0061946a486e.png" width = "60%" height = "60%"/></center>
 
-And it will lead to this pop-up that can change the sharing settings at once.
+_And it will lead to this pop-up that can change the sharing settings at once.
 Users can view, add, and update the users' access control requirements, and can also add group accounts in the add permission section._   
    
 ### Analyze Sharing
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717015-1cec5f4d-205a-4445-a5a7-8bc472e895e6.png" width = "60%" height = "60%"/></center>
 
-This page shows the result of any sharing analysis performed on the snapshot (or a selected subset). The user can go through the option in the left side bar._
+_This page shows the result of any sharing analysis performed on the snapshot (or a selected subset). The user can go through the option in the left side bar._
 
 
 
@@ -99,7 +95,7 @@ This page shows the result of any sharing analysis performed on the snapshot (or
 ### Analyze Sharing Changes
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717011-ba08230a-22e6-4fa3-9ab5-48ab664562a1.png" width = "60%" height = "60%"/></center>
 
-When the user clicks "Sharing Changes", a pop-up will be displayed to the user to compare between two snapshots. The user can select two snapshots in the right sidebar, and it will show the updated information between two snapshots._   
+_When the user clicks "Sharing Changes", a pop-up will be displayed to the user to compare between two snapshots. The user can select two snapshots in the right sidebar, and it will show the updated information between two snapshots._   
    
       
       
