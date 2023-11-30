@@ -79,18 +79,18 @@ And they can also update or add a user account in this page._
 ### Update Sharing
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717017-43e802b8-f387-4695-b800-240f083e9cd1.png" width = "60%" height = "60%"/></center>
 
-_To update sharing information for multiple files at once, the user can select multiple files in the main screen, and click "Change sharing"._   
+To update sharing information for multiple files at once, the user can select multiple files in the main screen, and click "Change sharing"._   
 
 
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717016-7c4fa81b-5b50-4c85-9838-0061946a486e.png" width = "60%" height = "60%"/></center>
 
-_And it will lead to this pop-up that can change the sharing settings at once.
+And it will lead to this pop-up that can change the sharing settings at once.
 Users can view, add, and update the users' access control requirements, and can also add group accounts in the add permission section._   
    
 ### Analyze Sharing
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717015-1cec5f4d-205a-4445-a5a7-8bc472e895e6.png" width = "60%" height = "60%"/></center>
 
-_This page shows the result of any sharing analysis performed on the snapshot (or a selected subset). The user can go through the option in the left side bar._
+This page shows the result of any sharing analysis performed on the snapshot (or a selected subset). The user can go through the option in the left side bar._
 
 
 
@@ -99,7 +99,7 @@ _This page shows the result of any sharing analysis performed on the snapshot (o
 ### Analyze Sharing Changes
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717011-ba08230a-22e6-4fa3-9ab5-48ab664562a1.png" width = "60%" height = "60%"/></center>
 
-_When the user clicks "Sharing Changes", a pop-up will be displayed to the user to compare between two snapshots. The user can select two snapshots in the right sidebar, and it will show the updated information between two snapshots._   
+When the user clicks "Sharing Changes", a pop-up will be displayed to the user to compare between two snapshots. The user can select two snapshots in the right sidebar, and it will show the updated information between two snapshots._   
    
       
       
