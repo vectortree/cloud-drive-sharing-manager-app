@@ -19,7 +19,7 @@ Some popular cloud drives offer only very basic functionality for managing shari
 
 
 # Getting into the Project
-This system can be extended to two cloud drive services, Google Cloud Drive and Microsoft OneDrive.
+This system supports two cloud drive services, Google Drive and Microsoft OneDrive.
    
 ### Main Login Page
 <center><img src = "https://user-images.githubusercontent.com/78739450/194716972-8448549f-ec45-4ae0-b359-28d198063134.png" width = "60%" height = "60%"/></center>
