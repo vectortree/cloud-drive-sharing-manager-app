@@ -18,7 +18,7 @@ Some popular cloud drives offer only very basic functionality for managing shari
 - MongoDB
 
 
-# GETTING INTO THE PROJECT
+# Getting into the Project
 This system can be extended to two cloud drive services, Google Cloud Drive and Microsoft OneDrive.
    
 ### Main Login Page
