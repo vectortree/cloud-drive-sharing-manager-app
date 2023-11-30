@@ -11,14 +11,14 @@ Some popular cloud drives offer only very basic functionality for managing shari
 
 **Goal.** The goal of this project is to create a user-friendly web interface with a rich set of features to manage sharing on Google Drive and Microsoft OneDrive. The system should be extensible: adding support for additional cloud drive services should be relatively easy. The system should be able to fetch metadata for all files accessible to the current user, or a specified subset of those files, and save the result in an internal database, for flexible and efficient analysis.
 
-# Tech Stack & Features
+## Tech Stack
 - React
 - Node.js
 - Express.js
 - MongoDB
 
 
-# Getting into the Project
+## UI Mockup
 This system supports two cloud drive services, Google Drive and Microsoft OneDrive.
    
 ### Main Login Page
@@ -89,15 +89,11 @@ Users can view, add, and update the users' access control requirements, and can 
 _This page shows the result of any sharing analysis performed on the snapshot (or a selected subset). The user can go through the option in the left side bar._
 
 
-
-   
-
 ### Analyze Sharing Changes
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717011-ba08230a-22e6-4fa3-9ab5-48ab664562a1.png" width = "60%" height = "60%"/></center>
 
 _When the user clicks "Sharing Changes" after selecting two snapshots, a pop-up will be displayed to the user for comparing both snapshots._   
    
-      
       
 # Getting Started with Create React App
 
