@@ -99,7 +99,7 @@ _This page shows the result of any sharing analysis performed on the snapshot (o
 ### Analyze Sharing Changes
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717011-ba08230a-22e6-4fa3-9ab5-48ab664562a1.png" width = "60%" height = "60%"/></center>
 
-_When user clicks "Sharing Changes", the pop-up will be shown to the user to compare between two snapshots. User can select two snapshots in the right sidebar, and it will show the updated information between two snapshots._   
+_When the user clicks "Sharing Changes", a pop-up will be displayed to the user to compare between two snapshots. The user can select two snapshots in the right sidebar, and it will show the updated information between two snapshots._   
    
       
       
