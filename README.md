@@ -43,7 +43,7 @@ _When the user clicks on the "Check requirements" button, it will check the curr
 
 _When the user clicks the "Add" or "Edit" button for the requirements, this pop-up page will be displayed, and they can type the requirement name and make requirement using query and adding access control._    
    
-### Home page
+### Home Page
 <center><img src = "https://user-images.githubusercontent.com/78739450/194717026-a06f6a49-0b5b-4743-8141-29fcee9169c2.png" width = "60%" height = "60%"/></center>
 
 _This is the main page of the cloud drive sharing manager. By default, users can see all files within the current snapshot, and can select the cloud drive service they will use in the sidebar._
